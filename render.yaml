@@ -2,13 +2,12 @@ services:
   - type: web
     name: ugwunagbo-website
     env: node
-    rootDirectory: my_ugwunagbo
-    buildCommand: cd my_ugwunagbo && npm install
-    startCommand: cd my_ugwunagbo && node server.js
+    buildCommand: npm install
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
     disk:
       name: uploads
-      mountPath: /opt/render/project/src/my_ugwunagbo/public/uploads
+      mountPath: /opt/render/project/src/public/uploads
       sizeGB: 1
