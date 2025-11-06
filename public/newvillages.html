@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Villages in Ugwunagbo Local Government Area, Abia State, Nigeria"
+    />
+    <title>Villages in Ugwunagbo LGA - Ugwunagbo Local Government Area</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="img/469561696_573785381917492_5352245378316206825_n.jpg"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .villages-hero {
+        background: linear-gradient(rgba(0, 100, 0, 0.8), rgba(0, 100, 0, 0.8)),
+          url("img/heritage5.jpg");
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 0;
+        text-align: center;
+      }
+
+      .villages-hero h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .villages-hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .villages-container {
+        padding: 5rem 0;
+        background-color: var(--secondary);
+      }
+
+      .villages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 30px;
+        margin-top: 3rem;
+      }
+
+      .village-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-left: 5px solid var(--primary);
+      }
+
+      .village-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .village-name {
+        color: var(--primary);
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .village-name i {
+        color: var(--accent);
+      }
+
+      .village-description {
+        color: #666;
+        line-height: 1.6;
+      }
+
+      .back-to-home {
+        text-align: center;
+        margin-top: 3rem;
+      }
+
+      .stats-section {
+        background: var(--primary);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-top: 2rem;
+      }
+
+      .stat-item {
+        padding: 20px;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--accent);
+      }
+
+      .stat-label {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        color: white;
+      }
+
+      .no-villages {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .no-villages i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+      }
+
+      .no-villages h3 {
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+
+      .villages-search {
+        max-width: 500px;
+        margin: 0 auto 3rem;
+      }
+
+      .search-box {
+        position: relative;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 15px 50px 15px 20px;
+        border: 2px solid #ddd;
+        border-radius: 50px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .search-box input:focus {
+        outline: none;
+        border-color: var(--primary);
+      }
+
+      .search-box i {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+      }
+
+      @media (max-width: 768px) {
+        .villages-hero h1 {
+          font-size: 2.2rem;
+        }
+
+        .villages-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .village-card {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <div class="logo">
+            <a
+              href="index.html"
+              style="
+                text-decoration: none;
+                color: inherit;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+              "
+            >
+              <div class="logo-placeholder">
+                <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
+              </div>
+              <div class="logo-text">
+                <h1>Ugwunagbo LGA</h1>
+                <p>Abia State, Nigeria</p>
+              </div>
+            </a>
+          </div>
+          <div class="header-contact-info">
+            <div class="header-contact-item">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <span>+234 123 456 7890</span>
+            </div>
+            <div class="header-contact-item">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <span>info@ugwunagbolga.gov.ng</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Villages Hero Section -->
+    <section class="villages-hero">
+      <div class="container">
+        <h1>Villages in Ugwunagbo</h1>
+        <p>
+          Discover the vibrant communities that make up our Local Government
+          Area
+        </p>
+        <a href="index.html" class="btn" style="margin-top: 2rem">
+          <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+      </div>
+    </section>
+
+    <!-- Villages Stats Section -->
+    <section class="stats-section">
+      <div class="container">
+        <h2>Our Communities at a Glance</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-number" id="totalVillages">0</div>
+            <div class="stat-label">Total Villages</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Years of Heritage</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Residents</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Community Spirit</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Villages Listing Section -->
+    <section class="villages-container">
+      <div class="container">
+        <div class="section-title">
+          <h2>Explore Our Villages</h2>
+          <p>
+            Each village has its unique character and contribution to our local
+            government
+          </p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="villages-search">
+          <div class="search-box">
+            <input
+              type="text"
+              id="villageSearch"
+              placeholder="Search for a village..."
+            />
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+        <div
+          class="villages-actions"
+          style="text-align: center; margin-bottom: 2rem"
+        >
+          <button onclick="refreshVillages()" class="btn btn-outline">
+            <i class="fas fa-sync-alt"></i> Refresh List
+          </button>
+        </div>
+
+        <!-- Villages Grid -->
+        <div class="villages-grid" id="villagesContainer">
+          <!-- Villages will be dynamically loaded here -->
+          <div class="no-villages">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>No Villages Added Yet</h3>
+            <p>
+              Village information will appear here once added by the
+              administrator
+            </p>
+          </div>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="back-to-home">
+          <a href="index.html" class="btn btn-primary">
+            <i class="fas fa-home"></i> Return to Homepage
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Ugwunagbo LGA</h3>
+            <p>
+              Committed to serving our community with integrity, transparency,
+              and excellence.
+            </p>
+            <div class="social-links">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="YouTube"
+                ><i class="fab fa-youtube" aria-hidden="true"></i
+              ></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+              <li><a href="index.html#services">Services</a></li>
+              <li><a href="villages.html">Villages Directory</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Info</h3>
+            <ul class="footer-links">
+              <li>
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                Ugwunagbo LGA Secretariat
+              </li>
+              <li>
+                <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
+                7890
+              </li>
+              <li>
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                info@ugwunagbolga.gov.ng
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>Courtesy Of SmartDevTechs</p>
+          <p>
+            &copy; <span id="currentYear"></span> Ugwunagbo Local Government
+            Area. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+      <i class="fas fa-chevron-up" aria-hidden="true"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script src="js/newvillages.js"></script>
+  </body>
+</html>
