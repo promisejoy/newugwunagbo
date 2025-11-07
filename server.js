@@ -1232,6 +1232,28 @@ app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
+// TEMPORARY: Password reset route (remove after use)
+app.post('/api/admin/reset-password', async (req, res) => {
+  try {
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    
+    await pool.execute(
+      "UPDATE admin SET password = ? WHERE username = ?",
+      [adminPassword, adminUsername]
+    );
+    
+    res.json({ 
+      success: true, 
+      message: 'Password reset to: ' + adminPassword,
+      username: adminUsername,
+      password: adminPassword
+    });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    res.status(500).json({ error: 'Failed to reset password' });
+  }
+});
 // Initialize database and start server
 initializeDatabaseWithRetry().then(() => {
   app.listen(PORT, () => {
