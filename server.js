@@ -1232,26 +1232,62 @@ app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// TEMPORARY: Password reset route (remove after use)
-app.post('/api/admin/reset-password', async (req, res) => {
+// DEBUG ROUTES - Add these to diagnose the issue
+app.get('/api/debug/database', async (req, res) => {
   try {
-    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const [admin] = await pool.execute("SELECT * FROM admin");
+    const [tables] = await pool.execute("SHOW TABLES");
     
+    res.json({
+      database_connected: true,
+      tables: tables,
+      admin_users: admin,
+      admin_count: admin.length,
+      env_vars: {
+        DB_HOST: process.env.DB_HOST ? 'Set' : 'Not set',
+        DB_USER: process.env.DB_USER ? 'Set' : 'Not set', 
+        DB_NAME: process.env.DB_NAME ? 'Set' : 'Not set'
+      }
+    });
+  } catch (error) {
+    res.json({
+      database_connected: false,
+      error: error.message,
+      env_vars: {
+        DB_HOST: process.env.DB_HOST ? 'Set' : 'Not set',
+        DB_USER: process.env.DB_USER ? 'Set' : 'Not set',
+        DB_NAME: process.env.DB_NAME ? 'Set' : 'Not set'
+      }
+    });
+  }
+});
+
+// Force create admin user
+app.post('/api/debug/create-admin', async (req, res) => {
+  try {
+    const adminUsername = 'admin';
+    const adminPassword = 'admin123';
+    
+    // First delete any existing admin
+    await pool.execute("DELETE FROM admin WHERE username = ?", [adminUsername]);
+    
+    // Create new admin
     await pool.execute(
-      "UPDATE admin SET password = ? WHERE username = ?",
-      [adminPassword, adminUsername]
+      "INSERT INTO admin (username, password) VALUES (?, ?)",
+      [adminUsername, adminPassword]
     );
     
     res.json({ 
       success: true, 
-      message: 'Password reset to: ' + adminPassword,
+      message: 'Admin user created successfully',
       username: adminUsername,
       password: adminPassword
     });
   } catch (error) {
-    console.error('Error resetting password:', error);
-    res.status(500).json({ error: 'Failed to reset password' });
+    res.json({ 
+      success: false, 
+      error: error.message 
+    });
   }
 });
 // Initialize database and start server
