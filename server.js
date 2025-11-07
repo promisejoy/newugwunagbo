@@ -1,12 +1,11 @@
 const express = require("express");
-const mysql = require("mysql2/promise");
+const { Pool } = require('pg');
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const fs = require("fs");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
 const { body, validationResult } = require("express-validator");
 require("dotenv").config();
 const cloudinary = require('cloudinary').v2;
@@ -79,188 +78,147 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-// MySQL Database Connection with better error handling
-const dbConfig = {
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "ugwunagbo",
-  charset: "utf8mb4",
-  connectTimeout: 60000,
-  acquireTimeout: 60000,
-  timeout: 60000,
-};
-
-// Create connection pool with better error handling
-const pool = mysql.createPool({
-  ...dbConfig,
-  waitForConnections: true,
-  connectionLimit: 20,
-  queueLimit: 0,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0,
+// PostgreSQL Connection (Use DATABASE_URL for Neon)
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// Initialize database with retry logic
-const initializeDatabaseWithRetry = async (retries = 3, delay = 2000) => {
-  for (let i = 0; i < retries; i++) {
-    try {
-      await initializeDatabase();
-      console.log("✅ Database initialized successfully");
-      break;
-    } catch (error) {
-      console.log(
-        `Database connection attempt ${i + 1} failed:`,
-        error.message
-      );
-      if (i === retries - 1) {
-        console.log(
-          "💡 The website will still run, but admin features may not work"
-        );
-        return;
-      }
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
-};
-
+// Initialize database
 async function initializeDatabase() {
-  let connection;
   try {
-    connection = await pool.getConnection();
-    console.log("✅ Database connection successful!");
+    console.log("🔄 Initializing PostgreSQL database...");
 
     // Create governor table
-    await connection.execute(`
-            CREATE TABLE IF NOT EXISTS governor (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                image VARCHAR(500),
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS governor (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(500),
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
     // Create video table
-    await connection.execute(`
-            CREATE TABLE IF NOT EXISTS video (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(500) NOT NULL,
-                description TEXT,
-                video VARCHAR(500),
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS video (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(500) NOT NULL,
+        description TEXT,
+        video VARCHAR(500),
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
     // Create villages table
-    await connection.execute(`
-           CREATE TABLE IF NOT EXISTS villages (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    is_deleted TINYINT(1) DEFAULT 0,
-    deleted_at TIMESTAMP NULL
-);
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS villages (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL UNIQUE,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_deleted BOOLEAN DEFAULT FALSE
+      )
+    `);
 
     // Create leaders table
-    await connection.execute(`
-            CREATE TABLE IF NOT EXISTS leaders (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                position VARCHAR(255) NOT NULL,
-                bio TEXT NOT NULL,
-                image VARCHAR(500),
-                email VARCHAR(255),
-                phone VARCHAR(50),
-                twitter VARCHAR(500),
-                facebook VARCHAR(500),
-                linkedin VARCHAR(500),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS leaders (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        position VARCHAR(255) NOT NULL,
+        bio TEXT NOT NULL,
+        image VARCHAR(500),
+        email VARCHAR(255),
+        phone VARCHAR(50),
+        twitter VARCHAR(500),
+        facebook VARCHAR(500),
+        linkedin VARCHAR(500),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
     // Create events table
-    await connection.execute(`
-                CREATE TABLE IF NOT EXISTS events (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(500) NOT NULL,
-                category VARCHAR(100) NOT NULL,
-                description TEXT NOT NULL,
-                date DATE NOT NULL,
-                time VARCHAR(50),
-                location VARCHAR(255) NOT NULL,
-                organizer VARCHAR(255),
-                image VARCHAR(500),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-`);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS events (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(500) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        description TEXT NOT NULL,
+        date DATE NOT NULL,
+        time VARCHAR(50),
+        location VARCHAR(255) NOT NULL,
+        organizer VARCHAR(255),
+        image VARCHAR(500),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
     // Create news table
-    await connection.execute(`
-            CREATE TABLE IF NOT EXISTS news (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(500) NOT NULL,
-                content TEXT NOT NULL,
-                image VARCHAR(500),
-                date DATE NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS news (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(500) NOT NULL,
+        content TEXT NOT NULL,
+        image VARCHAR(500),
+        date DATE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
     // Create contacts table
-    await connection.execute(`
-            CREATE TABLE IF NOT EXISTS contacts (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
-                subject VARCHAR(500) NOT NULL,
-                message TEXT NOT NULL,
-                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS contacts (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        subject VARCHAR(500) NOT NULL,
+        message TEXT NOT NULL,
+        date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
 
     // Create support_requests table
-    await connection.execute(`
-            CREATE TABLE IF NOT EXISTS support_requests (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                fullName VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
-                phone VARCHAR(50),
-                village VARCHAR(255) NOT NULL,
-                issueType VARCHAR(100) NOT NULL,
-                priority VARCHAR(50) NOT NULL,
-                subject VARCHAR(500) NOT NULL,
-                description TEXT NOT NULL,
-                suggestions TEXT,
-                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                status VARCHAR(50) DEFAULT 'pending'
-            )
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS support_requests (
+        id SERIAL PRIMARY KEY,
+        fullName VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(50),
+        village VARCHAR(255) NOT NULL,
+        issueType VARCHAR(100) NOT NULL,
+        priority VARCHAR(50) NOT NULL,
+        subject VARCHAR(500) NOT NULL,
+        description TEXT NOT NULL,
+        suggestions TEXT,
+        date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        status VARCHAR(50) DEFAULT 'pending'
+      )
+    `);
 
     // Create admin table
-    await connection.execute(`
-            CREATE TABLE IF NOT EXISTS admin (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(255) NOT NULL UNIQUE,
-                password VARCHAR(255) NOT NULL
-            )
-        `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS admin (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL
+      )
+    `);
 
-    // Insert default admin user with environment variables
+    // Insert default admin user
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
 
-    await connection.execute(`
-            INSERT IGNORE INTO admin (username, password) 
-            VALUES (?, ?)
-        `, [adminUsername, adminPassword]);
+    await pool.query(`
+      INSERT INTO admin (username, password) 
+      VALUES ($1, $2)
+      ON CONFLICT (username) DO NOTHING
+    `, [adminUsername, adminPassword]);
+
+    console.log("✅ PostgreSQL database initialized successfully!");
   } catch (error) {
-    console.log("⚠️  Database initialization error:", error.message);
-    throw error;
-  } finally {
-    if (connection) connection.release();
+    console.log("❌ Database initialization error:", error.message);
   }
 }
 
@@ -289,7 +247,7 @@ const validateSupport = [
 // Events API Routes
 app.get("/api/events", async (req, res) => {
   try {
-    const [rows] = await pool.execute("SELECT * FROM events ORDER BY date ASC");
+    const { rows } = await pool.query("SELECT * FROM events ORDER BY date ASC");
     res.json(rows);
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -328,8 +286,8 @@ app.post(
         fs.unlinkSync(req.file.path);
       }
 
-      const [result] = await pool.execute(
-        "INSERT INTO events (title, category, description, date, time, location, organizer, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      const { rows } = await pool.query(
+        "INSERT INTO events (title, category, description, date, time, location, organizer, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
         [
           title.trim(),
           category.trim(),
@@ -342,7 +300,7 @@ app.post(
         ]
       );
 
-      res.json({ id: result.insertId, message: "Event added successfully" });
+      res.json({ id: rows[0].id, message: "Event added successfully" });
     } catch (error) {
       console.error("Error adding event:", error);
       res.status(500).json({ error: "Failed to add event" });
@@ -387,8 +345,8 @@ app.put(
       }
 
       if (imageUrl) {
-        await pool.execute(
-          "UPDATE events SET title=?, category=?, description=?, date=?, time=?, location=?, organizer=?, image=? WHERE id=?",
+        await pool.query(
+          "UPDATE events SET title=$1, category=$2, description=$3, date=$4, time=$5, location=$6, organizer=$7, image=$8 WHERE id=$9",
           [
             title.trim(),
             category.trim(),
@@ -402,8 +360,8 @@ app.put(
           ]
         );
       } else {
-        await pool.execute(
-          "UPDATE events SET title=?, category=?, description=?, date=?, time=?, location=?, organizer=? WHERE id=?",
+        await pool.query(
+          "UPDATE events SET title=$1, category=$2, description=$3, date=$4, time=$5, location=$6, organizer=$7 WHERE id=$8",
           [
             title.trim(),
             category.trim(),
@@ -433,7 +391,7 @@ app.delete("/api/events/:id", async (req, res) => {
       return res.status(400).json({ error: "Valid event ID is required" });
     }
 
-    await pool.execute("DELETE FROM events WHERE id=?", [id]);
+    await pool.query("DELETE FROM events WHERE id=$1", [id]);
     res.json({ message: "Event deleted successfully" });
   } catch (error) {
     console.error("Error deleting event:", error);
@@ -444,7 +402,7 @@ app.delete("/api/events/:id", async (req, res) => {
 // Governor Routes
 app.get("/api/governor", async (req, res) => {
   try {
-    const [rows] = await pool.execute(
+    const { rows } = await pool.query(
       "SELECT * FROM governor ORDER BY updated_at DESC LIMIT 1"
     );
     if (rows.length > 0) {
@@ -477,19 +435,19 @@ app.put("/api/governor", upload.single("image"), async (req, res) => {
     }
 
     // Check if governor exists
-    const [existing] = await pool.execute("SELECT * FROM governor");
+    const { rows: existing } = await pool.query("SELECT * FROM governor");
 
     if (existing.length > 0) {
       if (imageUrl) {
-        await pool.execute("UPDATE governor SET name=?, image=?", [
+        await pool.query("UPDATE governor SET name=$1, image=$2", [
           name.trim(),
           imageUrl,
         ]);
       } else {
-        await pool.execute("UPDATE governor SET name=?", [name.trim()]);
+        await pool.query("UPDATE governor SET name=$1", [name.trim()]);
       }
     } else {
-      await pool.execute("INSERT INTO governor (name, image) VALUES (?, ?)", [
+      await pool.query("INSERT INTO governor (name, image) VALUES ($1, $2)", [
         name.trim(),
         imageUrl,
       ]);
@@ -505,7 +463,7 @@ app.put("/api/governor", upload.single("image"), async (req, res) => {
 // Video Routes
 app.get("/api/video", async (req, res) => {
   try {
-    const [rows] = await pool.execute(
+    const { rows } = await pool.query(
       "SELECT * FROM video ORDER BY updated_at DESC LIMIT 1"
     );
     if (rows.length > 0) {
@@ -539,24 +497,24 @@ app.put("/api/video", upload.single("video"), async (req, res) => {
     }
 
     // Check if video exists
-    const [existing] = await pool.execute("SELECT * FROM video");
+    const { rows: existing } = await pool.query("SELECT * FROM video");
 
     if (existing.length > 0) {
       if (videoUrl) {
-        await pool.execute("UPDATE video SET title=?, description=?, video=?", [
+        await pool.query("UPDATE video SET title=$1, description=$2, video=$3", [
           title.trim(),
           description?.trim(),
           videoUrl,
         ]);
       } else {
-        await pool.execute("UPDATE video SET title=?, description=?", [
+        await pool.query("UPDATE video SET title=$1, description=$2", [
           title.trim(),
           description?.trim(),
         ]);
       }
     } else {
-      await pool.execute(
-        "INSERT INTO video (title, description, video) VALUES (?, ?, ?)",
+      await pool.query(
+        "INSERT INTO video (title, description, video) VALUES ($1, $2, $3)",
         [title.trim(), description?.trim(), videoUrl]
       );
     }
@@ -572,8 +530,8 @@ app.put("/api/video", upload.single("video"), async (req, res) => {
 app.get("/api/villages", async (req, res) => {
   try {
     console.log("📋 Fetching villages...");
-    const [rows] = await pool.execute(
-      "SELECT * FROM villages WHERE is_deleted = 0 ORDER BY name ASC"
+    const { rows } = await pool.query(
+      "SELECT * FROM villages WHERE is_deleted = false ORDER BY name ASC"
     );
     console.log(`✅ Found ${rows.length} active villages`);
     res.json(rows);
@@ -603,12 +561,12 @@ app.post(
 
       console.log("Adding village:", name);
 
-      const [result] = await pool.execute(
-        "INSERT INTO villages (name, description) VALUES (?, ?)",
+      const { rows } = await pool.query(
+        "INSERT INTO villages (name, description) VALUES ($1, $2) RETURNING *",
         [name.trim(), description?.trim() || ""]
       );
 
-      res.json({ id: result.insertId, message: "Village added successfully" });
+      res.json({ id: rows[0].id, message: "Village added successfully" });
     } catch (error) {
       console.error("Error adding village:", error);
       res.status(500).json({ error: "Failed to add village" });
@@ -630,8 +588,8 @@ app.delete("/api/villages/:id", async (req, res) => {
       });
     }
 
-    const [existingVillage] = await pool.execute(
-      "SELECT * FROM villages WHERE id = ?", 
+    const { rows: existingVillage } = await pool.query(
+      "SELECT * FROM villages WHERE id = $1", 
       [id]
     );
 
@@ -645,14 +603,14 @@ app.delete("/api/villages/:id", async (req, res) => {
       });
     }
 
-    const [result] = await pool.execute(
-      "DELETE FROM villages WHERE id = ?", 
+    const { rowCount } = await pool.query(
+      "DELETE FROM villages WHERE id = $1", 
       [id]
     );
 
-    console.log("✅ DELETE result:", result);
+    console.log("✅ DELETE result - rows affected:", rowCount);
 
-    if (result.affectedRows === 0) {
+    if (rowCount === 0) {
       console.log("❌ No rows affected - village not deleted");
       return res.status(404).json({ 
         success: false,
@@ -660,7 +618,7 @@ app.delete("/api/villages/:id", async (req, res) => {
       });
     }
 
-    console.log("✅ Village deleted successfully, affected rows:", result.affectedRows);
+    console.log("✅ Village deleted successfully");
     
     res.json({ 
       success: true,
@@ -681,7 +639,7 @@ app.delete("/api/villages/:id", async (req, res) => {
 // Leaders Routes
 app.get("/api/leaders", async (req, res) => {
   try {
-    const [rows] = await pool.execute("SELECT * FROM leaders ORDER BY id DESC");
+    const { rows } = await pool.query("SELECT * FROM leaders ORDER BY id DESC");
     res.json(rows);
   } catch (error) {
     console.error("Error fetching leaders:", error);
@@ -721,8 +679,8 @@ app.post(
         fs.unlinkSync(req.file.path);
       }
 
-      const [result] = await pool.execute(
-        "INSERT INTO leaders (name, position, bio, image, email, phone, twitter, facebook, linkedin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      const { rows } = await pool.query(
+        "INSERT INTO leaders (name, position, bio, image, email, phone, twitter, facebook, linkedin) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
         [
           name.trim(),
           position.trim(),
@@ -736,7 +694,7 @@ app.post(
         ]
       );
 
-      res.json({ id: result.insertId, message: "Leader added successfully" });
+      res.json({ id: rows[0].id, message: "Leader added successfully" });
     } catch (error) {
       console.error("Error adding leader:", error);
       res.status(500).json({ error: "Failed to add leader" });
@@ -782,8 +740,8 @@ app.put(
       }
 
       if (imageUrl) {
-        await pool.execute(
-          "UPDATE leaders SET name=?, position=?, bio=?, image=?, email=?, phone=?, twitter=?, facebook=?, linkedin=? WHERE id=?",
+        await pool.query(
+          "UPDATE leaders SET name=$1, position=$2, bio=$3, image=$4, email=$5, phone=$6, twitter=$7, facebook=$8, linkedin=$9 WHERE id=$10",
           [
             name.trim(),
             position.trim(),
@@ -798,8 +756,8 @@ app.put(
           ]
         );
       } else {
-        await pool.execute(
-          "UPDATE leaders SET name=?, position=?, bio=?, email=?, phone=?, twitter=?, facebook=?, linkedin=? WHERE id=?",
+        await pool.query(
+          "UPDATE leaders SET name=$1, position=$2, bio=$3, email=$4, phone=$5, twitter=$6, facebook=$7, linkedin=$8 WHERE id=$9",
           [
             name.trim(),
             position.trim(),
@@ -830,7 +788,7 @@ app.delete("/api/leaders/:id", async (req, res) => {
       return res.status(400).json({ error: "Valid leader ID is required" });
     }
 
-    await pool.execute("DELETE FROM leaders WHERE id=?", [id]);
+    await pool.query("DELETE FROM leaders WHERE id=$1", [id]);
     res.json({ message: "Leader deleted successfully" });
   } catch (error) {
     console.error("Error deleting leader:", error);
@@ -841,7 +799,7 @@ app.delete("/api/leaders/:id", async (req, res) => {
 // News Routes
 app.get("/api/news", async (req, res) => {
   try {
-    const [rows] = await pool.execute("SELECT * FROM news ORDER BY date DESC");
+    const { rows } = await pool.query("SELECT * FROM news ORDER BY date DESC");
     res.json(rows);
   } catch (error) {
     console.error("Error fetching news:", error);
@@ -876,12 +834,12 @@ app.post(
         fs.unlinkSync(req.file.path);
       }
 
-      const [result] = await pool.execute(
-        "INSERT INTO news (title, content, image, date) VALUES (?, ?, ?, ?)",
+      const { rows } = await pool.query(
+        "INSERT INTO news (title, content, image, date) VALUES ($1, $2, $3, $4) RETURNING *",
         [title.trim(), content.trim(), imageUrl, date]
       );
 
-      res.json({ id: result.insertId, message: "News added successfully" });
+      res.json({ id: rows[0].id, message: "News added successfully" });
     } catch (error) {
       console.error("Error adding news:", error);
       res.status(500).json({ error: "Failed to add news" });
@@ -922,13 +880,13 @@ app.put(
       }
 
       if (imageUrl) {
-        await pool.execute(
-          "UPDATE news SET title=?, content=?, image=?, date=? WHERE id=?",
+        await pool.query(
+          "UPDATE news SET title=$1, content=$2, image=$3, date=$4 WHERE id=$5",
           [title.trim(), content.trim(), imageUrl, date, id]
         );
       } else {
-        await pool.execute(
-          "UPDATE news SET title=?, content=?, date=? WHERE id=?",
+        await pool.query(
+          "UPDATE news SET title=$1, content=$2, date=$3 WHERE id=$4",
           [title.trim(), content.trim(), date, id]
         );
       }
@@ -949,7 +907,7 @@ app.delete("/api/news/:id", async (req, res) => {
       return res.status(400).json({ error: "Valid news ID is required" });
     }
 
-    await pool.execute("DELETE FROM news WHERE id=?", [id]);
+    await pool.query("DELETE FROM news WHERE id=$1", [id]);
     res.json({ message: "News deleted successfully" });
   } catch (error) {
     console.error("Error deleting news:", error);
@@ -960,7 +918,7 @@ app.delete("/api/news/:id", async (req, res) => {
 // Contacts Routes
 app.get("/api/contacts", async (req, res) => {
   try {
-    const [rows] = await pool.execute(
+    const { rows } = await pool.query(
       "SELECT * FROM contacts ORDER BY date DESC LIMIT 5"
     );
     res.json(rows);
@@ -979,13 +937,13 @@ app.post("/api/contacts", validateContact, async (req, res) => {
 
     const { name, email, subject, message } = req.body;
 
-    const [result] = await pool.execute(
-      "INSERT INTO contacts (name, email, subject, message) VALUES (?, ?, ?, ?)",
+    const { rows } = await pool.query(
+      "INSERT INTO contacts (name, email, subject, message) VALUES ($1, $2, $3, $4) RETURNING *",
       [name.trim(), email, subject.trim(), message.trim()]
     );
 
     res.json({
-      id: result.insertId,
+      id: rows[0].id,
       message: "Contact request submitted successfully",
     });
   } catch (error) {
@@ -998,7 +956,7 @@ app.post("/api/contacts", validateContact, async (req, res) => {
 app.get("/api/support", async (req, res) => {
   try {
     console.log("📦 Fetching support requests from database...");
-    const [rows] = await pool.execute(
+    const { rows } = await pool.query(
       "SELECT * FROM support_requests ORDER BY date DESC"
     );
     console.log(`✅ Found ${rows.length} support requests`);
@@ -1054,10 +1012,10 @@ app.post(
         subject,
       });
 
-      const [result] = await pool.execute(
+      const { rows } = await pool.query(
         `INSERT INTO support_requests 
             (fullName, email, phone, village, issueType, priority, subject, description, suggestions, status) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending') RETURNING *`,
         [
           fullName.trim(),
           email.trim(),
@@ -1071,13 +1029,13 @@ app.post(
         ]
       );
 
-      console.log("✅ Support request saved with ID:", result.insertId);
+      console.log("✅ Support request saved with ID:", rows[0].id);
 
       res.json({
         success: true,
-        id: result.insertId,
+        id: rows[0].id,
         message: "Support request submitted successfully",
-        reference: `SR-${result.insertId.toString().padStart(6, "0")}`,
+        reference: `SR-${rows[0].id.toString().padStart(6, "0")}`,
       });
     } catch (error) {
       console.error("❌ Error submitting support request:", error);
@@ -1109,8 +1067,8 @@ app.put(
           .json({ error: "Valid support request ID is required" });
       }
 
-      await pool.execute(
-        "UPDATE support_requests SET status = ? WHERE id = ?",
+      await pool.query(
+        "UPDATE support_requests SET status = $1 WHERE id = $2",
         [status, id]
       );
 
@@ -1135,7 +1093,7 @@ app.delete("/api/support/:id", async (req, res) => {
         .json({ error: "Valid support request ID is required" });
     }
 
-    await pool.execute("DELETE FROM support_requests WHERE id = ?", [id]);
+    await pool.query("DELETE FROM support_requests WHERE id = $1", [id]);
     res.json({ message: "Support request deleted successfully" });
   } catch (error) {
     console.error("Error deleting support request:", error);
@@ -1156,8 +1114,8 @@ app.post(
 
       const { username, password } = req.body;
 
-      const [rows] = await pool.execute(
-        "SELECT * FROM admin WHERE username = ? AND password = ?",
+      const { rows } = await pool.query(
+        "SELECT * FROM admin WHERE username = $1 AND password = $2",
         [username, password]
       );
 
@@ -1190,8 +1148,8 @@ app.put(
       const { currentPassword, newPassword } = req.body;
 
       // Get admin user
-      const [admin] = await pool.execute(
-        "SELECT * FROM admin WHERE username = ? AND password = ?",
+      const { rows: admin } = await pool.query(
+        "SELECT * FROM admin WHERE username = $1 AND password = $2",
         ["admin", currentPassword]
       );
 
@@ -1200,7 +1158,7 @@ app.put(
       }
 
       // Update password
-      await pool.execute("UPDATE admin SET password = ? WHERE username = ?", [
+      await pool.query("UPDATE admin SET password = $1 WHERE username = $2", [
         newPassword,
         "admin",
       ]);
@@ -1235,8 +1193,12 @@ app.use("*", (req, res) => {
 // DEBUG ROUTES - Add these to diagnose the issue
 app.get('/api/debug/database', async (req, res) => {
   try {
-    const [admin] = await pool.execute("SELECT * FROM admin");
-    const [tables] = await pool.execute("SHOW TABLES");
+    const { rows: admin } = await pool.query("SELECT * FROM admin");
+    const { rows: tables } = await pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `);
     
     res.json({
       database_connected: true,
@@ -1244,9 +1206,9 @@ app.get('/api/debug/database', async (req, res) => {
       admin_users: admin,
       admin_count: admin.length,
       env_vars: {
-        DB_HOST: process.env.DB_HOST ? 'Set' : 'Not set',
-        DB_USER: process.env.DB_USER ? 'Set' : 'Not set', 
-        DB_NAME: process.env.DB_NAME ? 'Set' : 'Not set'
+        DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Not set',
+        POSTGRES_URL: process.env.POSTGRES_URL ? 'Set' : 'Not set',
+        ADMIN_USERNAME: process.env.ADMIN_USERNAME ? 'Set' : 'Not set'
       }
     });
   } catch (error) {
@@ -1254,9 +1216,9 @@ app.get('/api/debug/database', async (req, res) => {
       database_connected: false,
       error: error.message,
       env_vars: {
-        DB_HOST: process.env.DB_HOST ? 'Set' : 'Not set',
-        DB_USER: process.env.DB_USER ? 'Set' : 'Not set',
-        DB_NAME: process.env.DB_NAME ? 'Set' : 'Not set'
+        DATABASE_URL: process.env.DATABASE_URL ? 'Set' : 'Not set',
+        POSTGRES_URL: process.env.POSTGRES_URL ? 'Set' : 'Not set',
+        ADMIN_USERNAME: process.env.ADMIN_USERNAME ? 'Set' : 'Not set'
       }
     });
   }
@@ -1269,11 +1231,11 @@ app.post('/api/debug/create-admin', async (req, res) => {
     const adminPassword = 'admin123';
     
     // First delete any existing admin
-    await pool.execute("DELETE FROM admin WHERE username = ?", [adminUsername]);
+    await pool.query("DELETE FROM admin WHERE username = $1", [adminUsername]);
     
     // Create new admin
-    await pool.execute(
-      "INSERT INTO admin (username, password) VALUES (?, ?)",
+    await pool.query(
+      "INSERT INTO admin (username, password) VALUES ($1, $2)",
       [adminUsername, adminPassword]
     );
     
@@ -1290,11 +1252,13 @@ app.post('/api/debug/create-admin', async (req, res) => {
     });
   }
 });
+
 // Initialize database and start server
-initializeDatabaseWithRetry().then(() => {
+initializeDatabase().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
     console.log(`🔐 Admin login: username: ${process.env.ADMIN_USERNAME || 'admin'}, password: ${process.env.ADMIN_PASSWORD ? '***' : 'admin123'}`);
     console.log(`☁️  Cloudinary configured for folder: ugwunagbo`);
+    console.log(`🗄️  Using PostgreSQL database`);
   });
 });
