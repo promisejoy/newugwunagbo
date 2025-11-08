@@ -12,12 +12,70 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// MongoDB Configuration - FIXED: Better error handling
+// MongoDB Configuration - FIXED: Remove any PostgreSQL references
 const MONGODB_URI = process.env.MONGODB_URI;
 const DB_NAME = process.env.DB_NAME || "ugwunagbo_lga";
 let db, client;
 
+
+// EMERGENCY: Create admin user on server start
+async function createEmergencyAdmin() {
+  try {
+    if (!db) {
+      console.log("❌ Database not available for admin creation");
+      return;
+    }
+    
+    const adminCollection = db.collection("admin");
+    const adminExists = await adminCollection.findOne({ username: "admin" });
+    
+    if (!adminExists) {
+      await adminCollection.insertOne({
+        username: "admin",
+        password: "admin123", 
+        createdAt: new Date()
+      });
+      console.log("🚨 EMERGENCY: Admin user created with username: 'admin', password: 'admin123'");
+    } else {
+      console.log("✅ Admin user already exists in database");
+    }
+  } catch (error) {
+    console.error("❌ Emergency admin creation failed:", error);
+  }
+}
+
+// Call this after database connection
+async function startServer() {
+  try {
+    console.log('🚀 Starting Ugwunagbo LGA website server...');
+    const databaseClient = await connectToDatabase();
+    
+    // CREATE ADMIN USER ON STARTUP
+    await createEmergencyAdmin();
+    
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+      console.log(`🌐 Website URL: http://localhost:${PORT}`);
+      console.log(`🔐 ADMIN LOGIN: username: 'admin', password: 'admin123'`);
+      
+      if (!databaseClient) {
+        console.log('❌ DATABASE STATUS: DISCONNECTED - Admin features disabled');
+      } else {
+        console.log('✅ DATABASE STATUS: CONNECTED - All features available');
+      }
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
 // Security Middleware
+app.use(helmet({
+  contentSecurityPolicy: false // Disable for development
+}));
+app.use(cors());
+
 // Body parsing middleware
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
@@ -64,7 +122,7 @@ const upload = multer({
   },
 });
 
-// MongoDB Connection
+// FIXED: MongoDB Connection without PostgreSQL interference
 async function connectToDatabase() {
   try {
     console.log('🔗 Attempting to connect to MongoDB Atlas...');
@@ -74,12 +132,22 @@ async function connectToDatabase() {
       return null;
     }
 
+    // Validate MongoDB connection string
+    if (!MONGODB_URI.includes('mongodb')) {
+      console.error('❌ Invalid MongoDB connection string');
+      return null;
+    }
+
     client = new MongoClient(MONGODB_URI, {
       serverSelectionTimeoutMS: 10000,
       connectTimeoutMS: 10000,
+      retryWrites: true,
+      w: 'majority'
     });
 
     await client.connect();
+    
+    // Test the connection
     await client.db().admin().ping();
     
     db = client.db(DB_NAME);
@@ -89,7 +157,7 @@ async function connectToDatabase() {
     return client;
   } catch (error) {
     console.error("❌ MongoDB connection failed:", error.message);
-    console.log('💡 The website will run in limited mode (admin features disabled)');
+    console.log('💡 Running in limited mode (admin features disabled)');
     return null;
   }
 }
@@ -107,6 +175,7 @@ async function initializeCollections() {
       await collection.find({}).limit(1).toArray();
     }
     
+    // Insert default admin if not exists
     const adminCollection = db.collection("admin");
     const adminExists = await adminCollection.findOne({ username: "admin" });
     if (!adminExists) {
@@ -124,9 +193,10 @@ async function initializeCollections() {
   }
 }
 
-// Database connection check middleware
+// FIXED: Database connection check middleware
 app.use((req, res, next) => {
   if (!db) {
+    // For API routes, return error; for pages, continue without DB
     if (req.path.startsWith('/api/') && !req.path.includes('/api/admin/login')) {
       return res.status(503).json({ 
         error: "Database not available", 
@@ -162,11 +232,15 @@ const validateSupport = [
 // Governor Routes
 app.get("/api/governor", async (req, res) => {
   try {
-    if (!db) return res.json({});
+    if (!db) {
+      console.log("❌ Database not available for governor fetch");
+      return res.json({});
+    }
     const governor = await db.collection("governor").findOne({});
+    console.log("✅ Governor data fetched:", governor ? "Found" : "Not found");
     res.json(governor || {});
   } catch (error) {
-    console.error("Error fetching governor:", error);
+    console.error("❌ Error fetching governor:", error.message);
     res.status(500).json({ error: "Failed to fetch governor" });
   }
 });
@@ -194,15 +268,16 @@ app.put("/api/governor", upload.single("image"), async (req, res) => {
       updateData.image = imagePath;
     }
 
-    await db.collection("governor").updateOne(
+    const result = await db.collection("governor").updateOne(
       {},
       { $set: updateData },
       { upsert: true }
     );
 
+    console.log("✅ Governor updated successfully");
     res.json({ success: true, message: "Governor updated successfully" });
   } catch (error) {
-    console.error("Error updating governor:", error);
+    console.error("❌ Error updating governor:", error);
     res.status(500).json({ error: "Failed to update governor" });
   }
 });
@@ -210,11 +285,15 @@ app.put("/api/governor", upload.single("image"), async (req, res) => {
 // Video Routes
 app.get("/api/video", async (req, res) => {
   try {
-    if (!db) return res.json({});
+    if (!db) {
+      console.log("❌ Database not available for video fetch");
+      return res.json({});
+    }
     const video = await db.collection("video").findOne({});
+    console.log("✅ Video data fetched:", video ? "Found" : "Not found");
     res.json(video || {});
   } catch (error) {
-    console.error("Error fetching video:", error);
+    console.error("❌ Error fetching video:", error.message);
     res.status(500).json({ error: "Failed to fetch video" });
   }
 });
@@ -246,9 +325,10 @@ app.put("/api/video", upload.single("video"), async (req, res) => {
       { upsert: true }
     );
 
+    console.log("✅ Video updated successfully");
     res.json({ success: true, message: "Video updated successfully" });
   } catch (error) {
-    console.error("Error updating video:", error);
+    console.error("❌ Error updating video:", error);
     res.status(500).json({ error: "Failed to update video" });
   }
 });
@@ -256,11 +336,15 @@ app.put("/api/video", upload.single("video"), async (req, res) => {
 // Villages Routes
 app.get("/api/villages", async (req, res) => {
   try {
-    if (!db) return res.json([]);
+    if (!db) {
+      console.log("❌ Database not available for villages fetch");
+      return res.json([]);
+    }
     const villages = await db.collection("villages").find({}).sort({ name: 1 }).toArray();
+    console.log("✅ Villages data fetched:", villages.length, "villages");
     res.json(villages);
   } catch (error) {
-    console.error("Error fetching villages:", error);
+    console.error("❌ Error fetching villages:", error.message);
     res.status(500).json({ error: "Failed to fetch villages" });
   }
 });
@@ -281,13 +365,14 @@ app.post("/api/villages", async (req, res) => {
       createdAt: new Date()
     });
 
+    console.log("✅ Village added successfully");
     res.json({ 
       success: true, 
       message: "Village added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("Error adding village:", error);
+    console.error("❌ Error adding village:", error);
     res.status(500).json({ error: "Failed to add village" });
   }
 });
@@ -310,9 +395,10 @@ app.delete("/api/villages/:id", async (req, res) => {
       return res.status(404).json({ error: "Village not found" });
     }
 
+    console.log("✅ Village deleted successfully");
     res.json({ success: true, message: "Village deleted successfully" });
   } catch (error) {
-    console.error("Error deleting village:", error);
+    console.error("❌ Error deleting village:", error);
     res.status(500).json({ error: "Failed to delete village" });
   }
 });
@@ -320,11 +406,15 @@ app.delete("/api/villages/:id", async (req, res) => {
 // Leaders Routes
 app.get("/api/leaders", async (req, res) => {
   try {
-    if (!db) return res.json([]);
+    if (!db) {
+      console.log("❌ Database not available for leaders fetch");
+      return res.json([]);
+    }
     const leaders = await db.collection("leaders").find({}).sort({ name: 1 }).toArray();
+    console.log("✅ Leaders data fetched:", leaders.length, "leaders");
     res.json(leaders);
   } catch (error) {
-    console.error("Error fetching leaders:", error);
+    console.error("❌ Error fetching leaders:", error.message);
     res.status(500).json({ error: "Failed to fetch leaders" });
   }
 });
@@ -357,13 +447,14 @@ app.post("/api/leaders", upload.single("image"), async (req, res) => {
       createdAt: new Date()
     });
 
+    console.log("✅ Leader added successfully");
     res.json({ 
       success: true, 
       message: "Leader added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("Error adding leader:", error);
+    console.error("❌ Error adding leader:", error);
     res.status(500).json({ error: "Failed to add leader" });
   }
 });
@@ -411,9 +502,10 @@ app.put("/api/leaders/:id", upload.single("image"), async (req, res) => {
       return res.status(404).json({ error: "Leader not found" });
     }
 
+    console.log("✅ Leader updated successfully");
     res.json({ success: true, message: "Leader updated successfully" });
   } catch (error) {
-    console.error("Error updating leader:", error);
+    console.error("❌ Error updating leader:", error);
     res.status(500).json({ error: "Failed to update leader" });
   }
 });
@@ -436,9 +528,10 @@ app.delete("/api/leaders/:id", async (req, res) => {
       return res.status(404).json({ error: "Leader not found" });
     }
 
+    console.log("✅ Leader deleted successfully");
     res.json({ success: true, message: "Leader deleted successfully" });
   } catch (error) {
-    console.error("Error deleting leader:", error);
+    console.error("❌ Error deleting leader:", error);
     res.status(500).json({ error: "Failed to delete leader" });
   }
 });
@@ -446,11 +539,15 @@ app.delete("/api/leaders/:id", async (req, res) => {
 // News Routes
 app.get("/api/news", async (req, res) => {
   try {
-    if (!db) return res.json([]);
+    if (!db) {
+      console.log("❌ Database not available for news fetch");
+      return res.json([]);
+    }
     const news = await db.collection("news").find({}).sort({ date: -1 }).toArray();
+    console.log("✅ News data fetched:", news.length, "news items");
     res.json(news);
   } catch (error) {
-    console.error("Error fetching news:", error);
+    console.error("❌ Error fetching news:", error.message);
     res.status(500).json({ error: "Failed to fetch news" });
   }
 });
@@ -478,13 +575,14 @@ app.post("/api/news", upload.single("image"), async (req, res) => {
       createdAt: new Date()
     });
 
+    console.log("✅ News added successfully");
     res.json({ 
       success: true, 
       message: "News added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("Error adding news:", error);
+    console.error("❌ Error adding news:", error);
     res.status(500).json({ error: "Failed to add news" });
   }
 });
@@ -527,9 +625,10 @@ app.put("/api/news/:id", upload.single("image"), async (req, res) => {
       return res.status(404).json({ error: "News not found" });
     }
 
+    console.log("✅ News updated successfully");
     res.json({ success: true, message: "News updated successfully" });
   } catch (error) {
-    console.error("Error updating news:", error);
+    console.error("❌ Error updating news:", error);
     res.status(500).json({ error: "Failed to update news" });
   }
 });
@@ -552,9 +651,10 @@ app.delete("/api/news/:id", async (req, res) => {
       return res.status(404).json({ error: "News not found" });
     }
 
+    console.log("✅ News deleted successfully");
     res.json({ success: true, message: "News deleted successfully" });
   } catch (error) {
-    console.error("Error deleting news:", error);
+    console.error("❌ Error deleting news:", error);
     res.status(500).json({ error: "Failed to delete news" });
   }
 });
@@ -562,11 +662,15 @@ app.delete("/api/news/:id", async (req, res) => {
 // Events Routes
 app.get("/api/events", async (req, res) => {
   try {
-    if (!db) return res.json([]);
+    if (!db) {
+      console.log("❌ Database not available for events fetch");
+      return res.json([]);
+    }
     const events = await db.collection("events").find({}).sort({ date: 1 }).toArray();
+    console.log("✅ Events data fetched:", events.length, "events");
     res.json(events);
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error("❌ Error fetching events:", error.message);
     res.status(500).json({ error: "Failed to fetch events" });
   }
 });
@@ -598,13 +702,14 @@ app.post("/api/events", upload.single("image"), async (req, res) => {
       createdAt: new Date()
     });
 
+    console.log("✅ Event added successfully");
     res.json({ 
       success: true, 
       message: "Event added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("Error adding event:", error);
+    console.error("❌ Error adding event:", error);
     res.status(500).json({ error: "Failed to add event" });
   }
 });
@@ -651,9 +756,10 @@ app.put("/api/events/:id", upload.single("image"), async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
+    console.log("✅ Event updated successfully");
     res.json({ success: true, message: "Event updated successfully" });
   } catch (error) {
-    console.error("Error updating event:", error);
+    console.error("❌ Error updating event:", error);
     res.status(500).json({ error: "Failed to update event" });
   }
 });
@@ -676,9 +782,10 @@ app.delete("/api/events/:id", async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
+    console.log("✅ Event deleted successfully");
     res.json({ success: true, message: "Event deleted successfully" });
   } catch (error) {
-    console.error("Error deleting event:", error);
+    console.error("❌ Error deleting event:", error);
     res.status(500).json({ error: "Failed to delete event" });
   }
 });
@@ -686,14 +793,18 @@ app.delete("/api/events/:id", async (req, res) => {
 // Contacts Routes
 app.get("/api/contacts", async (req, res) => {
   try {
-    if (!db) return res.json([]);
+    if (!db) {
+      console.log("❌ Database not available for contacts fetch");
+      return res.json([]);
+    }
     const contacts = await db.collection("contacts").find({})
       .sort({ date: -1 })
       .limit(50)
       .toArray();
+    console.log("✅ Contacts data fetched:", contacts.length, "contacts");
     res.json(contacts);
   } catch (error) {
-    console.error("Error fetching contacts:", error);
+    console.error("❌ Error fetching contacts:", error.message);
     res.status(500).json({ error: "Failed to fetch contacts" });
   }
 });
@@ -718,9 +829,10 @@ app.post("/api/contacts", validateContact, async (req, res) => {
       status: "new"
     });
 
+    console.log("✅ Contact message submitted successfully");
     res.json({ success: true, message: "Contact message submitted successfully" });
   } catch (error) {
-    console.error("Error submitting contact:", error);
+    console.error("❌ Error submitting contact:", error);
     res.status(500).json({ error: "Failed to submit contact message" });
   }
 });
@@ -728,13 +840,17 @@ app.post("/api/contacts", validateContact, async (req, res) => {
 // Support Routes
 app.get("/api/support", async (req, res) => {
   try {
-    if (!db) return res.json([]);
+    if (!db) {
+      console.log("❌ Database not available for support requests fetch");
+      return res.json([]);
+    }
     const supportRequests = await db.collection("support_requests").find({})
       .sort({ date: -1 })
       .toArray();
+    console.log("✅ Support requests fetched:", supportRequests.length, "requests");
     res.json(supportRequests);
   } catch (error) {
-    console.error("Error fetching support requests:", error);
+    console.error("❌ Error fetching support requests:", error.message);
     res.status(500).json({ error: "Failed to fetch support requests" });
   }
 });
@@ -764,9 +880,10 @@ app.post("/api/support", validateSupport, async (req, res) => {
       status: "pending"
     });
 
+    console.log("✅ Support request submitted successfully");
     res.json({ success: true, message: "Support request submitted successfully" });
   } catch (error) {
-    console.error("Error submitting support request:", error);
+    console.error("❌ Error submitting support request:", error);
     res.status(500).json({ error: "Failed to submit support request" });
   }
 });
@@ -795,9 +912,10 @@ app.put("/api/support/:id/status", async (req, res) => {
       return res.status(404).json({ error: "Support request not found" });
     }
 
+    console.log("✅ Support request status updated successfully");
     res.json({ success: true, message: "Support request status updated successfully" });
   } catch (error) {
-    console.error("Error updating support request status:", error);
+    console.error("❌ Error updating support request status:", error);
     res.status(500).json({ error: "Failed to update support request status" });
   }
 });
@@ -820,41 +938,74 @@ app.delete("/api/support/:id", async (req, res) => {
       return res.status(404).json({ error: "Support request not found" });
     }
 
+    console.log("✅ Support request deleted successfully");
     res.json({ success: true, message: "Support request deleted successfully" });
   } catch (error) {
-    console.error("Error deleting support request:", error);
+    console.error("❌ Error deleting support request:", error);
     res.status(500).json({ error: "Failed to delete support request" });
   }
 });
 
 // Admin Routes
+// FIXED: Admin Login Route
 app.post("/api/admin/login", async (req, res) => {
   try {
     const { username, password } = req.body;
+    
+    console.log("🔐 Login attempt:", { username, password });
 
+    // If database is not available, use environment variables
     if (!db) {
+      console.log("❌ Database not available, using environment variables");
       const adminUsername = process.env.ADMIN_USERNAME || "admin";
       const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
       
+      console.log("🔑 Checking against:", { adminUsername, adminPassword });
+      
       if (username === adminUsername && password === adminPassword) {
+        console.log("✅ Login successful (offline mode)");
         return res.json({ success: true, message: "Login successful (offline mode)" });
       } else {
+        console.log("❌ Invalid credentials (offline mode)");
         return res.status(401).json({ success: false, error: "Invalid credentials" });
       }
     }
 
+    // Database is available, use normal login
+    console.log("🔍 Checking admin in database...");
     const admin = await db.collection("admin").findOne({
       username: username,
       password: password
     });
 
     if (admin) {
+      console.log("✅ Login successful (database mode)");
       res.json({ success: true, message: "Login successful" });
     } else {
+      console.log("❌ Invalid credentials (database mode)");
+      
+      // If admin doesn't exist, create one with default credentials
+      const adminExists = await db.collection("admin").findOne({ username: "admin" });
+      if (!adminExists) {
+        console.log("👤 Creating default admin user...");
+        await db.collection("admin").insertOne({
+          username: "admin",
+          password: "admin123",
+          createdAt: new Date()
+        });
+        console.log("✅ Default admin user created");
+        
+        // Try login again with newly created admin
+        if (username === "admin" && password === "admin123") {
+          console.log("✅ Login successful with new admin user");
+          return res.json({ success: true, message: "Login successful" });
+        }
+      }
+      
       res.status(401).json({ success: false, error: "Invalid credentials" });
     }
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("❌ Login error:", error);
     res.status(500).json({ error: "Login failed" });
   }
 });
@@ -894,7 +1045,7 @@ app.put("/api/admin/password", async (req, res) => {
 
     res.json({ success: true, message: "Password changed successfully" });
   } catch (error) {
-    console.error("Error changing password:", error);
+    console.error("❌ Error changing password:", error);
     res.status(500).json({ error: "Failed to change password" });
   }
 });
@@ -916,36 +1067,18 @@ app.get("/:page", (req, res) => {
   }
 });
 
-// Global error handling middleware
-app.use((error, req, res, next) => {
-  console.error("Unhandled Error:", error);
-  res.status(500).json({
-    error: "Something went wrong!",
-    ...(process.env.NODE_ENV === "development" && { details: error.message }),
-  });
-});
-
-// 404 handler for API routes
-app.use("/api/*", (req, res) => {
-  res.status(404).json({ error: "API route not found" });
-});
-
 // Initialize database and start server
 async function startServer() {
   try {
+    console.log('🚀 Starting Ugwunagbo LGA website server...');
     const databaseClient = await connectToDatabase();
     
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📁 Uploads directory: ${uploadsDir}`);
-      console.log(`🗄️  MongoDB Database: ${DB_NAME}`);
+      console.log(`✅ Server running on port ${PORT}`);
+      console.log(`🌐 Website URL: http://localhost:${PORT}`);
       
       if (!databaseClient) {
         console.log('❌ DATABASE STATUS: DISCONNECTED - Admin features disabled');
-        console.log('💡 To enable database features:');
-        console.log('1. Check your MONGODB_URI in .env file');
-        console.log('2. Make sure your IP is whitelisted in MongoDB Atlas');
-        console.log('3. Verify your database user credentials');
       } else {
         console.log('✅ DATABASE STATUS: CONNECTED - All features available');
       }
@@ -955,6 +1088,36 @@ async function startServer() {
     process.exit(1);
   }
 }
+
+// TEMPORARY: Create admin user if not exists (add this route)
+app.post("/api/admin/setup", async (req, res) => {
+  try {
+    if (!db) {
+      return res.status(503).json({ error: "Database not available" });
+    }
+    
+    const adminCollection = db.collection("admin");
+    
+    // Check if admin exists
+    const adminExists = await adminCollection.findOne({ username: "admin" });
+    
+    if (!adminExists) {
+      await adminCollection.insertOne({
+        username: "admin",
+        password: "admin123",
+        createdAt: new Date()
+      });
+      console.log("✅ Admin user created successfully");
+      res.json({ success: true, message: "Admin user created successfully" });
+    } else {
+      console.log("✅ Admin user already exists");
+      res.json({ success: true, message: "Admin user already exists" });
+    }
+  } catch (error) {
+    console.error("❌ Error setting up admin:", error);
+    res.status(500).json({ error: "Failed to setup admin" });
+  }
+});
 
 // Start the server
 startServer();
