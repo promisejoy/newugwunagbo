@@ -196,6 +196,15 @@ const apiService = {
         return await response.json();
     },
 
+    async deleteVillage(id) {
+        const response = await fetch(`/api/villages/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) throw new Error('Failed to delete village');
+        return await response.json();
+    },
+
     // Leaders API
     async getLeaders() {
         const response = await fetch('/api/leaders');
@@ -608,7 +617,7 @@ function initializeAdminTabs() {
     }
 }
 
-// Initialize Admin Forms - FIXED VERSION (No Duplicates)
+// Initialize Admin Forms - UPDATED FOR MONGODB _id
 function initializeAdminForms() {
     console.log('Initializing admin forms...');
     
@@ -723,7 +732,7 @@ function initializeAdminForms() {
         });
     }
 
-    // Leader Form - FIXED (No Duplicate Submissions)
+    // Leader Form - UPDATED FOR MONGODB _id
     const leaderForm = document.getElementById('leaderForm');
     const leaderImage = document.getElementById('leaderImage');
     const leaderImagePreview = document.getElementById('leaderImagePreview');
@@ -744,7 +753,8 @@ function initializeAdminForms() {
             
             isSubmittingLeader = true;
             
-            const id = leaderIdInput.value ? parseInt(leaderIdInput.value) : null;
+            // CHANGED: Use string ID instead of parseInt for MongoDB _id
+            const id = leaderIdInput.value ? leaderIdInput.value : null;
             const name = document.getElementById('leaderName').value;
             const position = document.getElementById('leaderPosition').value;
             const bio = document.getElementById('leaderBio').value;
@@ -769,7 +779,7 @@ function initializeAdminForms() {
             
             try {
                 if (id) {
-                    // Update existing leader
+                    // Update existing leader - CHANGED: Use string ID
                     await apiService.updateLeader(id, leaderData);
                     SweetPopup.success('Leader updated successfully!');
                 } else {
@@ -819,7 +829,7 @@ function initializeAdminForms() {
         cancelEdit.addEventListener('click', resetLeaderFormToAddMode);
     }
 
-    // News Form - FIXED (No Duplicate Submissions)
+    // News Form - UPDATED FOR MONGODB _id
     const newsForm = document.getElementById('newsForm');
     const newsImage = document.getElementById('newsImage');
     const newsImagePreview = document.getElementById('newsImagePreview');
@@ -844,7 +854,8 @@ function initializeAdminForms() {
             
             isSubmittingNews = true;
             
-            const id = newsIdInput.value ? parseInt(newsIdInput.value) : null;
+            // CHANGED: Use string ID instead of parseInt for MongoDB _id
+            const id = newsIdInput.value ? newsIdInput.value : null;
             const title = document.getElementById('newsTitle').value;
             const content = document.getElementById('newsContent').value;
             const date = document.getElementById('newsDate').value;
@@ -859,7 +870,7 @@ function initializeAdminForms() {
             
             try {
                 if (id) {
-                    // Update existing news
+                    // Update existing news - CHANGED: Use string ID
                     await apiService.updateNews(id, newsData);
                     SweetPopup.success('News updated successfully!');
                 } else {
@@ -909,7 +920,7 @@ function initializeAdminForms() {
         cancelNewsEdit.addEventListener('click', resetNewsFormToAddMode);
     }
 
-    // Events Form
+    // Events Form - UPDATED FOR MONGODB _id
     const eventsForm = document.getElementById('eventsForm');
     const eventImage = document.getElementById('eventImage');
     const eventImagePreview = document.getElementById('eventImagePreview');
@@ -926,7 +937,8 @@ function initializeAdminForms() {
         eventsForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const id = eventIdInput.value ? parseInt(eventIdInput.value) : null;
+            // CHANGED: Use string ID instead of parseInt for MongoDB _id
+            const id = eventIdInput.value ? eventIdInput.value : null;
             const title = document.getElementById('eventTitle').value;
             const category = document.getElementById('eventCategory').value;
             const description = document.getElementById('eventDescription').value;
@@ -949,6 +961,7 @@ function initializeAdminForms() {
             
             try {
                 if (id) {
+                    // CHANGED: Use string ID for MongoDB
                     await apiService.updateEvent(id, eventData);
                     SweetPopup.success('Event updated successfully!');
                 } else {
@@ -1158,7 +1171,7 @@ async function loadVideoData() {
     }
 }
 
-// Load villages to admin panel - FIXED VERSION
+// Load villages to admin panel - UPDATED FOR MONGODB _id
 async function loadVillagesList() {
     const villagesListContainer = document.getElementById('villagesListContainer');
     if (!villagesListContainer) {
@@ -1183,14 +1196,16 @@ async function loadVillagesList() {
         villagesData.forEach(village => {
             const villageItem = document.createElement('div');
             villageItem.className = 'village-item-admin';
-            villageItem.setAttribute('data-village-id', village.id);
+            // CHANGED: Use _id instead of id
+            villageItem.setAttribute('data-village-id', village._id || village.id);
             villageItem.innerHTML = `
                 <div>
                     <h4>${village.name}</h4>
                     <p>${village.description || 'No description'}</p>
                 </div>
                 <div class="item-actions">
-                    <button class="delete-btn" data-id="${village.id}">Delete</button>
+                    <!-- CHANGED: Use _id instead of id -->
+                    <button class="delete-btn" data-id="${village._id || village.id}">Delete</button>
                 </div>
             `;
             villagesListContainer.appendChild(villageItem);
@@ -1199,9 +1214,10 @@ async function loadVillagesList() {
         // Use event delegation to prevent duplicate listeners
         villagesListContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('delete-btn')) {
-                const villageId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const villageId = e.target.getAttribute('data-id');
                 console.log('Delete button clicked for village ID:', villageId);
-                if (villageId && !isNaN(villageId)) {
+                if (villageId) {
                     deleteVillage(villageId);
                 } else {
                     SweetPopup.error('Invalid village ID');
@@ -1217,8 +1233,7 @@ async function loadVillagesList() {
     }
 }
 
-// Delete village - FIXED VERSION
-// Delete village - ENHANCED VERSION with better error handling
+// Delete village - UPDATED FOR MONGODB _id
 async function deleteVillage(id) {
   console.log('🔄 Starting delete process for village ID:', id);
   
@@ -1229,6 +1244,7 @@ async function deleteVillage(id) {
       try {
         console.log('🗑️ Confirmed deletion for village ID:', id);
         
+        // CHANGED: Use string ID directly
         const response = await fetch(`/api/villages/${id}`, {
           method: 'DELETE',
           headers: {
@@ -1326,7 +1342,7 @@ async function loadLeaders() {
     }
 }
 
-// Load leaders to admin panel - FIXED VERSION (No Duplicate Listeners)
+// Load leaders to admin panel - UPDATED FOR MONGODB _id
 async function loadLeaderList() {
     const leaderListContainer = document.getElementById('leaderListContainer');
     if (!leaderListContainer) return;
@@ -1352,8 +1368,9 @@ async function loadLeaderList() {
                     <p>${leader.position}</p>
                 </div>
                 <div class="item-actions">
-                    <button class="edit-btn" data-id="${leader.id}">Edit</button>
-                    <button class="delete-btn" data-id="${leader.id}">Delete</button>
+                    <!-- CHANGED: Use _id instead of id -->
+                    <button class="edit-btn" data-id="${leader._id || leader.id}">Edit</button>
+                    <button class="delete-btn" data-id="${leader._id || leader.id}">Delete</button>
                 </div>
             `;
             leaderListContainer.appendChild(leaderItem);
@@ -1362,12 +1379,14 @@ async function loadLeaderList() {
         // Use event delegation instead of multiple event listeners
         leaderListContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('edit-btn')) {
-                const leaderId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const leaderId = e.target.getAttribute('data-id');
                 editLeader(leaderId);
             }
             
             if (e.target.classList.contains('delete-btn')) {
-                const leaderId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const leaderId = e.target.getAttribute('data-id');
                 deleteLeader(leaderId);
             }
         });
@@ -1419,7 +1438,7 @@ async function loadNews() {
     }
 }
 
-// Load news to admin panel - FIXED VERSION (No Duplicate Listeners)
+// Load news to admin panel - UPDATED FOR MONGODB _id
 async function loadNewsList() {
     const newsListContainer = document.getElementById('newsListContainer');
     if (!newsListContainer) return;
@@ -1445,8 +1464,9 @@ async function loadNewsList() {
                     <p>${formatDate(newsItem.date)}</p>
                 </div>
                 <div class="item-actions">
-                    <button class="edit-btn" data-id="${newsItem.id}">Edit</button>
-                    <button class="delete-btn" data-id="${newsItem.id}">Delete</button>
+                    <!-- CHANGED: Use _id instead of id -->
+                    <button class="edit-btn" data-id="${newsItem._id || newsItem.id}">Edit</button>
+                    <button class="delete-btn" data-id="${newsItem._id || newsItem.id}">Delete</button>
                 </div>
             `;
             newsListContainer.appendChild(newsListItem);
@@ -1455,12 +1475,14 @@ async function loadNewsList() {
         // Use event delegation instead of multiple event listeners
         newsListContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('edit-btn')) {
-                const newsId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const newsId = e.target.getAttribute('data-id');
                 editNews(newsId);
             }
             
             if (e.target.classList.contains('delete-btn')) {
-                const newsId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const newsId = e.target.getAttribute('data-id');
                 deleteNews(newsId);
             }
         });
@@ -1470,7 +1492,7 @@ async function loadNewsList() {
     }
 }
 
-// Load events to admin panel
+// Load events to admin panel - UPDATED FOR MONGODB _id
 async function loadEventsList() {
     const eventsListContainer = document.getElementById('eventsListContainer');
     if (!eventsListContainer) return;
@@ -1498,8 +1520,9 @@ async function loadEventsList() {
                     <p><strong>Location:</strong> ${event.location}</p>
                 </div>
                 <div class="item-actions">
-                    <button class="edit-btn" data-id="${event.id}">Edit</button>
-                    <button class="delete-btn" data-id="${event.id}">Delete</button>
+                    <!-- CHANGED: Use _id instead of id -->
+                    <button class="edit-btn" data-id="${event._id || event.id}">Edit</button>
+                    <button class="delete-btn" data-id="${event._id || event.id}">Delete</button>
                 </div>
             `;
             eventsListContainer.appendChild(eventItem);
@@ -1508,12 +1531,14 @@ async function loadEventsList() {
         // Use event delegation for event actions
         eventsListContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('edit-btn')) {
-                const eventId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const eventId = e.target.getAttribute('data-id');
                 editEvent(eventId);
             }
             
             if (e.target.classList.contains('delete-btn')) {
-                const eventId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const eventId = e.target.getAttribute('data-id');
                 deleteEvent(eventId);
             }
         });
@@ -1560,7 +1585,7 @@ async function loadContactRequests() {
     }
 }
 
-// Load support requests to admin panel
+// Load support requests to admin panel - UPDATED FOR MONGODB _id
 async function loadSupportRequests() {
     const supportRequestsContainer = document.getElementById('supportRequestsContainer');
     if (!supportRequestsContainer) return;
@@ -1609,10 +1634,11 @@ async function loadSupportRequests() {
                 </div>
                 <div class="support-actions">
                     ${request.status === 'pending' ? 
-                        `<button class="btn btn-success resolve-btn" data-id="${request.id}">Mark Resolved</button>` : 
-                        `<button class="btn btn-warning pending-btn" data-id="${request.id}">Mark Pending</button>`
+                        // CHANGED: Use _id instead of id
+                        `<button class="btn btn-success resolve-btn" data-id="${request._id || request.id}">Mark Resolved</button>` : 
+                        `<button class="btn btn-warning pending-btn" data-id="${request._id || request.id}">Mark Pending</button>`
                     }
-                    <button class="btn btn-danger delete-support-btn" data-id="${request.id}">Delete</button>
+                    <button class="btn btn-danger delete-support-btn" data-id="${request._id || request.id}">Delete</button>
                 </div>
             `;
             supportRequestsContainer.appendChild(requestElement);
@@ -1621,17 +1647,20 @@ async function loadSupportRequests() {
         // Use event delegation for support actions
         supportRequestsContainer.addEventListener('click', async (e) => {
             if (e.target.classList.contains('resolve-btn')) {
-                const requestId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const requestId = e.target.getAttribute('data-id');
                 await updateSupportRequestStatus(requestId, 'resolved');
             }
             
             if (e.target.classList.contains('pending-btn')) {
-                const requestId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const requestId = e.target.getAttribute('data-id');
                 await updateSupportRequestStatus(requestId, 'pending');
             }
             
             if (e.target.classList.contains('delete-support-btn')) {
-                const requestId = parseInt(e.target.getAttribute('data-id'));
+                // CHANGED: Get string ID directly, no parseInt needed
+                const requestId = e.target.getAttribute('data-id');
                 await deleteSupportRequest(requestId);
             }
         });
@@ -1641,11 +1670,12 @@ async function loadSupportRequests() {
     }
 }
 
-// Edit leader
+// Edit leader - UPDATED FOR MONGODB _id
 async function editLeader(id) {
     try {
         const leadersData = await apiService.getLeaders();
-        const leader = leadersData.find(l => l.id === id);
+        // CHANGED: Use _id instead of id for comparison
+        const leader = leadersData.find(l => (l._id || l.id) === id);
         if (!leader) return;
         
         document.getElementById('leaderName').value = leader.name;
@@ -1656,7 +1686,8 @@ async function editLeader(id) {
         document.getElementById('leaderTwitter').value = leader.twitter || '';
         document.getElementById('leaderFacebook').value = leader.facebook || '';
         document.getElementById('leaderLinkedin').value = leader.linkedin || '';
-        document.getElementById('leaderId').value = leader.id;
+        // CHANGED: Store string ID directly
+        document.getElementById('leaderId').value = leader._id || leader.id;
         
         // Update image preview
         const leaderImagePreview = document.getElementById('leaderImagePreview');
@@ -1674,13 +1705,14 @@ async function editLeader(id) {
     }
 }
 
-// Delete leader
+// Delete leader - UPDATED FOR MONGODB _id
 async function deleteLeader(id) {
     SweetPopup.confirm(
         'Are you sure you want to delete this leader?',
         'Confirm Deletion',
         async () => {
             try {
+                // CHANGED: Use string ID directly
                 await apiService.deleteLeader(id);
                 await loadLeaders();
                 await loadLeaderList();
@@ -1692,17 +1724,19 @@ async function deleteLeader(id) {
     );
 }
 
-// Edit news
+// Edit news - UPDATED FOR MONGODB _id
 async function editNews(id) {
     try {
         const newsData = await apiService.getNews();
-        const newsItem = newsData.find(n => n.id === id);
+        // CHANGED: Use _id instead of id for comparison
+        const newsItem = newsData.find(n => (n._id || n.id) === id);
         if (!newsItem) return;
         
         document.getElementById('newsTitle').value = newsItem.title;
         document.getElementById('newsContent').value = newsItem.content;
         document.getElementById('newsDate').value = newsItem.date;
-        document.getElementById('newsId').value = newsItem.id;
+        // CHANGED: Store string ID directly
+        document.getElementById('newsId').value = newsItem._id || newsItem.id;
         
         // Update image preview
         const newsImagePreview = document.getElementById('newsImagePreview');
@@ -1720,13 +1754,14 @@ async function editNews(id) {
     }
 }
 
-// Delete news
+// Delete news - UPDATED FOR MONGODB _id
 async function deleteNews(id) {
     SweetPopup.confirm(
         'Are you sure you want to delete this news article?',
         'Confirm Deletion',
         async () => {
             try {
+                // CHANGED: Use string ID directly
                 await apiService.deleteNews(id);
                 await loadNews();
                 await loadNewsList();
@@ -1738,11 +1773,12 @@ async function deleteNews(id) {
     );
 }
 
-// Edit event
+// Edit event - UPDATED FOR MONGODB _id
 async function editEvent(id) {
     try {
         const eventsData = await apiService.getEvents();
-        const event = eventsData.find(e => e.id === id);
+        // CHANGED: Use _id instead of id for comparison
+        const event = eventsData.find(e => (e._id || e.id) === id);
         if (!event) return;
         
         document.getElementById('eventTitle').value = event.title;
@@ -1752,7 +1788,8 @@ async function editEvent(id) {
         document.getElementById('eventTime').value = event.time || '';
         document.getElementById('eventLocation').value = event.location;
         document.getElementById('eventOrganizer').value = event.organizer || '';
-        document.getElementById('eventId').value = event.id;
+        // CHANGED: Store string ID directly
+        document.getElementById('eventId').value = event._id || event.id;
         
         // Update image preview
         const eventImagePreview = document.getElementById('eventImagePreview');
@@ -1770,13 +1807,14 @@ async function editEvent(id) {
     }
 }
 
-// Delete event
+// Delete event - UPDATED FOR MONGODB _id
 async function deleteEvent(id) {
     SweetPopup.confirm(
         'Are you sure you want to delete this event?',
         'Confirm Deletion',
         async () => {
             try {
+                // CHANGED: Use string ID directly
                 await apiService.deleteEvent(id);
                 await loadEventsList();
                 SweetPopup.success('Event deleted successfully!');
@@ -1787,9 +1825,10 @@ async function deleteEvent(id) {
     );
 }
 
-// Update support request status
+// Update support request status - UPDATED FOR MONGODB _id
 async function updateSupportRequestStatus(id, status) {
     try {
+        // CHANGED: Use string ID directly
         await apiService.updateSupportStatus(id, status);
         await loadSupportRequests();
         SweetPopup.success(`Support request marked as ${status} successfully!`);
@@ -1798,13 +1837,14 @@ async function updateSupportRequestStatus(id, status) {
     }
 }
 
-// Delete support request
+// Delete support request - UPDATED FOR MONGODB _id
 async function deleteSupportRequest(id) {
     SweetPopup.confirm(
         'Are you sure you want to delete this support request?',
         'Confirm Deletion',
         async () => {
             try {
+                // CHANGED: Use string ID directly
                 await apiService.deleteSupportRequest(id);
                 await loadSupportRequests();
                 SweetPopup.success('Support request deleted successfully!');
@@ -2016,35 +2056,34 @@ async function initializeWebsite() {
     console.log('Initializing website functionality...');
     
     // Mobile Menu Toggle
-    // Mobile menu functionality
-const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
 
-if (mobileMenuBtn && navLinks) {
-    mobileMenuBtn.addEventListener('click', function() {
-        navLinks.classList.toggle('active');
-        this.setAttribute('aria-expanded', 
-            this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
-        );
-    });
-    
-    // Close mobile menu when clicking on a link
-    const navItems = navLinks.querySelectorAll('a');
-    navItems.forEach(item => {
-        item.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+            this.setAttribute('aria-expanded', 
+                this.getAttribute('aria-expanded') === 'true' ? 'false' : 'true'
+            );
         });
-    });
-    
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('nav') && navLinks.classList.contains('active')) {
-            navLinks.classList.remove('active');
-            mobileMenuBtn.setAttribute('aria-expanded', 'false');
-        }
-    });
-}
+        
+        // Close mobile menu when clicking on a link
+        const navItems = navLinks.querySelectorAll('a');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('nav') && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
 
     // Smooth Scrolling for Anchor Links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
