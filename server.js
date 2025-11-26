@@ -12,79 +12,29 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// MongoDB Configuration - FIXED: Remove any PostgreSQL references
+// MongoDB Configuration - LOCAL DATABASE
 const MONGODB_URI = process.env.MONGODB_URI;
 const DB_NAME = process.env.DB_NAME || "ugwunagbo_lga";
 let db, client;
 
-
-// EMERGENCY: Create admin user on server start
-async function createEmergencyAdmin() {
-  try {
-    if (!db) {
-      console.log("❌ Database not available for admin creation");
-      return;
-    }
-    
-    const adminCollection = db.collection("admin");
-    const adminExists = await adminCollection.findOne({ username: "admin" });
-    
-    if (!adminExists) {
-      await adminCollection.insertOne({
-        username: "admin",
-        password: "admin123", 
-        createdAt: new Date()
-      });
-      console.log("🚨 EMERGENCY: Admin user created with username: 'admin', password: 'admin123'");
-    } else {
-      console.log("✅ Admin user already exists in database");
-    }
-  } catch (error) {
-    console.error("❌ Emergency admin creation failed:", error);
-  }
-}
-
-// Call this after database connection
-async function startServer() {
-  try {
-    console.log('🚀 Starting Ugwunagbo LGA website server...');
-    const databaseClient = await connectToDatabase();
-    
-    // CREATE ADMIN USER ON STARTUP
-    await createEmergencyAdmin();
-    
-    app.listen(PORT, () => {
-      console.log(`✅ Server running on port ${PORT}`);
-      console.log(`🌐 Website URL: http://localhost:${PORT}`);
-      console.log(`🔐 ADMIN LOGIN: username: 'admin', password: 'admin123'`);
-      
-      if (!databaseClient) {
-        console.log('❌ DATABASE STATUS: DISCONNECTED - Admin features disabled');
-      } else {
-        console.log('✅ DATABASE STATUS: CONNECTED - All features available');
-      }
-    });
-  } catch (error) {
-    console.error('❌ Failed to start server:', error);
-    process.exit(1);
-  }
-}
-
 // Security Middleware
 app.use(helmet({
-  contentSecurityPolicy: false // Disable for development
+  contentSecurityPolicy: false
 }));
 app.use(cors());
 
 // Body parsing middleware
-app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+
+// Serve static files from public directory
 app.use(express.static(path.join(__dirname, "public")));
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, "public", "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log("✅ Created uploads directory");
 }
 
 // Configure multer for file uploads
@@ -122,27 +72,14 @@ const upload = multer({
   },
 });
 
-// FIXED: MongoDB Connection without PostgreSQL interference
+// MongoDB Connection
 async function connectToDatabase() {
   try {
-    console.log('🔗 Attempting to connect to MongoDB Atlas...');
+    console.log('🔗 Connecting to local MongoDB...');
     
-    if (!MONGODB_URI) {
-      console.error('❌ MONGODB_URI is not defined in environment variables');
-      return null;
-    }
-
-    // Validate MongoDB connection string
-    if (!MONGODB_URI.includes('mongodb')) {
-      console.error('❌ Invalid MongoDB connection string');
-      return null;
-    }
-
     client = new MongoClient(MONGODB_URI, {
-      serverSelectionTimeoutMS: 10000,
-      connectTimeoutMS: 10000,
-      retryWrites: true,
-      w: 'majority'
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 5000,
     });
 
     await client.connect();
@@ -151,18 +88,19 @@ async function connectToDatabase() {
     await client.db().admin().ping();
     
     db = client.db(DB_NAME);
-    console.log("✅ Connected to MongoDB Atlas successfully!");
+    console.log("✅ Connected to local MongoDB successfully!");
     
     await initializeCollections();
     return client;
   } catch (error) {
     console.error("❌ MongoDB connection failed:", error.message);
-    console.log('💡 Running in limited mode (admin features disabled)');
+    console.log('💡 Please make sure MongoDB is installed and running on your system');
+    console.log('💡 Run: sudo systemctl start mongod (Linux) or start MongoDB service (Windows)');
     return null;
   }
 }
 
-// Initialize collections
+// Initialize collections and default data
 async function initializeCollections() {
   try {
     const collections = [
@@ -172,6 +110,7 @@ async function initializeCollections() {
     
     for (const collectionName of collections) {
       const collection = db.collection(collectionName);
+      // This will create the collection if it doesn't exist
       await collection.find({}).limit(1).toArray();
     }
     
@@ -187,16 +126,15 @@ async function initializeCollections() {
       console.log("✅ Default admin user created");
     }
     
-    console.log("✅ Database initialized successfully");
+    console.log("✅ Database collections initialized successfully");
   } catch (error) {
-    console.log("⚠️  Database initialization warning:", error.message);
+    console.log("⚠️  Database initialization note:", error.message);
   }
 }
 
-// FIXED: Database connection check middleware
+// Database connection check middleware
 app.use((req, res, next) => {
   if (!db) {
-    // For API routes, return error; for pages, continue without DB
     if (req.path.startsWith('/api/') && !req.path.includes('/api/admin/login')) {
       return res.status(503).json({ 
         error: "Database not available", 
@@ -232,15 +170,12 @@ const validateSupport = [
 // Governor Routes
 app.get("/api/governor", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for governor fetch");
-      return res.json({});
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const governor = await db.collection("governor").findOne({});
-    console.log("✅ Governor data fetched:", governor ? "Found" : "Not found");
     res.json(governor || {});
   } catch (error) {
-    console.error("❌ Error fetching governor:", error.message);
+    console.error("Error fetching governor:", error);
     res.status(500).json({ error: "Failed to fetch governor" });
   }
 });
@@ -268,16 +203,15 @@ app.put("/api/governor", upload.single("image"), async (req, res) => {
       updateData.image = imagePath;
     }
 
-    const result = await db.collection("governor").updateOne(
+    await db.collection("governor").updateOne(
       {},
       { $set: updateData },
       { upsert: true }
     );
 
-    console.log("✅ Governor updated successfully");
     res.json({ success: true, message: "Governor updated successfully" });
   } catch (error) {
-    console.error("❌ Error updating governor:", error);
+    console.error("Error updating governor:", error);
     res.status(500).json({ error: "Failed to update governor" });
   }
 });
@@ -285,15 +219,12 @@ app.put("/api/governor", upload.single("image"), async (req, res) => {
 // Video Routes
 app.get("/api/video", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for video fetch");
-      return res.json({});
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const video = await db.collection("video").findOne({});
-    console.log("✅ Video data fetched:", video ? "Found" : "Not found");
     res.json(video || {});
   } catch (error) {
-    console.error("❌ Error fetching video:", error.message);
+    console.error("Error fetching video:", error);
     res.status(500).json({ error: "Failed to fetch video" });
   }
 });
@@ -325,10 +256,9 @@ app.put("/api/video", upload.single("video"), async (req, res) => {
       { upsert: true }
     );
 
-    console.log("✅ Video updated successfully");
     res.json({ success: true, message: "Video updated successfully" });
   } catch (error) {
-    console.error("❌ Error updating video:", error);
+    console.error("Error updating video:", error);
     res.status(500).json({ error: "Failed to update video" });
   }
 });
@@ -336,15 +266,12 @@ app.put("/api/video", upload.single("video"), async (req, res) => {
 // Villages Routes
 app.get("/api/villages", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for villages fetch");
-      return res.json([]);
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const villages = await db.collection("villages").find({}).sort({ name: 1 }).toArray();
-    console.log("✅ Villages data fetched:", villages.length, "villages");
     res.json(villages);
   } catch (error) {
-    console.error("❌ Error fetching villages:", error.message);
+    console.error("Error fetching villages:", error);
     res.status(500).json({ error: "Failed to fetch villages" });
   }
 });
@@ -365,14 +292,13 @@ app.post("/api/villages", async (req, res) => {
       createdAt: new Date()
     });
 
-    console.log("✅ Village added successfully");
     res.json({ 
       success: true, 
       message: "Village added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("❌ Error adding village:", error);
+    console.error("Error adding village:", error);
     res.status(500).json({ error: "Failed to add village" });
   }
 });
@@ -395,10 +321,9 @@ app.delete("/api/villages/:id", async (req, res) => {
       return res.status(404).json({ error: "Village not found" });
     }
 
-    console.log("✅ Village deleted successfully");
     res.json({ success: true, message: "Village deleted successfully" });
   } catch (error) {
-    console.error("❌ Error deleting village:", error);
+    console.error("Error deleting village:", error);
     res.status(500).json({ error: "Failed to delete village" });
   }
 });
@@ -406,15 +331,12 @@ app.delete("/api/villages/:id", async (req, res) => {
 // Leaders Routes
 app.get("/api/leaders", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for leaders fetch");
-      return res.json([]);
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const leaders = await db.collection("leaders").find({}).sort({ name: 1 }).toArray();
-    console.log("✅ Leaders data fetched:", leaders.length, "leaders");
     res.json(leaders);
   } catch (error) {
-    console.error("❌ Error fetching leaders:", error.message);
+    console.error("Error fetching leaders:", error);
     res.status(500).json({ error: "Failed to fetch leaders" });
   }
 });
@@ -447,14 +369,13 @@ app.post("/api/leaders", upload.single("image"), async (req, res) => {
       createdAt: new Date()
     });
 
-    console.log("✅ Leader added successfully");
     res.json({ 
       success: true, 
       message: "Leader added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("❌ Error adding leader:", error);
+    console.error("Error adding leader:", error);
     res.status(500).json({ error: "Failed to add leader" });
   }
 });
@@ -502,10 +423,9 @@ app.put("/api/leaders/:id", upload.single("image"), async (req, res) => {
       return res.status(404).json({ error: "Leader not found" });
     }
 
-    console.log("✅ Leader updated successfully");
     res.json({ success: true, message: "Leader updated successfully" });
   } catch (error) {
-    console.error("❌ Error updating leader:", error);
+    console.error("Error updating leader:", error);
     res.status(500).json({ error: "Failed to update leader" });
   }
 });
@@ -528,10 +448,9 @@ app.delete("/api/leaders/:id", async (req, res) => {
       return res.status(404).json({ error: "Leader not found" });
     }
 
-    console.log("✅ Leader deleted successfully");
     res.json({ success: true, message: "Leader deleted successfully" });
   } catch (error) {
-    console.error("❌ Error deleting leader:", error);
+    console.error("Error deleting leader:", error);
     res.status(500).json({ error: "Failed to delete leader" });
   }
 });
@@ -539,15 +458,12 @@ app.delete("/api/leaders/:id", async (req, res) => {
 // News Routes
 app.get("/api/news", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for news fetch");
-      return res.json([]);
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const news = await db.collection("news").find({}).sort({ date: -1 }).toArray();
-    console.log("✅ News data fetched:", news.length, "news items");
     res.json(news);
   } catch (error) {
-    console.error("❌ Error fetching news:", error.message);
+    console.error("Error fetching news:", error);
     res.status(500).json({ error: "Failed to fetch news" });
   }
 });
@@ -575,14 +491,13 @@ app.post("/api/news", upload.single("image"), async (req, res) => {
       createdAt: new Date()
     });
 
-    console.log("✅ News added successfully");
     res.json({ 
       success: true, 
       message: "News added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("❌ Error adding news:", error);
+    console.error("Error adding news:", error);
     res.status(500).json({ error: "Failed to add news" });
   }
 });
@@ -625,10 +540,9 @@ app.put("/api/news/:id", upload.single("image"), async (req, res) => {
       return res.status(404).json({ error: "News not found" });
     }
 
-    console.log("✅ News updated successfully");
     res.json({ success: true, message: "News updated successfully" });
   } catch (error) {
-    console.error("❌ Error updating news:", error);
+    console.error("Error updating news:", error);
     res.status(500).json({ error: "Failed to update news" });
   }
 });
@@ -651,10 +565,9 @@ app.delete("/api/news/:id", async (req, res) => {
       return res.status(404).json({ error: "News not found" });
     }
 
-    console.log("✅ News deleted successfully");
     res.json({ success: true, message: "News deleted successfully" });
   } catch (error) {
-    console.error("❌ Error deleting news:", error);
+    console.error("Error deleting news:", error);
     res.status(500).json({ error: "Failed to delete news" });
   }
 });
@@ -662,15 +575,12 @@ app.delete("/api/news/:id", async (req, res) => {
 // Events Routes
 app.get("/api/events", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for events fetch");
-      return res.json([]);
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const events = await db.collection("events").find({}).sort({ date: 1 }).toArray();
-    console.log("✅ Events data fetched:", events.length, "events");
     res.json(events);
   } catch (error) {
-    console.error("❌ Error fetching events:", error.message);
+    console.error("Error fetching events:", error);
     res.status(500).json({ error: "Failed to fetch events" });
   }
 });
@@ -702,14 +612,13 @@ app.post("/api/events", upload.single("image"), async (req, res) => {
       createdAt: new Date()
     });
 
-    console.log("✅ Event added successfully");
     res.json({ 
       success: true, 
       message: "Event added successfully",
       id: result.insertedId 
     });
   } catch (error) {
-    console.error("❌ Error adding event:", error);
+    console.error("Error adding event:", error);
     res.status(500).json({ error: "Failed to add event" });
   }
 });
@@ -756,10 +665,9 @@ app.put("/api/events/:id", upload.single("image"), async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    console.log("✅ Event updated successfully");
     res.json({ success: true, message: "Event updated successfully" });
   } catch (error) {
-    console.error("❌ Error updating event:", error);
+    console.error("Error updating event:", error);
     res.status(500).json({ error: "Failed to update event" });
   }
 });
@@ -782,29 +690,188 @@ app.delete("/api/events/:id", async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    console.log("✅ Event deleted successfully");
     res.json({ success: true, message: "Event deleted successfully" });
   } catch (error) {
-    console.error("❌ Error deleting event:", error);
+    console.error("Error deleting event:", error);
     res.status(500).json({ error: "Failed to delete event" });
   }
 });
 
+
+// Forum API Routes
+
+// Forum API Routes
+app.get("/api/forum/topics", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const topics = await db.collection("forum_topics").find({})
+      .sort({ lastActivity: -1 })
+      .toArray();
+    res.json(topics);
+  } catch (error) {
+    console.error("Error fetching forum topics:", error);
+    res.status(500).json({ error: "Failed to fetch forum topics" });
+  }
+});
+
+app.post("/api/forum/topics", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { title, category, author, content } = req.body;
+
+    if (!title || !category || !content) {
+      return res.status(400).json({ error: "Title, category, and content are required" });
+    }
+
+    const result = await db.collection("forum_topics").insertOne({
+      title: title.trim(),
+      category: category.trim(),
+      author: author?.trim() || "Anonymous",
+      content: content.trim(),
+      createdAt: new Date(),
+      views: 0,
+      replyCount: 0,
+      lastActivity: new Date()
+    });
+
+    res.json({ 
+      success: true, 
+      message: "Topic created successfully",
+      id: result.insertedId 
+    });
+  } catch (error) {
+    console.error("Error creating forum topic:", error);
+    res.status(500).json({ error: "Failed to create forum topic" });
+  }
+});
+
+app.get("/api/forum/topics/:id", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+
+    const topic = await db.collection("forum_topics").findOne({ 
+      _id: new ObjectId(id) 
+    });
+
+    if (!topic) {
+      return res.status(404).json({ error: "Topic not found" });
+    }
+
+    // Increment views
+    await db.collection("forum_topics").updateOne(
+      { _id: new ObjectId(id) },
+      { $inc: { views: 1 } }
+    );
+
+    res.json(topic);
+  } catch (error) {
+    console.error("Error fetching forum topic:", error);
+    res.status(500).json({ error: "Failed to fetch forum topic" });
+  }
+});
+
+app.get("/api/forum/topics/:id/replies", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+
+    const replies = await db.collection("forum_replies").find({ 
+      topicId: id 
+    }).sort({ createdAt: 1 }).toArray();
+
+    res.json(replies);
+  } catch (error) {
+    console.error("Error fetching forum replies:", error);
+    res.status(500).json({ error: "Failed to fetch forum replies" });
+  }
+});
+
+app.post("/api/forum/topics/:id/replies", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+    const { author, content } = req.body;
+
+    if (!content) {
+      return res.status(400).json({ error: "Reply content is required" });
+    }
+
+    const result = await db.collection("forum_replies").insertOne({
+      topicId: id,
+      author: author?.trim() || "Anonymous",
+      content: content.trim(),
+      createdAt: new Date()
+    });
+
+    // Update topic reply count and last activity
+    await db.collection("forum_topics").updateOne(
+      { _id: new ObjectId(id) },
+      { 
+        $inc: { replyCount: 1 },
+        $set: { lastActivity: new Date() }
+      }
+    );
+
+    res.json({ 
+      success: true, 
+      message: "Reply posted successfully",
+      id: result.insertedId 
+    });
+  } catch (error) {
+    console.error("Error posting forum reply:", error);
+    res.status(500).json({ error: "Failed to post forum reply" });
+  }
+});
+
+// Serve uploaded files
+app.get("/uploads/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(uploadsDir, filename);
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).json({ error: "File not found" });
+  }
+});
+
+// Serve the main page
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Serve other pages
+app.get("/:page", (req, res) => {
+  const page = req.params.page;
+  const filePath = path.join(__dirname, "public", `${page}.html`);
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send("Page not found");
+  }
+});
+
+
+
 // Contacts Routes
 app.get("/api/contacts", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for contacts fetch");
-      return res.json([]);
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const contacts = await db.collection("contacts").find({})
       .sort({ date: -1 })
       .limit(50)
       .toArray();
-    console.log("✅ Contacts data fetched:", contacts.length, "contacts");
     res.json(contacts);
   } catch (error) {
-    console.error("❌ Error fetching contacts:", error.message);
+    console.error("Error fetching contacts:", error);
     res.status(500).json({ error: "Failed to fetch contacts" });
   }
 });
@@ -829,10 +896,9 @@ app.post("/api/contacts", validateContact, async (req, res) => {
       status: "new"
     });
 
-    console.log("✅ Contact message submitted successfully");
     res.json({ success: true, message: "Contact message submitted successfully" });
   } catch (error) {
-    console.error("❌ Error submitting contact:", error);
+    console.error("Error submitting contact:", error);
     res.status(500).json({ error: "Failed to submit contact message" });
   }
 });
@@ -840,17 +906,14 @@ app.post("/api/contacts", validateContact, async (req, res) => {
 // Support Routes
 app.get("/api/support", async (req, res) => {
   try {
-    if (!db) {
-      console.log("❌ Database not available for support requests fetch");
-      return res.json([]);
-    }
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
     const supportRequests = await db.collection("support_requests").find({})
       .sort({ date: -1 })
       .toArray();
-    console.log("✅ Support requests fetched:", supportRequests.length, "requests");
     res.json(supportRequests);
   } catch (error) {
-    console.error("❌ Error fetching support requests:", error.message);
+    console.error("Error fetching support requests:", error);
     res.status(500).json({ error: "Failed to fetch support requests" });
   }
 });
@@ -880,10 +943,9 @@ app.post("/api/support", validateSupport, async (req, res) => {
       status: "pending"
     });
 
-    console.log("✅ Support request submitted successfully");
     res.json({ success: true, message: "Support request submitted successfully" });
   } catch (error) {
-    console.error("❌ Error submitting support request:", error);
+    console.error("Error submitting support request:", error);
     res.status(500).json({ error: "Failed to submit support request" });
   }
 });
@@ -912,10 +974,9 @@ app.put("/api/support/:id/status", async (req, res) => {
       return res.status(404).json({ error: "Support request not found" });
     }
 
-    console.log("✅ Support request status updated successfully");
     res.json({ success: true, message: "Support request status updated successfully" });
   } catch (error) {
-    console.error("❌ Error updating support request status:", error);
+    console.error("Error updating support request status:", error);
     res.status(500).json({ error: "Failed to update support request status" });
   }
 });
@@ -938,74 +999,34 @@ app.delete("/api/support/:id", async (req, res) => {
       return res.status(404).json({ error: "Support request not found" });
     }
 
-    console.log("✅ Support request deleted successfully");
     res.json({ success: true, message: "Support request deleted successfully" });
   } catch (error) {
-    console.error("❌ Error deleting support request:", error);
+    console.error("Error deleting support request:", error);
     res.status(500).json({ error: "Failed to delete support request" });
   }
 });
 
 // Admin Routes
-// FIXED: Admin Login Route
 app.post("/api/admin/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    
-    console.log("🔐 Login attempt:", { username, password });
 
-    // If database is not available, use environment variables
     if (!db) {
-      console.log("❌ Database not available, using environment variables");
-      const adminUsername = process.env.ADMIN_USERNAME || "admin";
-      const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
-      
-      console.log("🔑 Checking against:", { adminUsername, adminPassword });
-      
-      if (username === adminUsername && password === adminPassword) {
-        console.log("✅ Login successful (offline mode)");
-        return res.json({ success: true, message: "Login successful (offline mode)" });
-      } else {
-        console.log("❌ Invalid credentials (offline mode)");
-        return res.status(401).json({ success: false, error: "Invalid credentials" });
-      }
+      return res.status(503).json({ error: "Database not available" });
     }
 
-    // Database is available, use normal login
-    console.log("🔍 Checking admin in database...");
     const admin = await db.collection("admin").findOne({
       username: username,
       password: password
     });
 
     if (admin) {
-      console.log("✅ Login successful (database mode)");
       res.json({ success: true, message: "Login successful" });
     } else {
-      console.log("❌ Invalid credentials (database mode)");
-      
-      // If admin doesn't exist, create one with default credentials
-      const adminExists = await db.collection("admin").findOne({ username: "admin" });
-      if (!adminExists) {
-        console.log("👤 Creating default admin user...");
-        await db.collection("admin").insertOne({
-          username: "admin",
-          password: "admin123",
-          createdAt: new Date()
-        });
-        console.log("✅ Default admin user created");
-        
-        // Try login again with newly created admin
-        if (username === "admin" && password === "admin123") {
-          console.log("✅ Login successful with new admin user");
-          return res.json({ success: true, message: "Login successful" });
-        }
-      }
-      
       res.status(401).json({ success: false, error: "Invalid credentials" });
     }
   } catch (error) {
-    console.error("❌ Login error:", error);
+    console.error("Login error:", error);
     res.status(500).json({ error: "Login failed" });
   }
 });
@@ -1023,11 +1044,7 @@ app.put("/api/admin/password", async (req, res) => {
     }
 
     if (!db) {
-      const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
-      if (currentPassword !== adminPassword) {
-        return res.status(401).json({ error: "Current password is incorrect" });
-      }
-      return res.json({ success: true, message: "Password changed successfully (offline mode)" });
+      return res.status(503).json({ error: "Database not available" });
     }
 
     const admin = await db.collection("admin").findOne({
@@ -1045,8 +1062,264 @@ app.put("/api/admin/password", async (req, res) => {
 
     res.json({ success: true, message: "Password changed successfully" });
   } catch (error) {
-    console.error("❌ Error changing password:", error);
+    console.error("Error changing password:", error);
     res.status(500).json({ error: "Failed to change password" });
+  }
+});
+
+
+
+
+
+
+// Service Applications Routes
+app.get("/api/service-applications", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const applications = await db.collection("service_applications").find({})
+      .sort({ applicationDate: -1 })
+      .toArray();
+    res.json(applications);
+  } catch (error) {
+    console.error("Error fetching service applications:", error);
+    res.status(500).json({ error: "Failed to fetch service applications" });
+  }
+});
+
+app.post("/api/service-applications", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const {
+      serviceType,
+      wardNumber,
+      applicationDate,
+      firstName,
+      lastName,
+      email,
+      phone,
+      address,
+      purpose,
+      additionalInfo,
+      documents
+    } = req.body;
+
+    // Validate required fields
+    if (!serviceType || !wardNumber || !applicationDate || !firstName || !lastName || !email || !phone || !address) {
+      return res.status(400).json({ error: "All required fields must be filled" });
+    }
+
+    // Generate application ID
+    const applicationId = generateApplicationId();
+
+    const result = await db.collection("service_applications").insertOne({
+      applicationId,
+      serviceType,
+      wardNumber,
+      applicationDate: new Date(applicationDate),
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      address: address.trim(),
+      purpose: purpose?.trim() || "",
+      additionalInfo: additionalInfo?.trim() || "",
+      documents: documents || [],
+      status: "pending",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    res.json({ 
+      success: true, 
+      message: "Application submitted successfully",
+      applicationId: applicationId
+    });
+  } catch (error) {
+    console.error("Error submitting service application:", error);
+    res.status(500).json({ error: "Failed to submit application" });
+  }
+});
+
+app.put("/api/service-applications/:id/status", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!id || !status) {
+      return res.status(400).json({ error: "ID and status are required" });
+    }
+
+    if (!["pending", "in-review", "approved", "rejected"].includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const result = await db.collection("service_applications").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { status, updatedAt: new Date() } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res.json({ success: true, message: "Application status updated successfully" });
+  } catch (error) {
+    console.error("Error updating application status:", error);
+    res.status(500).json({ error: "Failed to update application status" });
+  }
+});
+
+app.delete("/api/service-applications/:id", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "Application ID is required" });
+    }
+
+    const result = await db.collection("service_applications").deleteOne({ 
+      _id: new ObjectId(id) 
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res.json({ success: true, message: "Application deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting application:", error);
+    res.status(500).json({ error: "Failed to delete application" });
+  }
+});
+
+// Utility function to generate application ID
+function generateApplicationId() {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substr(2, 5);
+  return `UGW-${timestamp}-${random}`.toUpperCase();
+}
+
+
+
+
+
+
+
+// Payment Routes
+app.post("/api/service-applications/:id/payment", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+    const { paymentMethod, transactionId, amount } = req.body;
+
+    if (!paymentMethod || !transactionId || !amount) {
+      return res.status(400).json({ error: "Payment method, transaction ID, and amount are required" });
+    }
+
+    const result = await db.collection("service_applications").updateOne(
+      { _id: new ObjectId(id) },
+      { 
+        $set: { 
+          payment: {
+            method: paymentMethod,
+            transactionId: transactionId.trim(),
+            amount: parseFloat(amount),
+            paidAt: new Date(),
+            status: "pending_verification"
+          },
+          status: "payment_pending",
+          updatedAt: new Date()
+        }
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res.json({ success: true, message: "Payment details submitted successfully" });
+  } catch (error) {
+    console.error("Error recording payment:", error);
+    res.status(500).json({ error: "Failed to record payment" });
+  }
+});
+
+app.put("/api/service-applications/:id/payment/verify", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+    const { verified } = req.body;
+
+    if (typeof verified !== 'boolean') {
+      return res.status(400).json({ error: "Verification status is required" });
+    }
+
+    const result = await db.collection("service_applications").updateOne(
+      { _id: new ObjectId(id) },
+      { 
+        $set: { 
+          "payment.status": verified ? "verified" : "rejected",
+          status: verified ? "payment_verified" : "payment_rejected",
+          updatedAt: new Date()
+        }
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res.json({ 
+      success: true, 
+      message: verified ? "Payment verified successfully" : "Payment rejected"
+    });
+  } catch (error) {
+    console.error("Error verifying payment:", error);
+    res.status(500).json({ error: "Failed to verify payment" });
+  }
+});
+
+// Update the service applications GET route to include payment info
+app.get("/api/service-applications/:id", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+
+    const application = await db.collection("service_applications").findOne({ 
+      _id: new ObjectId(id) 
+    });
+
+    if (!application) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    res.json(application);
+  } catch (error) {
+    console.error("Error fetching application:", error);
+    res.status(500).json({ error: "Failed to fetch application" });
+  }
+});
+
+
+
+// Serve uploaded files
+app.get("/uploads/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(uploadsDir, filename);
+  
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).json({ error: "File not found" });
   }
 });
 
@@ -1078,9 +1351,13 @@ async function startServer() {
       console.log(`🌐 Website URL: http://localhost:${PORT}`);
       
       if (!databaseClient) {
-        console.log('❌ DATABASE STATUS: DISCONNECTED - Admin features disabled');
+        console.log('❌ DATABASE STATUS: DISCONNECTED - Please start MongoDB service');
+        console.log('💡 On Windows: Start MongoDB Service from Services');
+        console.log('💡 On Linux: sudo systemctl start mongod');
+        console.log('💡 On macOS: brew services start mongodb-community');
       } else {
         console.log('✅ DATABASE STATUS: CONNECTED - All features available');
+        console.log('📁 Uploads directory:', uploadsDir);
       }
     });
   } catch (error) {
@@ -1089,35 +1366,11 @@ async function startServer() {
   }
 }
 
-// TEMPORARY: Create admin user if not exists (add this route)
-app.post("/api/admin/setup", async (req, res) => {
-  try {
-    if (!db) {
-      return res.status(503).json({ error: "Database not available" });
-    }
-    
-    const adminCollection = db.collection("admin");
-    
-    // Check if admin exists
-    const adminExists = await adminCollection.findOne({ username: "admin" });
-    
-    if (!adminExists) {
-      await adminCollection.insertOne({
-        username: "admin",
-        password: "admin123",
-        createdAt: new Date()
-      });
-      console.log("✅ Admin user created successfully");
-      res.json({ success: true, message: "Admin user created successfully" });
-    } else {
-      console.log("✅ Admin user already exists");
-      res.json({ success: true, message: "Admin user already exists" });
-    }
-  } catch (error) {
-    console.error("❌ Error setting up admin:", error);
-    res.status(500).json({ error: "Failed to setup admin" });
-  }
-});
-
 // Start the server
 startServer();
+
+
+
+
+
+

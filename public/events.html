@@ -1,295 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Events happening in Ugwunagbo Local Government Area">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Events happening in Ugwunagbo Local Government Area"
+    />
     <title>Events - Ugwunagbo LGA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="shortcut icon" href="img/469561696_573785381917492_5352245378316206825_n.jpg" type="image/x-icon">
-    <link rel="stylesheet" href="css/style.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="shortcut icon"
+      href="img/469561696_573785381917492_5352245378316206825_n.jpg"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="css/style.css" />
     <style>
-        .events-hero {
-            background: linear-gradient(135deg, var(--primary), #004d00);
-            color: white;
-            padding: 80px 0 50px;
-            text-align: center;
-        }
-        
-        .events-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
+      .events-hero {
+        background: linear-gradient(135deg, var(--primary), #004d00);
+        color: white;
+        padding: 80px 0 50px;
+        text-align: center;
+      }
+
+      .events-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .event-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .event-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .event-image {
+        height: 200px;
+        overflow: hidden;
+      }
+
+      .event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .event-card:hover .event-image img {
+        transform: scale(1.05);
+      }
+
+      .event-content {
+        padding: 25px;
+      }
+
+      .event-date {
+        background: var(--accent);
+        color: var(--text);
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 15px;
+      }
+      /*  */
+      .event-title {
+        color: var(--primary);
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+
+      .event-description {
+        color: #666;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .event-details {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .event-detail {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .event-detail i {
+        color: var(--primary);
+      }
+
+      .no-events {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+      }
+
+      .no-events i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+      }
+
+      .events-filter {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 10px 20px;
+        border: 2px solid var(--primary);
+        background: white;
+        color: var(--primary);
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .filter-btn.active,
+      .filter-btn:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      @media (max-width: 768px) {
         .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+          grid-template-columns: 1fr;
         }
-        
-        .event-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .event-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .event-image {
-            height: 200px;
-            overflow: hidden;
-        }
-        
-        .event-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .event-card:hover .event-image img {
-            transform: scale(1.05);
-        }
-        
-        .event-content {
-            padding: 25px;
-        }
-        
-        .event-date {
-            background: var(--accent);
-            color: var(--text);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-        /*  */
-        .event-title {
-            color: var(--primary);
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-        
-        .event-description {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        
-        .event-details {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .event-detail {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .event-detail i {
-            color: var(--primary);
-        }
-        
-        .no-events {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-        }
-        
-        .no-events i {
-            font-size: 4rem;
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-        
+
         .events-filter {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+          justify-content: center;
         }
-        
-        .filter-btn {
-            padding: 10px 20px;
-            border: 2px solid var(--primary);
-            background: white;
-            color: var(--primary);
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .filter-btn.active,
-        .filter-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-        
-        @media (max-width: 768px) {
-            .events-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .events-filter {
-                justify-content: center;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header (Same as main page) -->
     <header>
-        <div class="container">
-            <div class="header-top">
-                <div class="logo">
-                    <div class="logo-placeholder">
-                        <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
-                    </div>
-                    <div class="logo-text">
-                        <h1>Ugwunagbo LGA</h1>
-                        <p>Abia State, Nigeria</p>
-                    </div>
-                </div>
-                <div class="header-contact-info">
-                    <div class="header-contact-item">
-                        <i class="fas fa-phone" aria-hidden="true"></i>
-                        <span>+234 123 456 7890</span>
-                    </div>
-                    <div class="header-contact-item">
-                        <i class="fas fa-envelope" aria-hidden="true"></i>
-                        <span>info@ugwunagbolga.gov.ng</span>
-                    </div>
-                </div>
-                <div class="admin-login">
-                    <button class="admin-btn" id="adminLoginBtn">
-                        <i class="fas fa-user-shield" aria-hidden="true"></i> Admin
-                    </button>
-                </div>
+      <div class="container">
+        <div class="header-top">
+          <div class="logo">
+            <div class="logo-placeholder">
+              <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
             </div>
-            <nav>
-                <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
-                    <i class="fas fa-bars" aria-hidden="true"></i>
-                </button>
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="index.html#about">About Us</a></li>
-                    <li><a href="index.html#leadership">Leadership</a></li>
-                    <li><a href="index.html#culture">Culture</a></li>
-                    <li><a href="index.html#services">Services</a></li>
-                    <li><a href="index.html#departments">Departments</a></li>
-                    <li><a href="index.html#news">News</a></li>
-                    <li><a href="events.html" class="active">Events</a></li>
-                    <li><a href="support.html">Support</a></li>
-                    <li><a href="index.html#contact">Contact</a></li>
-                </ul>
-            </nav>
+            <div class="logo-text">
+              <h1>Ugwunagbo LGA</h1>
+              <p>Abia State, Nigeria</p>
+            </div>
+          </div>
+          <div class="header-contact-info">
+            <div class="header-contact-item">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <span>+234 123 456 7890</span>
+            </div>
+            <div class="header-contact-item">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <span>info@ugwunagbolga.gov.ng</span>
+            </div>
+          </div>
+          <div class="admin-login">
+            <!-- <button class="admin-btn" id="adminLoginBtn">
+              <i class="fas fa-user-shield" aria-hidden="true"></i> Admin
+            </button> -->
+          </div>
         </div>
+        <nav>
+          <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+            <i class="fas fa-bars" aria-hidden="true"></i>
+          </button>
+          <ul class="nav-links">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="index.html#about">About Us</a></li>
+            <li><a href="index.html#leadership">Leadership</a></li>
+            <li><a href="forum.html">Diaspora Forum</a></li>
+            <li><a href="support.html">Support</a></li>
+            <li><a href="events.html">Events</a></li>
+            <li><a href="index.html#news">News</a></li>
+            <li><a href="index.html#culture">Culture</a></li>
+            <li><a href="index.html#services">Services</a></li>
+            <li><a href="index.html#departments">Departments</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
     <!-- Events Hero Section -->
     <section class="events-hero">
-        <div class="container">
-            <h1>Upcoming Events</h1>
-            <p>Discover exciting events, ceremonies, and activities happening around Ugwunagbo LGA</p>
-        </div>
+      <div class="container">
+        <h1>Upcoming Events</h1>
+        <p>
+          Discover exciting events, ceremonies, and activities happening around
+          Ugwunagbo LGA
+        </p>
+      </div>
     </section>
 
     <!-- Events Section -->
     <section class="events-section">
-        <div class="events-container">
-            <div class="events-filter">
-                <button class="filter-btn active" data-filter="all">All Events</button>
-                <button class="filter-btn" data-filter="ceremony">Ceremonies</button>
-                <button class="filter-btn" data-filter="sports">Sports</button>
-                <button class="filter-btn" data-filter="cultural">Cultural</button>
-                <button class="filter-btn" data-filter="community">Community</button>
-            </div>
-            
-            <div class="events-grid" id="eventsContainer">
-                <!-- Events will be dynamically loaded here -->
-                <div class="no-events">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>No Events Available</h3>
-                    <p>Events will appear here once uploaded through the admin dashboard</p>
-                </div>
-            </div>
+      <div class="events-container">
+        <div class="events-filter">
+          <button class="filter-btn active" data-filter="all">
+            All Events
+          </button>
+          <button class="filter-btn" data-filter="ceremony">Ceremonies</button>
+          <button class="filter-btn" data-filter="sports">Sports</button>
+          <button class="filter-btn" data-filter="cultural">Cultural</button>
+          <button class="filter-btn" data-filter="community">Community</button>
         </div>
+
+        <div class="events-grid" id="eventsContainer">
+          <!-- Events will be dynamically loaded here -->
+          <div class="no-events">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>No Events Available</h3>
+            <p>
+              Events will appear here once uploaded through the admin dashboard
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Footer (Same as main page) -->
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Ugwunagbo LGA</h3>
-                    <p>Committed to serving our community with integrity, transparency, and excellence.</p>
-                    <div class="social-links">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="index.html#about">About Us</a></li>
-                        <li><a href="index.html#leadership">Leadership</a></li>
-                        <li><a href="index.html#culture">Culture</a></li>
-                        <li><a href="index.html#services">Services</a></li>
-                        <li><a href="index.html#departments">Departments</a></li>
-                        <li><a href="index.html#news">News</a></li>
-                        <li><a href="events.html">Events</a></li>
-                        <li><a href="support.html">Support</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Services</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Birth Registration</a></li>
-                        <li><a href="#">Revenue Collection</a></li>
-                        <li><a href="#">Business Permits</a></li>
-                        <li><a href="#">Health Services</a></li>
-                        <li><a href="#">Social Welfare</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Contact Info</h3>
-                    <ul class="footer-links">
-                        <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ugwunagbo LGA Secretariat</li>
-                        <li><i class="fas fa-phone" aria-hidden="true"></i> +234 123 456 7890</li>
-                        <li><i class="fas fa-envelope" aria-hidden="true"></i> info@ugwunagbolga.gov.ng</li>
-                    </ul>
-                </div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Ugwunagbo LGA</h3>
+            <p>
+              Committed to serving our community with integrity, transparency,
+              and excellence.
+            </p>
+            <div class="social-links">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="YouTube"
+                ><i class="fab fa-youtube" aria-hidden="true"></i
+              ></a>
             </div>
-            <div class="copyright">
-                <p>Courtesy Of SmartDevTechs</p>
-                <p>&copy; <span id="currentYear"></span> Ugwunagbo Local Government Area. All Rights Reserved.</p>
-            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+              <li><a href="index.html#services">Services</a></li>
+              <li><a href="index.html#departments">Departments</a></li>
+              <li><a href="index.html#news">News</a></li>
+              <li><a href="events.html">Events</a></li>
+              <li><a href="support.html">Support</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Services</h3>
+            <ul class="footer-links">
+              <li><a href="#">Birth Registration</a></li>
+              <li><a href="#">Revenue Collection</a></li>
+              <li><a href="#">Business Permits</a></li>
+              <li><a href="#">Health Services</a></li>
+              <li><a href="#">Social Welfare</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Info</h3>
+            <ul class="footer-links">
+              <li>
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                Ugwunagbo LGA Secretariat
+              </li>
+              <li>
+                <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
+                7890
+              </li>
+              <li>
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                info@ugwunagbolga.gov.ng
+              </li>
+            </ul>
+          </div>
         </div>
+        <div class="copyright">
+          <p>Courtesy Of SmartDevTechs</p>
+          <p>
+            &copy; <span id="currentYear"></span> Ugwunagbo Local Government
+            Area. All Rights Reserved.
+          </p>
+        </div>
+      </div>
     </footer>
 
     <!-- Scroll to Top Button -->
     <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
-        <i class="fas fa-chevron-up" aria-hidden="true"></i>
+      <i class="fas fa-chevron-up" aria-hidden="true"></i>
     </button>
 
     <script src="js/events.js"></script>
-</body>
+  </body>
 </html>
