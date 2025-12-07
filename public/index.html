@@ -19,6 +19,65 @@
     />
     <link rel="stylesheet" href="css/style.css" />
   </head>
+  <style>
+    /* Position dropdown styling */
+#leaderPosition {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    width: 100%;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+#leaderPosition:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 100, 0, 0.1);
+}
+
+#leaderPosition option {
+    padding: 10px;
+}
+
+/* Position indicator in leader list */
+.position-indicator {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Leadership grid styling for 3 positions */
+.leadership-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 992px) {
+    .leadership-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .leadership-grid {
+        grid-template-columns: 1fr;
+    }
+}
+  </style>
   <body>
     <!-- Header -->
     <header>
@@ -60,8 +119,10 @@
               <li data-hide-on-mobile><a href="#leadership">Leadership</a></li>
               <li><a href="forum.html">Diaspora Forum</a></li>
               <li><a href="support.html">Support</a></li>
-              <li><a href="events.html">Events</a></li>
               <li><a href="#news">News</a></li>
+              <li><a href="academia.html">Academia</a></li>
+              <li><a href="gallery.html">Gallery</a></li>
+
               <li data-hide-on-mobile><a href="#culture">Culture</a></li>
               <li data-hide-on-mobile><a href="#services">Services</a></li>
               <li data-hide-on-mobile>
@@ -80,7 +141,7 @@
     <section class="hero">
       <div class="hero-slider">
         <div class="slide active">
-          <img src="img/canival.PNG" alt="Ugwunagbo Landscape" />
+          <img src="img/bg1.jpg" alt="Ugwunagbo Landscape" />
         </div>
         <div class="slide">
           <img
@@ -89,10 +150,10 @@
           />
         </div>
         <div class="slide">
-          <img src="img/can3.jpg" alt="Ugwunagbo Development" />
+          <img src="img/bgg.jpeg" alt="Ugwunagbo Development" />
         </div>
         <div class="slide">
-          <img src="img/hosp.jpg" alt="Ugwunagbo Culture" />
+          <img src="img/bg5.jpeg" alt="Ugwunagbo Culture" />
         </div>
       </div>
 
@@ -167,6 +228,11 @@
           </div>
         </div>
       </div>
+      <div class="read-history-btn">
+        <a href="full-history.html" class="btn btn-primary">
+          Read Full History Of Ugwunagbo
+        </a>
+      </div>
     </section>
 
     <!-- Governor Section -->
@@ -174,7 +240,7 @@
       <div class="container">
         <div class="section-title">
           <h2>Executive Governor</h2>
-          <p>Leadership at the State Level</p>
+          <p>at the State Level</p>
         </div>
         <div class="governor-content" id="governorContainer">
           <!-- Governor information will be dynamically loaded here -->
@@ -209,23 +275,22 @@
         <div class="culture-grid">
           <div class="culture-card">
             <div class="culture-image">
-              <img src="img/heritage5.jpg" alt="Palm Harvest (Igbu nkwu)" />
+              <img src="img/marriage.jpeg" alt="Palm Harvest (Igbu nkwu)" />
             </div>
             <div class="culture-content">
-              <h3>Palm Harvest (Igbu nkwu)</h3>
+              <h3>Marriage Customs (Igba nkwu)</h3>
               <p>
-                In Ugwunagbo, the palm tree is more than just a plant; it is a
-                pillar of our heritage. For generations, the noble palm fruit
-                has been at the heart of our community—sustaining us, uniting
-                us, and defining our way of life. From the rich, red oil that
-                colors our food to the sweet wine that celebrates our festivals,
-                the story of Ugwunagbo is written in the shade of the palm
-                fronds. It is our green gold and our timeless cultural symbol.
+                Marriage customs in Ugwunagbo, which is in Ngwaland (an Igbo
+                area), involve a multi-stage traditional process that can be
+                more important than the Western-style wedding. These stages
+                include: initial introductions, family background checks, the
+                negotiation and payment of bride price (Ugwo Isi), and the final
+                traditional wedding ceremony (Igba Nkwu).
               </p>
               <ul class="culture-features">
                 <li>
                   <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-                  <span>Harvested On Monthly Basis</span>
+                  <span>Practiced among every home</span>
                 </li>
                 <li>
                   <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
@@ -240,7 +305,7 @@
           </div>
           <div class="culture-card">
             <div class="culture-image">
-              <img src="img/heriatage4.jpg" alt="Palm Processing" />
+              <img src="img/palm process.jpeg" alt="Palm Processing" />
             </div>
             <div class="culture-content">
               <h3>Palm Processing</h3>
@@ -270,7 +335,7 @@
           </div>
           <div class="culture-card">
             <div class="culture-image">
-              <img src="img/heritage2.jpg" alt="Masquerade Festival (Mmanwu)" />
+              <img src="img/masq.jpeg" alt="Masquerade Festival (Mmanwu)" />
             </div>
             <div class="culture-content">
               <h3>Masquerade Festival (Mmanwu)</h3>
@@ -303,77 +368,98 @@
     <!-- Services Section -->
     <!-- Services Section -->
     <!-- Services Section -->
-<!-- Services Section -->
-<section id="services">
-  <div class="container">
-    <div class="section-title">
-      <h2>Our Services</h2>
-    </div>
-    <div class="services-grid">
-      <div class="service-card">
-        <div class="service-icon">
-          <i class="fas fa-id-card" aria-hidden="true"></i>
+    <!-- Services Section -->
+    <section id="services">
+      <div class="container">
+        <div class="section-title">
+          <h2>Our Services</h2>
         </div>
-        <div class="service-content">
-          <h3>Civil Registration</h3>
-          <p>
-            Birth, death, marriage and Local Govt. Of Origin registration services for all
-            residents of Ugwunagbo LGA.
-          </p>
-          <button class="btn btn-outline apply-service-btn" data-service="birth-certificate">Apply Now</button>
+        <div class="services-grid">
+          <div class="service-card">
+            <div class="service-icon">
+              <i class="fas fa-id-card" aria-hidden="true"></i>
+            </div>
+            <div class="service-content">
+              <h3>Civil Registration</h3>
+              <p>
+                Birth, marriage and Local Govt. Of Origin registration services
+                for all residents of Ugwunagbo LGA.
+              </p>
+              <button
+                class="btn btn-outline apply-service-btn"
+                data-service="birth-certificate"
+              >
+                Apply Now
+              </button>
+            </div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">
+              <i class="fas fa-home" aria-hidden="true"></i>
+            </div>
+            <div class="service-content">
+              <h3>Revenue Collection</h3>
+              <p>
+                Payment of taxes, levies, and other revenue obligations to the
+                local government.
+              </p>
+              <!-- <button
+                class="btn btn-outline apply-service-btn"
+                data-service="business-permit"
+              >
+                Apply Now
+              </button> -->
+            </div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">
+              <i class="fas fa-hand-holding-usd" aria-hidden="true"></i>
+            </div>
+            <div class="service-content">
+              <h3>Social Welfare</h3>
+              <p>
+                Support programs for vulnerable groups including women,
+                children, and the elderly.
+              </p>
+              <!-- <button
+                class="btn btn-outline apply-service-btn"
+                data-service="other"
+              >
+                Apply Now
+              </button> -->
+            </div>
+          </div>
+          <div class="service-card">
+            <div class="service-icon">
+              <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
+            </div>
+            <div class="service-content">
+              <h3>Villages Directory</h3>
+              <p>
+                Explore the list of villages in Ugwunagbo Local Government Area.
+              </p>
+              <a href="newvillages.html" class="btn btn-outline"
+                >View Villages</a
+              >
+            </div>
+          </div>
         </div>
       </div>
-      <div class="service-card">
-        <div class="service-icon">
-          <i class="fas fa-home" aria-hidden="true"></i>
-        </div>
-        <div class="service-content">
-          <h3>Revenue Collection</h3>
-          <p>
-            Payment of taxes, levies, and other revenue obligations to the
-            local government.
-          </p>
-          <button class="btn btn-outline apply-service-btn" data-service="business-permit">Apply Now</button>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">
-          <i class="fas fa-hand-holding-usd" aria-hidden="true"></i>
-        </div>
-        <div class="service-content">
-          <h3>Social Welfare</h3>
-          <p>
-            Support programs for vulnerable groups including women,
-            children, and the elderly.
-          </p>
-          <button class="btn btn-outline apply-service-btn" data-service="other">Apply Now</button>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="service-icon">
-          <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
-        </div>
-        <div class="service-content">
-          <h3>Villages Directory</h3>
-          <p>
-            Explore the list of villages in Ugwunagbo Local Government Area.
-          </p>
-          <a href="newvillages.html" class="btn btn-outline">View Villages</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-
+    <!-- Departments Section -->
     <!-- Departments Section -->
     <section id="departments">
       <div class="container">
         <div class="section-title">
           <h2>Our Departments</h2>
+          <p>Explore our specialized departments serving the community</p>
         </div>
         <div class="departments-grid">
-          <div class="department-card">
+          <a
+            href="department-admin.html"
+            class="department-card department-link"
+          >
             <div class="department-icon">
               <i class="fas fa-balance-scale" aria-hidden="true"></i>
             </div>
@@ -382,8 +468,13 @@
               General administration and coordination of local government
               activities.
             </p>
-          </div>
-          <div class="department-card">
+            <span class="department-link-text">Learn More →</span>
+          </a>
+
+          <a
+            href="department-finance.html"
+            class="department-card department-link"
+          >
             <div class="department-icon">
               <i class="fas fa-money-bill-wave" aria-hidden="true"></i>
             </div>
@@ -391,25 +482,80 @@
             <p>
               Management of local government finances and revenue collection.
             </p>
-          </div>
-          <div class="department-card">
+            <span class="department-link-text">Learn More →</span>
+          </a>
+
+          <a
+            href="department-planning.html"
+            class="department-card department-link"
+          >
             <div class="department-icon">
               <i class="fas fa-clipboard-list" aria-hidden="true"></i>
             </div>
             <h3>Planning</h3>
             <p>Development planning and project implementation.</p>
-          </div>
-          <div class="department-card">
+            <span class="department-link-text">Learn More →</span>
+          </a>
+
+          <a
+            href="department-health.html"
+            class="department-card department-link"
+          >
             <div class="department-icon">
               <i class="fas fa-heartbeat" aria-hidden="true"></i>
             </div>
             <h3>Health</h3>
             <p>Public health services and primary healthcare delivery.</p>
-          </div>
+            <span class="department-link-text">Learn More →</span>
+          </a>
+
+          <!-- New Departments -->
+          <a
+            href="department-judiciary.html"
+            class="department-card department-link"
+          >
+            <div class="department-icon">
+              <i class="fas fa-gavel" aria-hidden="true"></i>
+            </div>
+            <h3>Judiciary</h3>
+            <p>
+              Legal affairs, dispute resolution, and justice administration.
+            </p>
+            <span class="department-link-text">Learn More →</span>
+          </a>
+
+          <a
+            href="department-inec.html"
+            class="department-card department-link"
+          >
+            <div class="department-icon">
+              <i class="fas fa-vote-yea" aria-hidden="true"></i>
+            </div>
+            <h3>INEC</h3>
+            <p>
+              Independent National Electoral Commission - Voter registration and
+              electoral processes.
+            </p>
+            <span class="department-link-text">Learn More →</span>
+          </a>
+
+          <a
+            href="department-security.html"
+            class="department-card department-link"
+          >
+            <div class="department-icon">
+              <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            </div>
+            <h3>Security</h3>
+            <p>
+              Public safety, law enforcement coordination, and community
+              security.
+            </p>
+            <span class="department-link-text">Learn More →</span>
+          </a>
         </div>
       </div>
     </section>
-
     <!-- Video Section -->
     <section id="video" class="video-section">
       <div class="container">
@@ -562,17 +708,15 @@
             </div>
           </div>
           <div class="footer-column">
-            <h3>Quick Links</h3>
+            <h3>Departments</h3>
             <ul class="footer-links">
-              <li><a href="index.html">Home</a></li>
-              <li><a href="index.html#about">About Us</a></li>
-              <li><a href="index.html#leadership">Leadership</a></li>
-              <li><a href="index.html#culture">Culture</a></li>
-              <li><a href="index.html#services">Services</a></li>
-              <li><a href="index.html#departments">Departments</a></li>
-              <li><a href="index.html#news">News</a></li>
-              <li><a href="support.html">Support</a></li>
-              <li><a href="newvillages.html">Villages Directory</a></li>
+              <li><a href="department-admin.html">Administration</a></li>
+              <li><a href="department-finance.html">Finance</a></li>
+              <li><a href="department-planning.html">Planning</a></li>
+              <li><a href="department-health.html">Health</a></li>
+              <li><a href="department-judiciary.html">Judiciary</a></li>
+              <li><a href="department-inec.html">INEC</a></li>
+              <li><a href="department-security.html">Security</a></li>
             </ul>
           </div>
           <div class="footer-column">
@@ -602,6 +746,10 @@
               </li>
             </ul>
           </div>
+        </div>
+         <div class="footer-links-bottom">
+          <a href="privacy-policy.html">Privacy Policy</a> | 
+          <a href="terms-of-service.html">Terms of Service</a>
         </div>
         <div class="copyright">
           <p>Courtesy Of SmartDevTechs</p>
@@ -670,6 +818,7 @@
             <i class="fas fa-times" aria-hidden="true"></i>
           </button>
         </div>
+        <!-- Dashboard tabs -->
         <div class="admin-tabs-container">
           <button
             class="admin-mobile-menu-btn"
@@ -686,9 +835,9 @@
             <div class="admin-tab" data-tab="leadership">
               Leadership Management
             </div>
-          <div class="admin-tab" data-tab="service-applications">
-            Service Applications
-          </div>
+            <div class="admin-tab" data-tab="service-applications">
+              Service Applications
+            </div>
             <div class="admin-tab" data-tab="video">Video Management</div>
             <div class="admin-tab" data-tab="villages">Villages Management</div>
             <div class="admin-tab" data-tab="news">News Management</div>
@@ -696,6 +845,11 @@
             <div class="admin-tab" data-tab="support">Support Requests</div>
             <div class="admin-tab" data-tab="contacts">Contact Requests</div>
             <div class="admin-tab" data-tab="password">Change Password</div>
+            <div class="admin-tab" data-tab="leadership-history">
+              Leadership History Management
+            </div>
+            <div class="admin-tab" data-tab="gallery">Gallery</div>
+            <div class="admin-tab" data-tab="academia">Academia</div>
           </div>
         </div>
 
@@ -735,125 +889,7 @@
               </div>
             </form>
           </div>
-          <!-- Events Management Tab -->
-          <div class="tab-content" id="eventsTab">
-            <h3 id="eventsFormTitle">Add New Event</h3>
-            <form id="eventsForm">
-              <input type="hidden" id="eventId" value="" />
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="eventTitle">Event Title</label>
-                  <input
-                    type="text"
-                    id="eventTitle"
-                    class="form-control"
-                    placeholder="Enter event title"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="eventCategory">Category</label>
-                  <select id="eventCategory" class="form-control" required>
-                    <option value="">Select Category</option>
-                    <option value="ceremony">Ceremony</option>
-                    <option value="sports">Sports</option>
-                    <option value="cultural">Cultural</option>
-                    <option value="community">Community</option>
-                    <option value="government">Government</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="eventDescription">Event Description</label>
-                <textarea
-                  id="eventDescription"
-                  class="form-control"
-                  placeholder="Enter event description"
-                  required
-                ></textarea>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="eventDate">Event Date</label>
-                  <input
-                    type="date"
-                    id="eventDate"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="eventTime">Event Time</label>
-                  <input type="time" id="eventTime" class="form-control" />
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="eventLocation">Location</label>
-                  <input
-                    type="text"
-                    id="eventLocation"
-                    class="form-control"
-                    placeholder="Enter event location"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="eventOrganizer">Organizer</label>
-                  <input
-                    type="text"
-                    id="eventOrganizer"
-                    class="form-control"
-                    placeholder="Enter organizer name"
-                  />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="eventImage">Event Image</label>
-                <input
-                  type="file"
-                  id="eventImage"
-                  class="form-control"
-                  accept="image/*"
-                />
-                <div class="image-preview" id="eventImagePreview">
-                  <span>No image selected</span>
-                </div>
-                <small>Recommended: Landscape image, max 5MB</small>
-              </div>
-              <div class="admin-actions">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  id="eventSubmitBtn"
-                >
-                  Add Event
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  id="resetEventForm"
-                >
-                  Reset Form
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  id="cancelEventEdit"
-                  style="display: none"
-                >
-                  Cancel Edit
-                </button>
-              </div>
-            </form>
 
-            <div class="events-list">
-              <h3>Current Events</h3>
-              <div id="eventsListContainer">
-                <!-- Events will be dynamically loaded here -->
-              </div>
-            </div>
-          </div>
           <!-- Leadership Management Tab -->
           <div class="tab-content" id="leadershipTab">
             <h3 id="leaderFormTitle">Add New Leader</h3>
@@ -870,15 +906,18 @@
                     required
                   />
                 </div>
+                <!-- Replace the existing position input with a dropdown -->
                 <div class="form-group">
-                  <label for="leaderPosition">Position</label>
-                  <input
-                    type="text"
-                    id="leaderPosition"
-                    class="form-control"
-                    placeholder="Enter position"
-                    required
-                  />
+                  <label for="leaderPosition">Position *</label>
+                  <select id="leaderPosition" class="form-control" required>
+                    <option value="">Select Position</option>
+                    <option value="1-Executive Chairman">
+                      Executive Chairman
+                    </option>
+                    <option value="2-Deputy Chairman">Deputy Chairman</option>
+                    <option value="3-Secretary">Secretary</option>
+                    <option value="4-Other">Other</option>
+                  </select>
                 </div>
               </div>
               <div class="form-group">
@@ -1154,8 +1193,6 @@
             </div>
           </div>
 
-          
-
           <!-- Add this to your admin content section -->
           <div class="tab-content" id="service-applicationsTab">
             <h3>Service Applications</h3>
@@ -1199,8 +1236,6 @@
               <!-- Service applications will be dynamically loaded here -->
             </div>
           </div>
-
-
 
           <!-- Support Requests Tab -->
           <div class="tab-content" id="supportTab">
@@ -1258,6 +1293,255 @@
               <div id="contactRequestsContainer">
                 <!-- Contact requests will be dynamically loaded here -->
               </div>
+            </div>
+          </div>
+
+          <!-- Leadership History Management Tab -->
+          <div class="tab-content" id="leadership-historyTab">
+            <h3 id="leadershipHistoryFormTitle">Add Historical Leader</h3>
+            <form id="leadershipHistoryForm">
+              <input type="hidden" id="historicalLeaderId" value="" />
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="historicalLeaderName">Full Name *</label>
+                  <input
+                    type="text"
+                    id="historicalLeaderName"
+                    class="form-control"
+                    placeholder="Enter leader's full name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="historicalLeaderVillage">Village *</label>
+                  <input
+                    type="text"
+                    id="historicalLeaderVillage"
+                    class="form-control"
+                    placeholder="Enter leader's village"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="historicalLeaderPosition">Position/Role *</label>
+                  <input
+                    type="text"
+                    id="historicalLeaderPosition"
+                    class="form-control"
+                    placeholder="E.g., Transition Chairman, Elected Chairman"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="historicalLeaderPeriod">Period *</label>
+                  <input
+                    type="text"
+                    id="historicalLeaderPeriod"
+                    class="form-control"
+                    placeholder="E.g., 1996-1997"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="historicalLeaderAchievements"
+                  >Achievements/Contributions</label
+                >
+                <textarea
+                  id="historicalLeaderAchievements"
+                  class="form-control"
+                  placeholder="Enter notable achievements or contributions"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label for="historicalLeaderImage"
+                  >Leader's Photo (Optional)</label
+                >
+                <input
+                  type="file"
+                  id="historicalLeaderImage"
+                  class="form-control"
+                  accept="image/*"
+                />
+                <div class="image-preview" id="historicalLeaderImagePreview">
+                  <span>No image selected</span>
+                </div>
+                <small>Recommended: Square image, max 5MB</small>
+              </div>
+              <div class="admin-actions">
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="leadershipHistorySubmitBtn"
+                >
+                  Add Historical Leader
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  id="resetLeadershipHistoryForm"
+                >
+                  Reset Form
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  id="cancelLeadershipHistoryEdit"
+                  style="display: none"
+                >
+                  Cancel Edit
+                </button>
+              </div>
+            </form>
+
+            <div class="historical-leaders-list">
+              <h3>Historical Leaders</h3>
+              <div id="historicalLeadersListContainer">
+                <!-- Historical leaders will be loaded here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Academia Management Section -->
+          <div id="academiaTab" class="tab-content">
+            <h2><i class="fas fa-graduation-cap"></i> Academia Management</h2>
+
+            <!-- Add Academia Form -->
+            <div class="form-container">
+              <h3>Add Academician</h3>
+              <form id="academiaForm" enctype="multipart/form-data">
+                <input type="hidden" id="academiaId" name="id" />
+
+                <div class="form-group">
+                  <label for="academiaTitle"
+                    >Title (e.g., Prof., Dr., Engr.)</label
+                  >
+                  <input type="text" id="academiaTitle" name="title" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="academiaName">Full Name</label>
+                  <input
+                    type="text"
+                    id="academiaName"
+                    name="full_name"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="academiaVillage">Village</label>
+                  <input
+                    type="text"
+                    id="academiaVillage"
+                    name="village"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="academiaQualification"
+                    >Educational Qualifications</label
+                  >
+                  <textarea
+                    id="academiaQualification"
+                    name="qualification"
+                    rows="4"
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="academiaPhoto">Photo (Optional)</label>
+                  <input
+                    type="file"
+                    id="academiaPhoto"
+                    name="photo"
+                    accept="image/*"
+                  />
+                  <div id="academiaPhotoPreview" class="image-preview"></div>
+                </div>
+
+                <div class="form-buttons">
+                  <button type="submit" class="btn-primary">
+                    <i class="fas fa-plus"></i> Add Academician
+                  </button>
+                  <button
+                    type="button"
+                    id="resetAcademiaForm"
+                    class="btn-secondary"
+                  >
+                    <i class="fas fa-redo"></i> Reset
+                  </button>
+                  <button
+                    type="button"
+                    id="cancelAcademiaEdit"
+                    class="btn-secondary"
+                    style="display: none"
+                  >
+                    <i class="fas fa-times"></i> Cancel Edit
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Academia List -->
+            <div class="list-container">
+              <h3>Academicians List</h3>
+              <div id="academiaListContainer"></div>
+            </div>
+          </div>
+
+          <!-- Gallery Management Section -->
+          <div id="galleryTab" class="tab-content">
+            <h2><i class="fas fa-photo-video"></i> Gallery Management</h2>
+
+            <!-- Add Gallery Item Form -->
+            <div class="form-container">
+              <h3>Upload Gallery Item</h3>
+              <form id="galleryForm" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label for="galleryType">Media Type</label>
+                  <select id="galleryType" name="type" required>
+                    <option value="">Select Type</option>
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="galleryFile">Upload File</label>
+                  <input type="file" id="galleryFile" name="file" required />
+                  <small id="fileHelp" class="help-text"></small>
+                </div>
+
+                <div class="form-group">
+                  <label for="galleryDescription">Description (Optional)</label>
+                  <textarea
+                    id="galleryDescription"
+                    name="description"
+                    rows="3"
+                  ></textarea>
+                </div>
+
+                <div class="form-buttons">
+                  <button type="submit" class="btn-primary">
+                    <i class="fas fa-upload"></i> Upload
+                  </button>
+                  <button type="reset" class="btn-secondary">
+                    <i class="fas fa-redo"></i> Reset
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Gallery Items List -->
+            <div class="list-container">
+              <h3>Gallery Items</h3>
+              <div id="galleryListContainer"></div>
             </div>
           </div>
 
@@ -1327,163 +1611,391 @@
       </div>
     </div>
 
-
-
     <script>
       // Service Applications Management
-async function loadServiceApplications(filter = 'all') {
-  try {
-    const response = await fetch('/api/service-applications');
-    const applications = await response.json();
+      // Service Applications Management
+      async function loadServiceApplications(filter = "all") {
+        try {
+          const response = await fetch("/api/service-applications");
+          const applications = await response.json();
 
-    // Update stats
-    document.getElementById('totalApplications').textContent = applications.length;
-    document.getElementById('pendingApplications').textContent = applications.filter(app => app.status === 'pending').length;
-    document.getElementById('approvedApplications').textContent = applications.filter(app => app.status === 'approved').length;
-    document.getElementById('rejectedApplications').textContent = applications.filter(app => app.status === 'rejected').length;
+          // Update stats
+          const total = applications.length;
+          const pending = applications.filter(
+            (app) =>
+              app.status === "pending" || app.status === "payment_pending"
+          ).length;
+          const approved = applications.filter(
+            (app) => app.status === "approved"
+          ).length;
+          const rejected = applications.filter(
+            (app) => app.status === "rejected"
+          ).length;
 
-    // Filter applications
-    let filteredApplications = applications;
-    if (filter !== 'all') {
-      filteredApplications = applications.filter(app => app.status === filter);
-    }
+          document.getElementById("totalApplications").textContent = total;
+          document.getElementById("pendingApplications").textContent = pending;
+          document.getElementById("approvedApplications").textContent =
+            approved;
+          document.getElementById("rejectedApplications").textContent =
+            rejected;
 
-    displayServiceApplications(filteredApplications);
-  } catch (error) {
-    console.error('Error loading service applications:', error);
-    document.getElementById('serviceApplicationsContainer').innerHTML = 
-      '<div class="error-message">Failed to load service applications</div>';
-  }
-}
+          // Filter applications
+          let filteredApplications = applications;
+          if (filter !== "all") {
+            filteredApplications = applications.filter((app) => {
+              if (filter === "pending") {
+                return (
+                  app.status === "pending" || app.status === "payment_pending"
+                );
+              }
+              return app.status === filter;
+            });
+          }
 
-function displayServiceApplications(applications) {
-  const container = document.getElementById('serviceApplicationsContainer');
-  
-  if (applications.length === 0) {
-    container.innerHTML = '<div class="no-data">No service applications found</div>';
-    return;
-  }
+          displayServiceApplications(filteredApplications);
+        } catch (error) {
+          console.error("Error loading service applications:", error);
+          document.getElementById("serviceApplicationsContainer").innerHTML =
+            '<div class="error-message">Failed to load service applications</div>';
+        }
+      }
 
-  container.innerHTML = applications.map(application => `
+      function displayServiceApplications(applications) {
+        const container = document.getElementById(
+          "serviceApplicationsContainer"
+        );
+
+        if (applications.length === 0) {
+          container.innerHTML =
+            '<div class="no-data">No service applications found</div>';
+          return;
+        }
+
+        container.innerHTML = applications
+          .map((application) => {
+            // Format Date of Birth
+            const dobDisplay = application.dateOfBirth
+              ? new Date(application.dateOfBirth).toLocaleDateString()
+              : application.serviceType === "birth-certificate" ||
+                application.serviceType === "local-origin"
+              ? "⚠️ Not provided"
+              : "N/A";
+
+            // Payment status
+            const paymentStatus = application.payment
+              ? `<span class="${
+                  application.payment.status === "verified"
+                    ? "payment-verified"
+                    : "payment-pending"
+                }">
+           ${
+             application.payment.status === "verified"
+               ? "✓ Verified"
+               : "⏳ Pending"
+           }
+         </span>`
+              : '<span class="payment-none">❌ Not Paid</span>';
+
+            // Payment details
+            const paymentDetails = application.payment
+              ? `<div class="info-row">
+           <strong>Amount:</strong> ₦${
+             application.payment.amount?.toLocaleString() || "0"
+           }
+         </div>
+         <div class="info-row">
+           <strong>Transaction ID:</strong> ${
+             application.payment.transactionId || "N/A"
+           }
+         </div>
+         <div class="info-row">
+           <strong>Paid On:</strong> ${
+             application.payment.paidAt
+               ? new Date(application.payment.paidAt).toLocaleString()
+               : "N/A"
+           }
+         </div>`
+              : "";
+
+            return `
     <div class="application-card" data-id="${application._id}">
       <div class="application-header">
         <div class="application-id">${application.applicationId}</div>
         <div class="application-status status-${application.status}">
-          ${application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+          ${
+            application.status.replace("_", " ").charAt(0).toUpperCase() +
+            application.status.replace("_", " ").slice(1)
+          }
         </div>
       </div>
       <div class="application-body">
         <div class="application-info">
           <div class="info-row">
-            <strong>Service:</strong> ${application.serviceType}
+            <strong>Service:</strong> ${formatServiceType(
+              application.serviceType
+            )}
           </div>
           <div class="info-row">
-            <strong>Applicant:</strong> ${application.firstName} ${application.lastName}
+            <strong>Applicant:</strong> ${application.firstName} ${
+              application.lastName
+            }
           </div>
           <div class="info-row">
-            <strong>Contact:</strong> ${application.email} | ${application.phone}
+            <strong>Date of Birth:</strong> ${dobDisplay}
+          </div>
+          <div class="info-row">
+            <strong>Contact:</strong> ${application.email} | ${
+              application.phone
+            }
           </div>
           <div class="info-row">
             <strong>Ward:</strong> ${application.wardNumber}
           </div>
           <div class="info-row">
-            <strong>Applied:</strong> ${new Date(application.applicationDate).toLocaleDateString()}
+            <strong>Applied:</strong> ${new Date(
+              application.applicationDate
+            ).toLocaleDateString()}
           </div>
-          ${application.purpose ? `<div class="info-row"><strong>Purpose:</strong> ${application.purpose}</div>` : ''}
+          <div class="info-row">
+            <strong>Payment Status:</strong> ${paymentStatus}
+          </div>
+          ${paymentDetails}
+          ${
+            application.purpose
+              ? `<div class="info-row"><strong>Purpose:</strong> ${application.purpose}</div>`
+              : ""
+          }
+          ${
+            application.address
+              ? `<div class="info-row"><strong>Address:</strong> ${application.address}</div>`
+              : ""
+          }
         </div>
-        ${application.additionalInfo ? `
+        ${
+          application.additionalInfo
+            ? `
           <div class="additional-info">
             <strong>Additional Info:</strong>
             <p>${application.additionalInfo}</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
       <div class="application-actions">
-        <select class="status-select" onchange="updateApplicationStatus('${application._id}', this.value)">
-          <option value="pending" ${application.status === 'pending' ? 'selected' : ''}>Pending</option>
-          <option value="in-review" ${application.status === 'in-review' ? 'selected' : ''}>In Review</option>
-          <option value="approved" ${application.status === 'approved' ? 'selected' : ''}>Approved</option>
-          <option value="rejected" ${application.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+        <select class="status-select" onchange="updateApplicationStatus('${
+          application._id
+        }', this.value)">
+          <option value="pending" ${
+            application.status === "pending" ? "selected" : ""
+          }>Pending</option>
+          <option value="payment_pending" ${
+            application.status === "payment_pending" ? "selected" : ""
+          }>Payment Pending</option>
+          <option value="in_review" ${
+            application.status === "in_review" ? "selected" : ""
+          }>In Review</option>
+          <option value="approved" ${
+            application.status === "approved" ? "selected" : ""
+          }>Approved</option>
+          <option value="rejected" ${
+            application.status === "rejected" ? "selected" : ""
+          }>Rejected</option>
         </select>
-        <button class="btn btn-danger btn-sm" onclick="deleteApplication('${application._id}')">
+        ${
+          application.payment &&
+          application.payment.status === "pending_verification"
+            ? `
+          <button class="btn btn-success btn-sm" onclick="verifyPayment('${application._id}')">
+            <i class="fas fa-check"></i> Verify Payment
+          </button>
+        `
+            : ""
+        }
+        <button class="btn btn-danger btn-sm" onclick="deleteApplication('${
+          application._id
+        }')">
           <i class="fas fa-trash"></i> Delete
         </button>
       </div>
     </div>
-  `).join('');
-}
-
-async function updateApplicationStatus(applicationId, status) {
-  try {
-    const response = await fetch(`/api/service-applications/${applicationId}/status`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSweetPopup('success', 'Status Updated', 'Application status has been updated successfully.');
-      loadServiceApplications(document.getElementById('applicationFilter').value);
-    } else {
-      showSweetPopup('error', 'Update Failed', result.error || 'Failed to update status.');
-    }
-  } catch (error) {
-    console.error('Error updating application status:', error);
-    showSweetPopup('error', 'Update Failed', 'Failed to update application status.');
-  }
-}
-
-async function deleteApplication(applicationId) {
-  if (confirm('Are you sure you want to delete this application? This action cannot be undone.')) {
-    try {
-      const response = await fetch(`/api/service-applications/${applicationId}`, {
-        method: 'DELETE'
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        showSweetPopup('success', 'Application Deleted', 'The application has been deleted successfully.');
-        loadServiceApplications(document.getElementById('applicationFilter').value);
-      } else {
-        showSweetPopup('error', 'Delete Failed', result.error || 'Failed to delete application.');
+  `;
+          })
+          .join("");
       }
-    } catch (error) {
-      console.error('Error deleting application:', error);
-      showSweetPopup('error', 'Delete Failed', 'Failed to delete application.');
-    }
-  }
-}
 
-// Add event listeners for service applications tab
-document.addEventListener('DOMContentLoaded', function() {
-  const refreshBtn = document.getElementById('refreshApplications');
-  const filterSelect = document.getElementById('applicationFilter');
+      async function verifyPayment(applicationId) {
+        if (confirm("Verify this payment?")) {
+          try {
+            const response = await fetch(
+              `/api/service-applications/${applicationId}/payment/verify`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ verified: true }),
+              }
+            );
 
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', () => {
-      loadServiceApplications(filterSelect.value);
-    });
-  }
+            const result = await response.json();
 
-  if (filterSelect) {
-    filterSelect.addEventListener('change', (e) => {
-      loadServiceApplications(e.target.value);
-    });
-  }
-
-  // Load applications when service applications tab is clicked
-  document.addEventListener('click', function(e) {
-    if (e.target.closest('.admin-tab') && e.target.closest('.admin-tab').dataset.tab === 'service-applications') {
-      loadServiceApplications();
-    }
-  });
-});
+            if (result.success) {
+              alert("✅ Payment verified successfully!");
+              loadServiceApplications(
+                document.getElementById("applicationFilter").value
+              );
+            } else {
+              alert("❌ Failed to verify payment");
+            }
+          } catch (error) {
+            console.error("Error verifying payment:", error);
+            alert("❌ Error verifying payment");
+          }
+        }
+      }
     </script>
     <script src="js/app.js"></script>
+
+    <!-- Developers Section -->
+<section class="developers-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Website Development Team</h2>
+            <p>Meet the talented developers behind the Ugwunagbo LGA website</p>
+        </div>
+        
+        <div class="developers-grid">
+            <!-- Developer 1 -->
+            <div class="developer-card">
+                <div class="developer-image">
+                    <img src="img/smart-removebg-preview.png" alt="Engr. Uchendu Chinedu Promise.">
+                </div>
+                <div class="developer-role-badge">Software Engineer</div>
+                <h3 class="developer-name">Engr. Uchendu Chinedu Promise.</h3>
+                <div class="developer-title">Full Stack Developer & Digital Solutions Expert</div>
+                
+                <p class="developer-bio">
+                    A passionate software developer with expertise in creating modern, responsive web applications. 
+                    Specializes in frontend and backend development, UI/UX design, and digital transformation solutions. 
+                    Committed to building technology that serves communities and enhances user experiences.
+                </p>
+                
+                <div class="developer-village">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Based in Aba, Abia State Nig.</span>
+                </div>
+                
+                <div class="developer-contact">
+                    <a href="mailto:smartdevtechs@gmail.com" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="tel:+2347032270247" aria-label="Phone">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                    <a href="https://github.com/promisejoy" target="_blank" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/in/smartdevtechs" target="_blank" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Developer 2 -->
+            <div class="developer-card">
+                <div class="developer-image">
+                    <img src="img/eng.jpeg" alt="Engr. Excel Chibuike Chiemela.">
+                </div>
+                <div class="developer-role-badge">UI/UX Designer & Frontend Developer</div>
+                <h3 class="developer-name">Engr. Excel Chibuike Chiemela.</h3>
+                <div class="developer-title">Creative Designer & Frontend Specialist</div>
+                
+                <p class="developer-bio">
+                    I am a forward-thinking Software Engineer with a sharp focus on JavaScript and modern web development. I build digital experiences that are not only functional but thoughtful—solutions where logic meets creativity and technology serves purpose. 
+                </p>
+                
+                <div class="developer-village">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>From Aba, Abia State</span>
+                </div>
+                
+                <div class="developer-contact">
+                    <a href="mailto:johndeveloper@example.com" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="tel:+2348064661450" aria-label="Phone">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                    <!-- <a href="https://dribbble.com/johndev" target="_blank" aria-label="Dribbble">
+                        <i class="fab fa-dribbble"></i>
+                    </a>
+                    <a href="https://twitter.com/johndev" target="_blank" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a> -->
+                </div>
+            </div>
+            
+            <!-- Add more developers as needed -->
+        </div>
+       
+        
+        <div class="section-footer" style="text-align: center; margin-top: 40px; color: rgba(255,255,255,0.7);">
+            <p><i class="fas fa-code"></i> Built with modern web technologies including HTML5, CSS3, JavaScript, Node.js, and MongoDB</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                &copy; <span id="currentYear"></span> Ugwunagbo LGA Website. All development rights reserved.
+            </p>
+        </div>
+    </div>
+</section>
+
+    <script>
+      // Navigation active state management
+document.addEventListener('DOMContentLoaded', function() {
+    // Get current page URL
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    // Get all navigation links
+    const navLinks = document.querySelectorAll('.nav-links a');
+    
+    // Remove active class from all links
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        
+        // Get the href attribute and extract the page name
+        const linkHref = link.getAttribute('href');
+        const linkPage = linkHref.split('/').pop();
+        
+        // Check if this link matches current page
+        if (linkPage === currentPage) {
+            link.classList.add('active');
+        }
+        
+        // Handle index.html special case
+        if (currentPage === '' || currentPage === 'index.html') {
+            if (linkHref === 'index.html') {
+                link.classList.add('active');
+            }
+        }
+    });
+    
+    // Additional check for hash links (sections on same page)
+    if (currentPage === 'index.html' || currentPage === '') {
+        const hash = window.location.hash;
+        if (hash) {
+            // Find the link with matching hash
+            const hashLink = document.querySelector(`.nav-links a[href="${hash}"]`);
+            if (hashLink) {
+                // Remove active from all links
+                navLinks.forEach(link => link.classList.remove('active'));
+                // Add active to current hash link
+                hashLink.classList.add('active');
+            }
+        }
+    }
+});
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>

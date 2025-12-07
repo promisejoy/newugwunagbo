@@ -24,7 +24,9 @@ function initApplication() {
     initMobileMenu();
 
     // Initialize scroll to top
-    initScrollToTop();
+    
+    // ADD THIS LINE:
+    initServiceTypeListener();
 }
 
 function initFileUpload() {
@@ -144,6 +146,28 @@ function validateForm() {
             return false;
         }
     }
+    
+    // Check if DOB is required for birth-related services
+    const serviceType = document.getElementById('serviceType').value;
+    const birthRelatedServices = ['birth-certificate', 'local-origin'];
+    const dobInput = document.getElementById('dateOfBirth');
+    
+    if (birthRelatedServices.includes(serviceType)) {
+        if (!dobInput || !dobInput.value) {
+            showError('Date of Birth is required for birth certificate and local origin applications');
+            if (dobInput) dobInput.focus();
+            return false;
+        }
+        
+        // Validate DOB is not in the future
+        const selectedDate = new Date(dobInput.value);
+        const today = new Date();
+        if (selectedDate > today) {
+            showError('Date of birth cannot be in the future');
+            dobInput.focus();
+            return false;
+        }
+    }
 
     // Validate email format
     const email = document.getElementById('email').value;
@@ -165,10 +189,13 @@ function validateForm() {
 
     return true;
 }
-
 function getFormData() {
-    return {
-        serviceType: document.getElementById('serviceType').value,
+    const serviceType = document.getElementById('serviceType').value;
+    const isBirthRelated = ['birth-certificate', 'local-origin'].includes(serviceType);
+    const dobInput = document.getElementById('dateOfBirth');
+    
+    const data = {
+        serviceType: serviceType,
         wardNumber: document.getElementById('wardNumber').value,
         applicationDate: document.getElementById('applicationDate').value,
         firstName: document.getElementById('firstName').value.trim(),
@@ -180,6 +207,17 @@ function getFormData() {
         additionalInfo: document.getElementById('additionalInfo').value.trim(),
         documents: getDocumentFiles()
     };
+    
+    // Always include dateOfBirth field (even if empty)
+    // This is important for the backend to know the field exists
+    if (isBirthRelated && dobInput) {
+        data.dateOfBirth = dobInput.value;
+    } else {
+        data.dateOfBirth = null; // Explicitly set to null if not required
+    }
+    
+    console.log('Form data with DOB:', data); // Debug log
+    return data;
 }
 
 function getDocumentFiles() {
@@ -193,6 +231,14 @@ function getDocumentFiles() {
 
 async function submitApplication(formData) {
   try {
+    // Include date of birth in the form data
+    const dobInput = document.getElementById('dateOfBirth');
+    if (dobInput && dobInput.value) {
+      formData.dateOfBirth = dobInput.value;
+    }
+    
+    console.log('Submitting application with data:', formData);
+    
     const response = await fetch('/api/service-applications', {
       method: 'POST',
       headers: {
@@ -258,10 +304,17 @@ async function confirmPayment() {
     const paymentMethod = document.getElementById('paymentMethod').value;
     const transactionId = document.getElementById('transactionId').value;
     const amount = document.getElementById('paymentAmount').value;
+    const applicationId = window.currentApplicationId;
 
     // Validate form
-    if (!paymentMethod || !transactionId || !amount) {
+    if (!paymentMethod || !transactionId || !amount || !applicationId) {
         showError('Please fill in all payment details');
+        return;
+    }
+
+    // Validate amount
+    if (parseFloat(amount) < 5000) {
+        showError('Amount must be at least ₦5,000');
         return;
     }
 
@@ -271,33 +324,194 @@ async function confirmPayment() {
     submitBtn.innerHTML = '<div class="loading-spinner"></div> Confirming Payment...';
 
     try {
-        const response = await fetch(`/api/service-applications/${window.currentApplicationId}/payment`, {
+        // Prepare payment data
+        const paymentData = {
+            applicationId: applicationId,
+            paymentMethod: paymentMethod,
+            transactionId: transactionId.trim(),
+            amount: parseFloat(amount)
+        };
+
+        console.log('Submitting payment:', paymentData);
+
+        // Send payment confirmation to server
+        const response = await fetch('/api/service-applications/payments', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                paymentMethod,
-                transactionId,
-                amount: parseFloat(amount)
-            })
+            body: JSON.stringify(paymentData)
         });
 
         const result = await response.json();
+        
+        console.log('Payment response:', result);
 
-        if (result.success) {
-            showPaymentStatus('submitted');
-        } else {
+        if (!response.ok) {
             throw new Error(result.error || 'Failed to confirm payment');
         }
+
+        // Show success message
+        showSweetPopup('success', 'Payment Confirmed!', 
+            `✅ Your payment has been submitted successfully!\n\nTransaction ID: ${transactionId}\nAmount: ₦${amount}\n\nThe admin has been notified and will verify your payment.`, {
+                callback: () => {
+                    showPaymentStatus('submitted');
+                }
+            }
+        );
+
     } catch (error) {
         console.error('Payment confirmation error:', error);
-        showError('Failed to confirm payment: ' + error.message);
+        
+        showSweetPopup('error', 'Payment Failed!', 
+            `❌ Failed to submit payment: ${error.message}\n\nPlease try again or contact support.`, {
+                callback: () => {
+                    console.log('🔄 User acknowledged payment error');
+                }
+            }
+        );
     } finally {
         showLoading(false);
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Payment Made';
     }
+}
+// Fallback payment method
+async function tryFallbackPayment(paymentData) {
+    try {
+        // Save payment to localStorage
+        const pendingPayments = JSON.parse(localStorage.getItem('pendingPayments') || '[]');
+        paymentData.id = Date.now();
+        paymentData.status = 'pending_sync';
+        paymentData.createdAt = new Date().toISOString();
+        pendingPayments.push(paymentData);
+        localStorage.setItem('pendingPayments', JSON.stringify(pendingPayments));
+        
+        // Save admin notification
+        const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+        notifications.unshift({
+            id: `payment-${paymentData.id}`,
+            type: 'payment',
+            title: '💰 Offline Payment Received',
+            message: `Payment of ₦${paymentData.amount} for Application #${paymentData.applicationId}`,
+            applicationId: paymentData.applicationId,
+            amount: paymentData.amount,
+            transactionId: paymentData.transactionId,
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: 'high'
+        });
+        localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+        
+        return true;
+    } catch (error) {
+        console.error('Fallback payment failed:', error);
+        return false;
+    }
+}
+
+function savePaymentToLocalStorage(paymentData, serverResponse) {
+    try {
+        const confirmedPayments = JSON.parse(localStorage.getItem('confirmedPayments') || '[]');
+        confirmedPayments.push({
+            ...paymentData,
+            serverResponse: serverResponse,
+            confirmedAt: new Date().toISOString()
+        });
+        localStorage.setItem('confirmedPayments', JSON.stringify(confirmedPayments));
+    } catch (error) {
+        console.error('Failed to save payment locally:', error);
+    }
+}
+// Function to notify admin via API
+async function notifyAdminOfPayment(applicationId, paymentData) {
+    try {
+        const notificationData = {
+            type: 'payment_confirmation',
+            applicationId: applicationId,
+            paymentData: paymentData,
+            timestamp: new Date().toISOString(),
+            subject: `💰 New Payment Received for Application #${applicationId}`,
+            message: `
+                A new payment has been received for application #${applicationId}.
+                
+                Payment Details:
+                - Amount: ₦${paymentData.amount.toLocaleString()}
+                - Method: ${paymentData.paymentMethod}
+                - Transaction ID: ${paymentData.transactionId}
+                - Date: ${new Date(paymentData.paymentDate).toLocaleString()}
+                
+                Please check the bank account and verify the payment.
+            `
+        };
+
+        const response = await fetch('/api/admin/notifications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(notificationData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to send admin notification');
+        }
+
+        console.log('✅ Admin notified of payment');
+        return true;
+    } catch (error) {
+        console.error('❌ Admin notification failed:', error);
+        throw error;
+    }
+}
+
+// Fallback notification method (email simulation)
+async function fallbackAdminNotification(applicationId, paymentData) {
+    console.log('🔄 Using fallback notification method');
+    
+    // Simulate sending email notification
+    const emailContent = {
+        to: 'admin@ugwunagbolga.gov.ng', // Admin email
+        subject: `[URGENT] Payment Notification for Application #${applicationId}`,
+        body: `
+            Dear Admin,
+            
+            A payment has been reported for application #${applicationId}.
+            
+            PAYMENT DETAILS:
+            -------------------------
+            Application ID: ${applicationId}
+            Amount: ₦${paymentData.amount.toLocaleString()}
+            Payment Method: ${paymentData.paymentMethod}
+            Transaction ID: ${paymentData.transactionId}
+            Date/Time: ${new Date(paymentData.paymentDate).toLocaleString()}
+            
+            ACTION REQUIRED:
+            -------------------------
+            1. Check the bank account for transaction: ${paymentData.transactionId}
+            2. Verify the amount: ₦${paymentData.amount.toLocaleString()}
+            3. Update the application status in the admin dashboard
+            4. Notify the applicant once payment is verified
+            
+            This is an automated notification from Ugwunagbo LGA Service Portal.
+            
+            Best regards,
+            Service Portal System
+        `
+    };
+    
+    // Save to localStorage as backup notification
+    const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+    notifications.push({
+        ...emailContent,
+        id: Date.now(),
+        read: false,
+        createdAt: new Date().toISOString()
+    });
+    localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+    
+    console.log('📧 Fallback notification saved:', emailContent);
+    return true;
 }
 
 function showPaymentStatus(status) {
@@ -416,33 +630,35 @@ function printPaymentInstructions() {
 
 // Update the form submission to store application data
 async function submitApplication(formData) {
-    try {
-        const response = await fetch('/api/service-applications', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.error || `Server error: ${response.status}`);
-        }
-
-        return result;
-    } catch (error) {
-        console.error('Submission error:', error);
-        // Fallback: generate local application ID if server is unavailable
-        return {
-            success: true,
-            applicationId: generateApplicationId(),
-            message: "Application submitted (offline mode)"
-        };
+  try {
+    // Include date of birth in form data
+    const dobInput = document.getElementById('dateOfBirth');
+    if (dobInput && dobInput.value) {
+      formData.dateOfBirth = dobInput.value;
     }
-}
+    
+    console.log('Submitting application with data:', formData);
+    
+    const response = await fetch('/api/service-applications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData)
+    });
 
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || `Server error: ${response.status}`);
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Submission error:', error);
+    throw error; // Re-throw to be caught by the caller
+  }
+}
 function showError(message) {
     // Create or update error message display
     let errorDiv = document.getElementById('formError');
@@ -517,4 +733,84 @@ function generateApplicationId() {
     const timestamp = Date.now().toString(36);
     const random = Math.random().toString(36).substr(2, 5);
     return `UGW-${timestamp}-${random}`.toUpperCase();
+}
+
+
+function initServiceTypeListener() {
+    const serviceTypeSelect = document.getElementById('serviceType');
+    const dobFieldContainer = document.getElementById('dobFieldContainer');
+    
+    // Check if service type is birth-related on page load
+    checkAndAddDOBField();
+    
+    // Listen for changes in service type
+    serviceTypeSelect.addEventListener('change', checkAndAddDOBField);
+    
+    function checkAndAddDOBField() {
+        const selectedService = serviceTypeSelect.value;
+        const birthRelatedServices = ['birth-certificate', 'local-origin'];
+        
+        if (birthRelatedServices.includes(selectedService)) {
+            addDOBField();
+        } else {
+            removeDOBField();
+        }
+    }
+    
+    function addDOBField() {
+        // Check if DOB field already exists
+        if (document.getElementById('dateOfBirth')) {
+            return;
+        }
+        
+        // Create DOB field HTML
+        const dobHtml = `
+            <div class="form-group dob-field-container">
+                <label for="dateOfBirth" class="required">
+                    Date of Birth
+                    <span style="font-size: 0.9rem; color: #666; font-weight: normal; margin-left: 5px;">
+                        (Required for ${serviceTypeSelect.options[serviceTypeSelect.selectedIndex].text})
+                    </span>
+                </label>
+                <input type="date" id="dateOfBirth" class="form-control" required>
+                <small style="display: block; margin-top: 5px; color: #666;">
+                    <i class="fas fa-info-circle"></i> This helps us process your ${serviceTypeSelect.options[serviceTypeSelect.selectedIndex].text} accurately
+                </small>
+            </div>
+        `;
+        
+        // Insert DOB field after the phone number field
+        dobFieldContainer.innerHTML = dobHtml;
+        
+        // Add some validation for date (must be in the past)
+        const dobInput = document.getElementById('dateOfBirth');
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Set max date to today (can't be born in the future)
+        dobInput.max = today;
+        
+        // Add validation
+        dobInput.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const today = new Date();
+            
+            if (selectedDate > today) {
+                this.setCustomValidity('Date of birth cannot be in the future');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        // Scroll to show the new field
+        setTimeout(() => {
+            dobFieldContainer.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 300);
+    }
+    
+    function removeDOBField() {
+        dobFieldContainer.innerHTML = '';
+    }
 }

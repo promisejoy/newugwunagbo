@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia - Ugwunagbo LGA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Academia Specific Styles */
+        .academia-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('img/acaa.jpeg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+            margin-bottom: 50px;
+        }
+
+        .academia-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .academia-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .academia-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .academia-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #eaeaea;
+        }
+
+        .academia-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .academia-photo {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .academia-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .academia-card:hover .academia-photo img {
+            transform: scale(1.05);
+        }
+
+        .academia-photo i {
+            font-size: 5rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .academia-content {
+            padding: 25px;
+        }
+
+        .academia-title {
+            color: #2c3e50;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        .academia-name {
+            font-size: 1.8rem;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .academia-village {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .academia-village i {
+            color: #e74c3c;
+        }
+
+        .academia-qualification {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .academia-qualification p {
+            margin: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            grid-column: 1 / -1;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+            color: #7f8c8d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+
+        @media (max-width: 768px) {
+            .academia-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .academia-grid {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+
+            .academia-photo {
+                height: 200px;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+   <header>
+      <div class="container">
+        <div class="header-top">
+          <div class="logo">
+            <div class="logo-placeholder">
+              <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
+            </div>
+            <div class="logo-text">
+              <h1>Ugwunagbo LGA</h1>
+              <p>Abia State, Nigeria</p>
+            </div>
+          </div>
+          <div class="header-contact-info">
+            <div class="header-contact-item">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <span>+234 123 456 7890</span>
+            </div>
+            <div class="header-contact-item">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <span>info@ugwunagbolga.gov.ng</span>
+            </div>
+          </div>
+          <!-- <div class="admin-login">
+            <button class="admin-btn" id="adminLoginBtn">
+              <i class="fas fa-user-shield" aria-hidden="true"></i> Admin
+            </button>
+          </div> -->
+        </div>
+        <nav>
+          <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+            <i class="fas fa-bars" aria-hidden="true"></i> Menu
+          </button>
+          <div class="nav-scroll-container">
+            <ul class="nav-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li data-hide-on-mobile><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="forum.html">Diaspora Forum</a></li>
+              <li><a href="support.html">Support</a></li>
+              <!-- <li><a href="events.html">Events</a></li> -->
+              <li><a href="index.html#news">News</a></li> 
+              <li><a href="academia.html" class="active">Academia</a></li>
+              <li><a href="gallery.html">Gallery</a></li>
+
+
+              <li data-hide-on-mobile><a href="index.html#culture">Culture</a></li>
+              <li data-hide-on-mobile><a href="index.html#services">Services</a></li>
+              <li data-hide-on-mobile>
+                <a href="index.html#departments">Departments</a>
+              </li>
+              <li><a href="index.html#contact">Contact</a></li>
+
+              
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+
+    <!-- Academia Hero Section -->
+    <section class="academia-hero">
+        <h1><i class="fas fa-graduation-cap"></i> Academia of Ugwunagbo</h1>
+        <p>Celebrating our highly educated sons and daughters who have excelled in various fields of academia and professional endeavors</p>
+    </section>
+
+    <!-- Academia Grid -->
+    <div class="academia-grid" id="academiaContainer">
+        <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading academicians...</p>
+        </div>
+    </div>
+
+    <!-- Footer (same as other pages) -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Ugwunagbo LGA</h3>
+            <p>
+              Committed to serving our community with integrity, transparency,
+              and excellence.
+            </p>
+            <div class="social-links">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="YouTube"
+                ><i class="fab fa-youtube" aria-hidden="true"></i
+              ></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+              <li><a href="index.html#services">Services</a></li>
+              <li><a href="index.html#departments">Departments</a></li>
+              <li><a href="index.html#news">News</a></li>
+              <li><a href="support.html">Support</a></li>
+              <li><a href="newvillages.html">Villages Directory</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Services</h3>
+            <ul class="footer-links">
+              <li><a href="#">Birth Registration</a></li>
+              <li><a href="#">Revenue Collection</a></li>
+              <li><a href="#">Business Permits</a></li>
+              <li><a href="#">Health Services</a></li>
+              <li><a href="#">Social Welfare</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Info</h3>
+            <ul class="footer-links">
+              <li>
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                Ugwunagbo LGA Secretariat
+              </li>
+              <li>
+                <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
+                7890
+              </li>
+              <li>
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                info@ugwunagbolga.gov.ng
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>Courtesy Of SmartDevTechs</p>
+          <p>
+            &copy; <span id="currentYear"></span> Ugwunagbo Local Government
+            Area. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+      <i class="fas fa-chevron-up" aria-hidden="true"></i>
+    </button>
+
+        <script src="events.html"></script>
+        <script src="js/app.js"></script>
+    <script>
+        // Current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Fetch academia data
+        async function fetchAcademia() {
+            const container = document.getElementById('academiaContainer');
+            
+            try {
+                const response = await fetch('/api/academia');
+                if (!response.ok) throw new Error('Failed to fetch academia data');
+                
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-user-graduate"></i>
+                            <h2>No Academicians Added Yet</h2>
+                            <p>Check back later for updates on our esteemed academics</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                data.forEach(person => {
+                    const photoHtml = person.photo 
+                        ? `<img src="${person.photo}" alt="${person.full_name}">`
+                        : `<i class="fas fa-user-graduate"></i>`;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'academia-card';
+                    card.innerHTML = `
+                        <div class="academia-photo">
+                            ${photoHtml}
+                        </div>
+                        <div class="academia-content">
+                            <div class="academia-title">${person.title}</div>
+                            <h2 class="academia-name">${person.full_name}</h2>
+                            <div class="academia-village">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${person.village}</span>
+                            </div>
+                            <div class="academia-qualification">
+                                <p>${person.qualification}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Error Loading Data</h2>
+                        <p>Please try again later or contact support</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            const navLinks = document.querySelector('.nav-links');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            
+            this.setAttribute('aria-expanded', !isExpanded);
+            navLinks.classList.toggle('active');
+        });
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', fetchAcademia);
+    </script>
+</body>
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Department - Ugwunagbo LGA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/department.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      /* ============================================
+   Security Department Specific Styling
+   ============================================ */
+
+/* Department Header - Dark Red/Black Theme */
+.department-hero {
+    background: linear-gradient(135deg, #c0392b, #2c3e50);
+    padding: 60px 20px;
+    color: white;
+    text-align: center;
+}
+
+.department-hero h1 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.department-hero h1 i {
+    font-size: 2.5rem;
+}
+
+.department-hero p {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Department Content */
+.department-content {
+    padding: 40px 20px;
+    background: #f8f9fa;
+}
+
+.department-info {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+}
+
+.department-info h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.department-info > p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+/* Emergency Contact */
+.emergency-contact {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.emergency-contact h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.emergency-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 0;
+    letter-spacing: 1px;
+}
+
+.emergency-contact p {
+    opacity: 0.9;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+/* Department Details */
+.department-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.department-services {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 4px solid #c0392b;
+}
+
+.department-services h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.department-services h3 i {
+    color: #c0392b;
+}
+
+.service-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.service-list li {
+    padding: 12px 0;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #eee;
+}
+
+.service-list li:last-child {
+    border-bottom: none;
+}
+
+.service-list li i {
+    color: #c0392b;
+    font-size: 0.9rem;
+}
+
+/* Department Contact */
+.department-contact {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 10px;
+    border-left: 4px solid #2c3e50;
+}
+
+.department-contact h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.department-contact h3 i {
+    color: #2c3e50;
+}
+
+.contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.contact-info-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.contact-info-item i {
+    color: #c0392b;
+    font-size: 1.2rem;
+    margin-top: 3px;
+    width: 24px;
+}
+
+.contact-info-item div {
+    flex: 1;
+}
+
+.contact-info-item strong {
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+.contact-info-item div span {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Security Partners */
+.security-partners {
+    margin: 40px 0 30px;
+}
+
+.security-partners h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.security-partners h3 i {
+    color: #3498db;
+}
+
+.partner-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.partner-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-top: 4px solid #3498db;
+}
+
+.partner-item h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.partner-item p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* Back Button */
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: #c0392b;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 2px solid #c0392b;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Header Mobile */
+    .department-hero {
+        padding: 40px 15px;
+    }
+    
+    .department-hero h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .department-hero h1 i {
+        font-size: 2rem;
+    }
+    
+    .department-hero p {
+        font-size: 1rem;
+        line-height: 1.5;
+        padding: 0 10px;
+    }
+    
+    /* Content Mobile */
+    .department-content {
+        padding: 30px 15px;
+    }
+    
+    .department-info {
+        padding: 20px;
+        border-radius: 10px;
+    }
+    
+    .department-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .department-info > p {
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+    
+    /* Emergency Contact Mobile */
+    .emergency-contact {
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .emergency-number {
+        font-size: 1.6rem;
+    }
+    
+    .emergency-contact p {
+        font-size: 0.9rem;
+    }
+    
+    /* Department Details Mobile */
+    .department-details {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin: 20px 0;
+    }
+    
+    .department-services,
+    .department-contact {
+        padding: 20px;
+    }
+    
+    .department-services h3,
+    .department-contact h3 {
+        font-size: 1.2rem;
+    }
+    
+    .service-list li {
+        padding: 10px 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    /* Contact Info Mobile */
+    .contact-info-item {
+        gap: 12px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+    }
+    
+    .contact-info-item i {
+        font-size: 1rem;
+    }
+    
+    .contact-info-item strong {
+        font-size: 0.9rem;
+    }
+    
+    .contact-info-item div span {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    /* Fix for contact info text */
+    .contact-info-item div span br {
+        display: none;
+    }
+    
+    /* Handle multi-line contact info */
+    .contact-info-item:nth-child(1) div span,
+    .contact-info-item:nth-child(2) div span,
+    .contact-info-item:nth-child(3) div span,
+    .contact-info-item:nth-child(4) div span,
+    .contact-info-item:nth-child(5) div span {
+        white-space: normal;
+        display: block;
+    }
+    
+    /* Security Partners Mobile */
+    .security-partners {
+        margin: 30px 0 20px;
+    }
+    
+    .security-partners h3 {
+        font-size: 1.2rem;
+    }
+    
+    .partner-list {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .partner-item {
+        padding: 15px;
+    }
+    
+    /* Back Button Mobile */
+    .back-button {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 0.9rem;
+        margin: 15px auto 0;
+        display: flex;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra Small Screens */
+    .department-hero {
+        padding: 30px 10px;
+    }
+    
+    .department-hero h1 {
+        font-size: 1.6rem;
+    }
+    
+    .department-hero p {
+        font-size: 0.95rem;
+        padding: 0 5px;
+    }
+    
+    .department-content {
+        padding: 20px 10px;
+    }
+    
+    .department-info {
+        padding: 15px;
+    }
+    
+    .department-info h2 {
+        font-size: 1.4rem;
+    }
+    
+    .department-info > p {
+        font-size: 0.95rem;
+    }
+    
+    /* Emergency Contact Extra Small */
+    .emergency-contact {
+        padding: 15px;
+    }
+    
+    .emergency-number {
+        font-size: 1.4rem;
+    }
+    
+    /* Contact Items Extra Small */
+    .contact-info-item {
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+    }
+    
+    .contact-info-item i {
+        font-size: 0.9rem;
+        width: 20px;
+    }
+    
+    .contact-info-item strong {
+        font-size: 0.85rem;
+    }
+    
+    .contact-info-item div span {
+        font-size: 0.8rem;
+    }
+    
+    /* Fix for very long text in contact info */
+    .contact-info-item div span {
+        word-break: break-word;
+        hyphens: auto;
+    }
+    
+    /* Service List Extra Small */
+    .service-list li {
+        font-size: 0.85rem;
+    }
+    
+    /* Partner Items Extra Small */
+    .partner-item h4 {
+        font-size: 1rem;
+    }
+    
+    .partner-item p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 360px) {
+    /* Very Small Screens */
+    .department-hero h1 {
+        font-size: 1.4rem;
+    }
+    
+    .department-hero p {
+        font-size: 0.9rem;
+    }
+    
+    .emergency-number {
+        font-size: 1.2rem;
+    }
+    
+    .contact-info-item div span {
+        font-size: 0.75rem;
+    }
+    
+    .service-list li {
+        font-size: 0.8rem;
+    }
+    
+    .back-button {
+        font-size: 0.8rem;
+        padding: 10px 12px;
+    }
+}
+
+/* Text Readability */
+.department-info h2,
+.department-info h3,
+.department-info h4 {
+    color: #2c3e50;
+    margin-top: 0;
+    line-height: 1.3;
+}
+
+.department-info p,
+.department-info li {
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Remove ALL hover effects completely - NO background changes on hover */
+.department-info,
+.department-services,
+.department-contact,
+.emergency-contact,
+.partner-item,
+.back-button,
+.service-list li {
+    transition: none;
+}
+
+/* Specifically ensure no hover background changes */
+.department-info:hover,
+.department-services:hover,
+.department-contact:hover,
+.emergency-contact:hover,
+.partner-item:hover,
+.service-list li:hover {
+    background-color: inherit !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Ensure no hover color changes */
+.service-list li:hover {
+    background-color: transparent !important;
+    color: #555 !important;
+}
+
+.service-list li:hover i {
+    color: #c0392b !important;
+}
+
+/* Ensure back button doesn't change on hover */
+.back-button:hover {
+    background-color: #c0392b !important;
+    color: white !important;
+    transform: none !important;
+}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+      <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <div class="logo">
+            <div class="logo-placeholder">
+              <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
+            </div>
+            <div class="logo-text">
+              <h1>Ugwunagbo LGA</h1>
+              <p>Abia State, Nigeria</p>
+            </div>
+          </div>
+          <div class="header-contact-info">
+            <div class="header-contact-item">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <span>+234 123 456 7890</span>
+            </div>
+            <div class="header-contact-item">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <span>info@ugwunagbolga.gov.ng</span>
+            </div>
+          </div>
+          <!-- <div class="admin-login">
+            <button class="admin-btn" id="adminLoginBtn">
+              <i class="fas fa-user-shield" aria-hidden="true"></i> Admin
+            </button>
+          </div> -->
+        </div>
+         <nav>
+                <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+                    <i class="fas fa-bars" aria-hidden="true"></i> Menu
+                </button>
+                <div class="nav-scroll-container">
+                    <ul class="nav-links">
+              <li><a href="index.html" >Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li data-hide-on-mobile><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="forum.html">Diaspora Forum</a></li>
+              <li><a href="support.html">Support</a></li>
+              <li><a href="index.html#news">News</a></li> 
+              <li><a href="academia.html">Academia</a></li>
+              <li><a href="gallery.html">Gallery</a></li>
+
+
+              <li data-hide-on-mobile><a href="index.html#culture">Culture</a></li>
+              <li data-hide-on-mobile><a href="index.html#services" >Services</a></li>
+              <li data-hide-on-mobile>
+                <a href="index.html#departments" class="active">Departments</a>
+              </li>
+              <li><a href="index.html#contact">Contact</a></li>
+
+              
+            </ul>
+                </div>
+            </nav>
+      </div>
+    </header>
+
+    <!-- Department Hero Section -->
+    <section class="department-hero">
+        <div class="container">
+            <h1><i class="fas fa-shield-alt"></i> Security Department</h1>
+            <p>Ensuring public safety, law enforcement coordination, and community security</p>
+        </div>
+    </section>
+
+    <!-- Department Content -->
+    <section class="department-content">
+        <div class="container">
+            <div class="department-info">
+                <h2>About the Security Department</h2>
+                <p>The Security Department of Ugwunagbo LGA is dedicated to maintaining law and order, protecting lives and properties, and ensuring a safe environment for all residents. We coordinate with various security agencies to provide comprehensive security coverage.</p>
+                
+                <div class="emergency-contact">
+                    <h3><i class="fas fa-phone-alt"></i> EMERGENCY CONTACT</h3>
+                    <div class="emergency-number">+234 807 654 3210</div>
+                    <p>Available 24/7 for emergencies and security reports</p>
+                </div>
+                
+                <div class="department-details">
+                    <div class="department-services">
+                        <h3><i class="fas fa-tasks"></i> Our Services</h3>
+                        <ul class="service-list">
+                            <li><i class="fas fa-check-circle"></i> 24/7 security patrols</li>
+                            <li><i class="fas fa-check-circle"></i> Crime prevention and investigation</li>
+                            <li><i class="fas fa-check-circle"></i> Community policing initiatives</li>
+                            <li><i class="fas fa-check-circle"></i> Security threat assessment</li>
+                            <li><i class="fas fa-check-circle"></i> Conflict resolution and mediation</li>
+                            <li><i class="fas fa-check-circle"></i> Traffic control and management</li>
+                            <li><i class="fas fa-check-circle"></i> Security awareness programs</li>
+                            <li><i class="fas fa-check-circle"></i> Emergency response coordination</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="department-contact">
+                        <h3><i class="fas fa-address-book"></i> Contact Information</h3>
+                        <div class="contact-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Address:</strong><br>
+                                Security Department, Ugwunagbo LGA Secretariat,<br>
+                                Ugwunagbo, Abia State
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <strong>Phone:</strong><br>
+                                +234 805 123 4567
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email:</strong><br>
+                                security@ugwunagbolga.gov.ng
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Working Hours:</strong><br>
+                                Open 24 hours daily
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-user-tie"></i>
+                            <div>
+                                <strong>Security Commander:</strong><br>
+                                CSP Adekunle Johnson
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="security-partners">
+                    <h3><i class="fas fa-handshake"></i> Security Partners</h3>
+                    <div class="partner-list">
+                        <div class="partner-item">
+                            <h4>Nigeria Police Force</h4>
+                            <p>Ugwunagbo Police Division</p>
+                        </div>
+                        <div class="partner-item">
+                            <h4>Nigerian Security and Civil Defence Corps</h4>
+                            <p>Civil Defence Unit</p>
+                        </div>
+                        <div class="partner-item">
+                            <h4>Vigilante Group</h4>
+                            <p>Community Security Volunteers</p>
+                        </div>
+                        <div class="partner-item">
+                            <h4>Neighborhood Watch</h4>
+                            <p>Community Policing Initiative</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="index.html#departments" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Departments
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Ugwunagbo LGA</h3>
+            <p>
+              Committed to serving our community with integrity, transparency,
+              and excellence.
+            </p>
+            <div class="social-links">
+              <a href="#" aria-label="Facebook"
+                ><i class="fab fa-facebook-f" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Twitter"
+                ><i class="fab fa-twitter" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="Instagram"
+                ><i class="fab fa-instagram" aria-hidden="true"></i
+              ></a>
+              <a href="#" aria-label="YouTube"
+                ><i class="fab fa-youtube" aria-hidden="true"></i
+              ></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+              <li><a href="index.html#services">Services</a></li>
+              <li><a href="index.html#departments">Departments</a></li>
+              <li><a href="index.html#news">News</a></li>
+              <li><a href="support.html">Support</a></li>
+              <li><a href="newvillages.html">Villages Directory</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Services</h3>
+            <ul class="footer-links">
+              <li><a href="#">Birth Registration</a></li>
+              <li><a href="#">Revenue Collection</a></li>
+              <li><a href="#">Business Permits</a></li>
+              <li><a href="#">Health Services</a></li>
+              <li><a href="#">Social Welfare</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Info</h3>
+            <ul class="footer-links">
+              <li>
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                Ugwunagbo LGA Secretariat
+              </li>
+              <li>
+                <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
+                7890
+              </li>
+              <li>
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+                info@ugwunagbolga.gov.ng
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>Courtesy Of SmartDevTechs</p>
+          <p>
+            &copy; <span id="currentYear"></span> Ugwunagbo Local Government
+            Area. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+      <i class="fas fa-chevron-up" aria-hidden="true"></i>
+    </button>
+
+    <script src="js/events.js"></script>
+</body>
+</html>

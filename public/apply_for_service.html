@@ -404,6 +404,414 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+
+
+
+        /* Dynamic date of birth field */
+.dob-field-container {
+    margin-top: 10px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+
+
+
+/* Payment Instructions Styling */
+.payment-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    margin: 2rem 0;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.payment-section h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.bank-details {
+    background: white;
+    padding: 1.8rem;
+    border-radius: 12px;
+    border-left: 5px solid var(--accent);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
+}
+
+.bank-details h4 {
+    color: #2c3e50;
+    margin-bottom: 1.2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #f1f3f4;
+}
+
+.bank-info {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.info-row:hover {
+    background: #f1f3f4;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.info-row strong {
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.info-row span {
+    color: #212529;
+    font-weight: 500;
+    text-align: right;
+}
+
+.info-row .account-number {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+.info-row .amount {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    border: 1px dashed var(--accent);
+}
+
+.payment-notes {
+    margin-top: 1.8rem;
+    padding-top: 1.5rem;
+    border-top: 2px dashed #dee2e6;
+}
+
+.payment-notes p {
+    color: #555;
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+}
+
+.payment-notes i {
+    color: var(--primary);
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.payment-notes strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Application ID Styling */
+.application-id {
+    background: linear-gradient(135deg, var(--primary), #1e5a1e);
+    color: white;
+    padding: 1.2rem 2rem;
+    border-radius: 10px;
+    margin: 1.5rem auto;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    max-width: 500px;
+    box-shadow: 0 4px 15px rgba(0, 100, 0, 0.2);
+}
+
+.application-id::before {
+    content: "Application ID: ";
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+/* Action Buttons Styling */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.action-buttons .submit-btn {
+    min-width: 180px;
+    padding: 14px 25px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 10px;
+}
+
+/* Payment Status Styling */
+.payment-status {
+    text-align: center;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    margin: 1.5rem 0;
+}
+
+.status-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.status-icon.success {
+    color: #28a745;
+}
+
+.status-icon.pending {
+    color: #ffc107;
+}
+
+.status-icon.failed {
+    color: #dc3545;
+}
+
+#paymentStatusTitle {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.4rem;
+}
+
+#paymentStatusMessage {
+    color: #666;
+    font-size: 1.05rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.next-steps {
+    margin-top: 2rem;
+    text-align: left;
+    display: inline-block;
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+}
+
+.next-steps p {
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.next-steps ul {
+    margin-top: 0.5rem;
+    padding-left: 1.2rem;
+}
+
+.next-steps li {
+    color: #555;
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+}
+
+/* Mobile Responsive Design for Payment Section */
+@media (max-width: 768px) {
+    .payment-section {
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .payment-section h3 {
+        font-size: 1.3rem;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .bank-details {
+        padding: 1.2rem;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.8rem;
+    }
+
+    .info-row span {
+        text-align: left;
+        width: 100%;
+        padding-left: 0.5rem;
+    }
+
+    .bank-details h4 {
+        font-size: 1.1rem;
+    }
+
+    .application-id {
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        margin: 1rem auto;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .action-buttons .submit-btn {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .payment-notes p {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+    }
+
+    .payment-status {
+        padding: 1.5rem;
+    }
+
+    .status-icon {
+        font-size: 2.8rem;
+    }
+
+    #paymentStatusTitle {
+        font-size: 1.2rem;
+    }
+
+    #paymentStatusMessage {
+        font-size: 0.95rem;
+    }
+
+    .next-steps {
+        padding: 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .payment-section {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    .payment-section h3 {
+        font-size: 1.2rem;
+    }
+
+    .bank-details {
+        padding: 1rem;
+    }
+
+    .info-row strong {
+        font-size: 0.9rem;
+    }
+
+    .info-row span {
+        font-size: 0.9rem;
+    }
+
+    .info-row .account-number {
+        font-size: 1rem;
+    }
+
+    .info-row .amount {
+        font-size: 1rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .payment-notes p {
+        font-size: 0.85rem;
+    }
+
+    .application-id {
+        font-size: 1rem;
+        padding: 0.8rem 1rem;
+    }
+}
+
+/* Animation for payment section */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.payment-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Print-specific styles */
+@media print {
+    .payment-section {
+        border: 2px solid #000;
+        box-shadow: none;
+        background: white !important;
+    }
+    
+    .action-buttons {
+        display: none;
+    }
+    
+    .bank-details {
+        break-inside: avoid;
+    }
+}
     </style>
 </head>
 <body>
@@ -450,7 +858,7 @@
                         <li><a href="events.html">Events</a></li>
                         <li><a href="index.html#news">News</a></li>
                         <li data-hide-on-mobile><a href="index.html#culture">Culture</a></li>
-                        <li data-hide-on-mobile><a href="index.html#services">Services</a></li>
+                        <li data-hide-on-mobile><a href="index.html#services" class="active">Services</a></li>
                         <li data-hide-on-mobile><a href="index.html#departments">Departments</a></li>
                         <li><a href="index.html#contact">Contact</a></li>
                     </ul>
@@ -481,7 +889,6 @@
                             <select id="serviceType" class="form-control" required>
                                 <option value="">Select a service...</option>
                                 <option value="birth-certificate">Birth Certificate</option>
-                                <option value="death-certificate">Death Certificate</option>
                                 <option value="marriage-certificate">Marriage Certificate</option>
                                 <option value="local-origin">Certificate of Local Govt. Origin</option>
                                 <option value="business-permit">Business Permit</option>
@@ -514,6 +921,8 @@
                                 <label for="applicationDate" class="required">Application Date</label>
                                 <input type="date" id="applicationDate" class="form-control" required>
                             </div>
+                            <div id="dobFieldContainer"></div>
+
                         </div>
                     </div>
 
@@ -612,47 +1021,53 @@
     <div class="application-id" id="successApplicationId" style="background: var(--primary); color: white; padding: 1rem; border-radius: 8px; margin: 1.5rem 0; font-weight: bold; text-align: center;"></div>
     
     <!-- Payment Instructions -->
-    <div class="payment-section" style="background: #f8f9fa; padding: 2rem; border-radius: 10px; margin: 2rem 0;">
-        <h3 style="color: var(--primary); margin-bottom: 1.5rem; text-align: center;">
-            <i class="fas fa-credit-card"></i> Payment Instructions
-        </h3>
+    <!-- Payment Instructions -->
+<div class="payment-section">
+    <h3>
+        <i class="fas fa-credit-card"></i> Payment Instructions
+    </h3>
+    
+    <div class="bank-details">
+        <h4>Make Payment to Official Account</h4>
         
-        <div class="bank-details" style="background: white; padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--accent);">
-            <h4 style="color: #333; margin-bottom: 1rem;">Make Payment to Official Account:</h4>
-            
-            <div class="bank-info" style="display: grid; gap: 0.8rem;">
-                <div class="info-row" style="display: flex; justify-content: space-between;">
-                    <strong>Bank Name:</strong>
-                    <span>First Bank of Nigeria</span>
-                </div>
-                <div class="info-row" style="display: flex; justify-content: space-between;">
-                    <strong>Account Name:</strong>
-                    <span>Ugwunagbo Local Government</span>
-                </div>
-                <div class="info-row" style="display: flex; justify-content: space-between;">
-                    <strong>Account Number:</strong>
-                    <span style="font-family: monospace; font-weight: bold;">3112345678</span>
-                </div>
-                <div class="info-row" style="display: flex; justify-content: space-between;">
-                    <strong>Amount:</strong>
-                    <span style="color: var(--accent); font-weight: bold;">₦5,000.00</span>
-                </div>
+        <div class="bank-info">
+            <div class="info-row">
+                <strong>Bank Name:</strong>
+                <span>First Bank of Nigeria</span>
             </div>
-            
-            <div class="payment-notes" style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
-                    <i class="fas fa-info-circle"></i> 
-                    <strong>Important:</strong> Use your Application ID as payment reference
-                </p>
-                <p style="color: #666; font-size: 0.9rem;">
-                    <i class="fas fa-clock"></i> 
-                    Payment verification takes 24-48 hours
-                </p>
+            <div class="info-row">
+                <strong>Account Name:</strong>
+                <span>Ugwunagbo Local Government</span>
+            </div>
+            <div class="info-row">
+                <strong>Account Number:</strong>
+                <span class="account-number">3112345678</span>
+            </div>
+            <div class="info-row">
+                <strong>Amount:</strong>
+                <span class="amount">₦5,000.00</span>
             </div>
         </div>
         
+        <div class="payment-notes">
+            <p>
+                <i class="fas fa-info-circle"></i> 
+                <strong>Important:</strong> Use your Application ID as payment reference
+            </p>
+            <p>
+                <i class="fas fa-clock"></i> 
+                Payment verification takes 24-48 hours
+            </p>
+            <p>
+                <i class="fas fa-phone"></i> 
+                <strong>Call:</strong> 07012345678 for payment assistance
+            </p>
+        </div>
+    </div>
+</div>
+        
         <!-- Payment Confirmation Form -->
-        <div class="payment-confirmation" style="margin-top: 2rem;">
+        <!-- <div class="payment-confirmation" style="margin-top: 2rem;">
             <h4 style="color: #333; margin-bottom: 1rem;">Confirm Your Payment</h4>
             <form id="paymentConfirmationForm" style="background: white; padding: 1.5rem; border-radius: 8px;">
                 <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
@@ -684,7 +1099,7 @@
                     </button>
                 </div>
             </form>
-        </div>
+        </div> -->
     </div>
     
     <!-- Payment Status Section -->
@@ -697,8 +1112,7 @@
                 <p style="font-weight: bold;">Next Steps:</p>
                 <ul style="text-align: left; display: inline-block; margin-top: 0.5rem;">
                     <li>Your application will be processed within 3-5 working days</li>
-                    <li>You will receive email notifications for updates</li>
-                    <li>Check your application status in the admin portal</li>
+                    <li>You will receive SMS notifications for updates</li>
                 </ul>
             </div>
         </div>
@@ -709,10 +1123,10 @@
                 style="background: linear-gradient(135deg, #6c757d, #868e96);">
             <i class="fas fa-home"></i> Return to Home
         </button>
-        <button class="submit-btn" id="printReceiptBtn" 
+        <!-- <button class="submit-btn" id="printReceiptBtn" 
                 style="background: linear-gradient(135deg, #17a2b8, #138496);">
             <i class="fas fa-print"></i> Print Instructions
-        </button>
+        </button> -->
     </div>
 </div>
             </div>

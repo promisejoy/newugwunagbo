@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Department - Ugwunagbo LGA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+/* ============================================
+   Health Department Specific Styling
+   ============================================ */
+
+/* Department Header - Red/Health Theme */
+.department-header {
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    text-align: center;
+}
+
+.department-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 2.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.department-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.department-intro {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Emergency Alert */
+.emergency-alert {
+    background: #e74c3c;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    font-weight: 600;
+}
+
+.emergency-alert i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+/* Department Content */
+.department-content {
+    padding: 40px 20px;
+    background: #f8f9fa;
+}
+
+.department-card {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.department-card-header {
+    background: #e74c3c;
+    color: white;
+    padding: 20px;
+}
+
+.department-card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+}
+
+.department-card-body {
+    padding: 25px;
+}
+
+.department-card-body h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.department-card-body p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Healthcare Facilities */
+.facilities-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.facility-card {
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid;
+}
+
+.facility-card h4 {
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.facility-card p {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.facility-info {
+    margin-top: 15px;
+}
+
+.facility-info div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.facility-info i {
+    margin-right: 10px;
+    width: 20px;
+}
+
+/* Services Tabs */
+.services-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.service-category {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #e74c3c;
+}
+
+.service-category h3 {
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.service-category h3 i {
+    color: #e74c3c;
+}
+
+.service-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.service-list li {
+    padding: 8px 0;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.service-list li i {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    width: 20px;
+}
+
+/* Immunization Schedule */
+.schedule-table {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+thead {
+    background: #f8f9fa;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid #e74c3c;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Contact Information */
+.contact-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.contact-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 180px;
+}
+
+.contact-item i {
+    font-size: 1.8rem;
+    color: #e74c3c;
+    margin-bottom: 12px;
+}
+
+.contact-item h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 100%;
+}
+
+.contact-item p {
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+    font-size: 0.9rem;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Back Button */
+.back-to-departments {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.back-to-departments a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: #e74c3c;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 2px solid #e74c3c;
+    justify-content: center;
+}
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Header Mobile */
+    .department-header {
+        padding: 40px 15px;
+    }
+    
+    .department-header h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .department-intro {
+        font-size: 1rem;
+        line-height: 1.5;
+        padding: 0 10px;
+    }
+    
+    .department-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    
+    /* Emergency Alert Mobile */
+    .emergency-alert {
+        font-size: 0.9rem;
+        padding: 12px 15px;
+    }
+    
+    /* Content Mobile */
+    .department-content {
+        padding: 30px 15px;
+    }
+    
+    .department-card {
+        margin-bottom: 25px;
+        border-radius: 10px;
+    }
+    
+    .department-card-header {
+        padding: 15px;
+    }
+    
+    .department-card-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .department-card-body {
+        padding: 20px;
+    }
+    
+    .department-card-body h3 {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+    
+    /* Facilities Grid Mobile */
+    .facilities-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .facility-card {
+        padding: 15px;
+    }
+    
+    .facility-card h4 {
+        font-size: 1rem;
+    }
+    
+    .facility-card p {
+        font-size: 0.9rem;
+    }
+    
+    /* Services Tabs Mobile */
+    .services-tabs {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .service-category {
+        padding: 15px;
+    }
+    
+    .service-category h3 {
+        font-size: 1.1rem;
+    }
+    
+    .service-list li {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    /* Schedule Table Mobile */
+    table {
+        min-width: 100%;
+    }
+    
+    th, td {
+        padding: 12px 10px;
+        font-size: 0.85rem;
+    }
+    
+    /* CONTACT INFORMATION - Mobile Fixed */
+    .contact-info-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .contact-item {
+        padding: 20px 15px;
+        min-height: auto;
+        margin-bottom: 0;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .contact-item i {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+    
+    .contact-item h4 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+    
+    .contact-item p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+        text-align: center;
+    }
+    
+    /* Fix for contact info text - remove line breaks and handle properly */
+    .contact-item p br {
+        display: none;
+    }
+    
+    /* Handle multi-line contact info */
+    .contact-item:nth-child(1) p,
+    .contact-item:nth-child(2) p,
+    .contact-item:nth-child(3) p,
+    .contact-item:nth-child(4) p {
+        white-space: normal;
+    }
+    
+    /* Back Button Mobile */
+    .back-to-departments {
+        margin-top: 25px;
+    }
+    
+    .back-to-departments a {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra Small Screens */
+    .department-header {
+        padding: 30px 10px;
+    }
+    
+    .department-header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .department-intro {
+        font-size: 0.95rem;
+        padding: 0 5px;
+    }
+    
+    .emergency-alert {
+        font-size: 0.85rem;
+        padding: 10px 12px;
+    }
+    
+    .department-content {
+        padding: 20px 10px;
+    }
+    
+    .department-card-body {
+        padding: 15px;
+    }
+    
+    .department-card-header {
+        padding: 12px 15px;
+    }
+    
+    .department-card-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    /* Contact Items Extra Small */
+    .contact-item {
+        padding: 15px 12px;
+    }
+    
+    .contact-item i {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+    
+    .contact-item h4 {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+    }
+    
+    .contact-item p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    /* Fix for very long text in contact info */
+    .contact-item p {
+        word-break: break-word;
+        hyphens: auto;
+    }
+    
+    /* Table Extra Small */
+    th, td {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 360px) {
+    /* Very Small Screens */
+    .department-header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .department-intro {
+        font-size: 0.9rem;
+    }
+    
+    .emergency-alert {
+        font-size: 0.8rem;
+    }
+    
+    .contact-item p {
+        font-size: 0.8rem;
+    }
+    
+    .service-list li {
+        font-size: 0.9rem;
+    }
+    
+    .back-to-departments a {
+        font-size: 0.8rem;
+        padding: 10px 12px;
+    }
+}
+
+/* Text Readability */
+.department-card-body h3,
+.department-card-body h4 {
+    color: #2c3e50;
+    margin-top: 0;
+    line-height: 1.3;
+}
+
+.department-card-body p,
+.department-card-body li {
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Remove ALL hover effects completely - NO background changes on hover */
+.department-card,
+.contact-item,
+.service-category,
+.facility-card,
+.back-to-departments a,
+.service-list li {
+    transition: none;
+}
+
+/* Specifically ensure no hover background changes */
+.department-card:hover,
+.contact-item:hover,
+.service-category:hover,
+.facility-card:hover,
+.service-list li:hover {
+    background-color: inherit !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Ensure no hover color changes */
+.service-list li:hover {
+    background-color: transparent !important;
+    color: #555 !important;
+}
+
+.service-list li:hover i {
+    color: #e74c3c !important;
+}
+
+/* Keep minimal table hover for readability */
+tbody tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Color fixes for facility cards */
+.facility-card:nth-child(1) {
+    background: #e8f4f8 !important;
+    border-left-color: #3498db !important;
+}
+
+.facility-card:nth-child(1) i,
+.facility-card:nth-child(1) .facility-info i {
+    color: #3498db !important;
+}
+
+.facility-card:nth-child(2) {
+    background: #e8f6f3 !important;
+    border-left-color: #27ae60 !important;
+}
+
+.facility-card:nth-child(2) i,
+.facility-card:nth-child(2) .facility-info i {
+    color: #27ae60 !important;
+}
+
+.facility-card:nth-child(3) {
+    background: #fef9e7 !important;
+    border-left-color: #f39c12 !important;
+}
+
+.facility-card:nth-child(3) i,
+.facility-card:nth-child(3) .facility-info i {
+    color: #f39c12 !important;
+}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <div class="logo">
+            <div class="logo-placeholder">
+              <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
+            </div>
+            <div class="logo-text">
+              <h1>Ugwunagbo LGA</h1>
+              <p>Abia State, Nigeria</p>
+            </div>
+          </div>
+          <div class="header-contact-info">
+            <div class="header-contact-item">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <span>+234 123 456 7890</span>
+            </div>
+            <div class="header-contact-item">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <span>info@ugwunagbolga.gov.ng</span>
+            </div>
+          </div>
+        </div>
+        <nav>
+            <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars" aria-hidden="true"></i> Menu
+            </button>
+            <div class="nav-scroll-container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About Us</a></li>
+                    <li data-hide-on-mobile><a href="index.html#leadership">Leadership</a></li>
+                    <li><a href="forum.html">Diaspora Forum</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="index.html#news">News</a></li> 
+                    <li><a href="academia.html">Academia</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li data-hide-on-mobile><a href="index.html#culture">Culture</a></li>
+                    <li data-hide-on-mobile><a href="index.html#services">Services</a></li>
+                    <li data-hide-on-mobile>
+                        <a href="index.html#departments" class="active">Departments</a>
+                    </li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Department Header -->
+    <section class="department-header">
+        <div class="container">
+            <div class="department-icon">
+                <i class="fas fa-heartbeat"></i>
+            </div>
+            <h1>Health Department</h1>
+            <p class="department-intro">
+                Dedicated to improving the health and well-being of Ugwunagbo residents 
+                through quality healthcare services, disease prevention, and health promotion.
+            </p>
+        </div>
+    </section>
+
+    <!-- Emergency Alert -->
+    <div class="emergency-alert">
+        <div class="container">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>EMERGENCY MEDICAL SERVICES:</strong> Call +234 807 999 1111 (24/7 Ambulance Service)
+        </div>
+    </div>
+
+    <!-- Department Content -->
+    <section class="department-content">
+        <div class="container">
+            <!-- Healthcare Facilities -->
+            <div class="department-card">
+                <div class="department-card-header">
+                    <h2>Healthcare Facilities</h2>
+                </div>
+                <div class="department-card-body">
+                    <div class="facilities-grid">
+                        <div class="facility-card">
+                            <h4><i class="fas fa-hospital"></i> Ugwunagbo General Hospital</h4>
+                            <p>Comprehensive medical services including emergency care, surgery, and maternity</p>
+                            <div class="facility-info">
+                                <div>
+                                    <i class="fas fa-phone"></i>
+                                    <span>+234 802 333 4444</span>
+                                </div>
+                                <div>
+                                    <i class="fas fa-clock"></i>
+                                    <span>24/7 Emergency Services</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="facility-card">
+                            <h4><i class="fas fa-clinic-medical"></i> Primary Healthcare Centers</h4>
+                            <p>10 centers across communities providing basic healthcare and immunization</p>
+                            <div class="facility-info">
+                                <div>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>All 10 Wards Covered</span>
+                                </div>
+                                <div>
+                                    <i class="fas fa-clock"></i>
+                                    <span>8:00 AM - 4:00 PM Daily</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="facility-card">
+                            <h4><i class="fas fa-pump-medical"></i> Maternal & Child Health Clinics</h4>
+                            <p>Specialized care for pregnant women, nursing mothers, and children under 5</p>
+                            <div class="facility-info">
+                                <div>
+                                    <i class="fas fa-baby"></i>
+                                    <span>Free Antenatal Services</span>
+                                </div>
+                                <div>
+                                    <i class="fas fa-syringe"></i>
+                                    <span>Immunization Every Wednesday</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Services -->
+            <div class="department-card">
+                <div class="department-card-header">
+                    <h2>Health Services</h2>
+                </div>
+                <div class="department-card-body">
+                    <div class="services-tabs">
+                        <div class="service-category">
+                            <h3><i class="fas fa-user-md"></i> Clinical Services</h3>
+                            <ul class="service-list">
+                                <li><i class="fas fa-stethoscope"></i> General medical consultations</li>
+                                <li><i class="fas fa-baby"></i> Maternal and child health</li>
+                                <li><i class="fas fa-heart"></i> Cardiology and chronic care</li>
+                                <li><i class="fas fa-lungs"></i> Respiratory care</li>
+                            </ul>
+                        </div>
+                        <div class="service-category">
+                            <h3><i class="fas fa-shield-virus"></i> Preventive Care</h3>
+                            <ul class="service-list">
+                                <li><i class="fas fa-syringe"></i> Immunization programs</li>
+                                <li><i class="fas fa-virus-slash"></i> Disease surveillance</li>
+                                <li><i class="fas fa-hand-sparkles"></i> Hygiene education</li>
+                                <li><i class="fas fa-seedling"></i> Nutrition programs</li>
+                            </ul>
+                        </div>
+                        <div class="service-category">
+                            <h3><i class="fas fa-ambulance"></i> Emergency Services</h3>
+                            <ul class="service-list">
+                                <li><i class="fas fa-ambulance"></i> 24/7 Ambulance service</li>
+                                <li><i class="fas fa-first-aid"></i> Emergency medical care</li>
+                                <li><i class="fas fa-capsules"></i> Emergency drug supply</li>
+                                <li><i class="fas fa-phone-alt"></i> Medical emergency hotline</li>
+                            </ul>
+                        </div>
+                        <div class="service-category">
+                            <h3><i class="fas fa-chart-line"></i> Public Health</h3>
+                            <ul class="service-list">
+                                <li><i class="fas fa-spray-can"></i> Environmental health</li>
+                                <li><i class="fas fa-vial"></i> Laboratory services</li>
+                                <li><i class="fas fa-pills"></i> Pharmacy services</li>
+                                <li><i class="fas fa-file-medical"></i> Health records</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Immunization Schedule -->
+            <div class="department-card">
+                <div class="department-card-header">
+                    <h2>Immunization Schedule</h2>
+                </div>
+                <div class="department-card-body">
+                    <div class="schedule-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Time</th>
+                                    <th>Location</th>
+                                    <th>Vaccines Available</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Every Wednesday</td>
+                                    <td>9:00 AM - 2:00 PM</td>
+                                    <td>All PHC Centers</td>
+                                    <td>BCG, OPV, Pentavalent, Measles</td>
+                                </tr>
+                                <tr>
+                                    <td>1st Friday Monthly</td>
+                                    <td>10:00 AM - 3:00 PM</td>
+                                    <td>General Hospital</td>
+                                    <td>HPV, Meningitis, Yellow Fever</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="department-card">
+                <div class="department-card-header">
+                    <h2>Contact & Support</h2>
+                </div>
+                <div class="department-card-body">
+                    <div class="contact-info-grid">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h4>Health Department</h4>
+                            <p>Health Services Block<br>Ugwunagbo LGA Secretariat<br>Behind General Hospital</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <h4>Emergency Contacts</h4>
+                            <p>Ambulance: +234 807 999 1111<br>General Hospital: +234 802 333 4444<br>PHC Support: +234 803 222 3333</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <h4>Email Addresses</h4>
+                            <p>health@ugwunagbolga.gov.ng<br>medical@ugwunagbolga.gov.ng<br>phc@ugwunagbolga.gov.ng</p>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <h4>Service Hours</h4>
+                            <p>Department: 8:00 AM - 4:00 PM<br>General Hospital: 24/7<br>PHC Centers: 8:00 AM - 4:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Departments -->
+            <div class="back-to-departments">
+                <a href="index.html#departments">
+                    <i class="fas fa-arrow-left"></i> Back to All Departments
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Ugwunagbo LGA</h3>
+            <p>Committed to serving our community with integrity, transparency, and excellence.</p>
+            <div class="social-links">
+              <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+              <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+              <li><a href="index.html#services">Services</a></li>
+              <li><a href="index.html#departments">Departments</a></li>
+              <li><a href="index.html#news">News</a></li>
+              <li><a href="support.html">Support</a></li>
+              <li><a href="newvillages.html">Villages Directory</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Services</h3>
+            <ul class="footer-links">
+              <li><a href="#">Birth Registration</a></li>
+              <li><a href="#">Revenue Collection</a></li>
+              <li><a href="#">Business Permits</a></li>
+              <li><a href="#">Health Services</a></li>
+              <li><a href="#">Social Welfare</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Info</h3>
+            <ul class="footer-links">
+              <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ugwunagbo LGA Secretariat</li>
+              <li><i class="fas fa-phone" aria-hidden="true"></i> +234 123 456 7890</li>
+              <li><i class="fas fa-envelope" aria-hidden="true"></i> info@ugwunagbolga.gov.ng</li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>Courtesy Of SmartDevTechs</p>
+          <p>&copy; <span id="currentYear"></span> Ugwunagbo Local Government Area. All Rights Reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+      <i class="fas fa-chevron-up" aria-hidden="true"></i>
+    </button>
+
+    <script src="js/events.js"></script>
+</body>
+</html>

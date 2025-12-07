@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judiciary Department - Ugwunagbo LGA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+/* ============================================
+   Judiciary Department Specific Styling
+   ============================================ */
+
+/* Department Header - Dark Blue/Black Theme */
+.department-header {
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    text-align: center;
+}
+
+.department-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: white;
+    font-size: 2.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.department-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.department-intro {
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Department Content */
+.department-content {
+    padding: 40px 20px;
+    background: #f8f9fa;
+}
+
+.department-card {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.department-card-header {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+}
+
+.department-card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: white;
+}
+
+.department-card-body {
+    padding: 25px;
+}
+
+.department-card-body h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.department-card-body p {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Department Info */
+.department-info {
+    margin-top: 20px;
+}
+
+.department-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.department-services {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #2c3e50;
+}
+
+/* Department Services */
+.department-services h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.department-services h3 i {
+    color: #2c3e50;
+}
+
+/* Department Contact */
+.department-contact h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.department-contact h3 i {
+    color: #34495e;
+}
+
+.service-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.service-list li {
+    padding: 12px 0;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.5;
+    border-bottom: 1px solid #eee;
+}
+
+.service-list li:last-child {
+    border-bottom: none;
+}
+
+.service-list li i {
+    color: #3498db;
+    font-size: 1rem;
+    width: 24px;
+}
+
+/* Department Contact */
+.department-contact {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #34495e;
+}
+
+.department-contact h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.department-contact h3 i {
+    color: #34495e;
+}
+
+.contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.contact-info-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.contact-info-item i {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-top: 3px;
+    width: 24px;
+}
+
+.contact-info-item div {
+    flex: 1;
+}
+
+.contact-info-item strong {
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+.contact-info-item div span,
+.contact-info-item div {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Back Button */
+.back-to-departments {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.back-to-departments a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: #2c3e50;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 2px solid #2c3e50;
+    justify-content: center;
+}
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Header Mobile */
+    .department-header {
+        padding: 40px 15px;
+    }
+    
+    .department-header h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .department-intro {
+        font-size: 1rem;
+        line-height: 1.5;
+        padding: 0 10px;
+    }
+    
+    .department-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    
+    /* Content Mobile */
+    .department-content {
+        padding: 30px 15px;
+    }
+    
+    .department-card {
+        margin-bottom: 25px;
+        border-radius: 10px;
+    }
+    
+    .department-card-header {
+        padding: 15px;
+    }
+    
+    .department-card-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .department-card-body {
+        padding: 20px;
+    }
+    
+    .department-card-body h3 {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+    
+    /* Department Details Mobile */
+    .department-details {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .department-services,
+    .department-contact {
+        padding: 15px;
+    }
+    
+    .department-services h3,
+    .department-contact h3 {
+        font-size: 1.1rem;
+    }
+    
+    .service-list li {
+        padding: 10px 0;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    
+    /* Contact Info Mobile - FIXED */
+    .contact-info-item {
+        gap: 12px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+    }
+    
+    .contact-info-item i {
+        font-size: 1rem;
+    }
+    
+    .contact-info-item strong {
+        font-size: 0.9rem;
+    }
+    
+    .contact-info-item div span,
+    .contact-info-item div {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+    
+    /* REMOVED THE PROBLEMATIC CSS RULES */
+    /* These were causing the text to disappear */
+    
+    /* Back Button Mobile */
+    .back-to-departments {
+        margin-top: 25px;
+    }
+    
+    .back-to-departments a {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra Small Screens */
+    .department-header {
+        padding: 30px 10px;
+    }
+    
+    .department-header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .department-intro {
+        font-size: 0.95rem;
+        padding: 0 5px;
+    }
+    
+    .department-content {
+        padding: 20px 10px;
+    }
+    
+    .department-card-body {
+        padding: 15px;
+    }
+    
+    .department-card-header {
+        padding: 12px 15px;
+    }
+    
+    .department-card-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    /* Contact Items Extra Small */
+    .contact-info-item {
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+    }
+    
+    .contact-info-item i {
+        font-size: 0.9rem;
+        width: 20px;
+    }
+    
+    .contact-info-item strong {
+        font-size: 0.85rem;
+    }
+    
+    .contact-info-item div span,
+    .contact-info-item div {
+        font-size: 0.8rem;
+    }
+    
+    /* Fix for very long text in contact info */
+    .contact-info-item div span,
+    .contact-info-item div {
+        word-break: break-word;
+        hyphens: auto;
+    }
+    
+    /* Service List Extra Small */
+    .service-list li {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 360px) {
+    /* Very Small Screens */
+    .department-header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .department-intro {
+        font-size: 0.9rem;
+    }
+    
+    .contact-info-item div span,
+    .contact-info-item div {
+        font-size: 0.75rem;
+    }
+    
+    .service-list li {
+        font-size: 0.8rem;
+    }
+    
+    .back-to-departments a {
+        font-size: 0.8rem;
+        padding: 10px 12px;
+    }
+}
+
+/* Text Readability */
+.department-card-body h3,
+.department-card-body h4 {
+    color: #2c3e50;
+    margin-top: 0;
+    line-height: 1.3;
+}
+
+.department-card-body p,
+.department-card-body li {
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Remove ALL hover effects completely - NO background changes on hover */
+.department-card,
+.department-services,
+.department-contact,
+.contact-info-item,
+.back-to-departments a,
+.service-list li {
+    transition: none;
+}
+
+/* Specifically ensure no hover background changes */
+.department-card:hover,
+.department-services:hover,
+.department-contact:hover,
+.service-list li:hover {
+    background-color: inherit !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Ensure no hover color changes */
+.service-list li:hover {
+    background-color: transparent !important;
+    color: #555 !important;
+}
+
+.service-list li:hover i {
+    color: #3498db !important;
+}
+
+
+
+
+/* ============================================
+   FIX FOR TRANSPARENT H3 HEADINGS
+   ============================================ */
+
+/* Force h3 headings to always be fully opaque and visible */
+.department-services h3,
+.department-contact h3,
+.department-services h3 i,
+.department-contact h3 i {
+    opacity: 1 !important;
+    color: #2c3e50 !important;
+    visibility: visible !important;
+}
+
+/* Specifically target the icons */
+.department-services h3 i {
+    color: #2c3e50 !important; /* Judiciary blue/black, INEC orange */
+}
+
+.department-contact h3 i {
+    color: #34495e !important; /* Judiciary dark blue, INEC purple */
+}
+
+/* Override any hover states that might be making them transparent */
+.department-services:hover h3,
+.department-contact:hover h3,
+.department-services:hover h3 i,
+.department-contact:hover h3 i {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* For INEC specific colors */
+.department-header[style*="f39c12"] .department-services h3 i {
+    color: #f39c12 !important; /* INEC orange */
+}
+
+.department-header[style*="8e44ad"] .department-contact h3 i {
+    color: #8e44ad !important; /* INEC purple */
+}
+
+/* Nuclear option: force all text in department sections to be visible */
+.department-card-body * {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.department-details * {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <div class="header-top">
+          <div class="logo">
+            <div class="logo-placeholder">
+              <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
+            </div>
+            <div class="logo-text">
+              <h1>Ugwunagbo LGA</h1>
+              <p>Abia State, Nigeria</p>
+            </div>
+          </div>
+          <div class="header-contact-info">
+            <div class="header-contact-item">
+              <i class="fas fa-phone" aria-hidden="true"></i>
+              <span>+234 123 456 7890</span>
+            </div>
+            <div class="header-contact-item">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <span>info@ugwunagbolga.gov.ng</span>
+            </div>
+          </div>
+        </div>
+        <nav>
+            <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars" aria-hidden="true"></i> Menu
+            </button>
+            <div class="nav-scroll-container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About Us</a></li>
+                    <li data-hide-on-mobile><a href="index.html#leadership">Leadership</a></li>
+                    <li><a href="forum.html">Diaspora Forum</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="index.html#news">News</a></li> 
+                    <li><a href="academia.html">Academia</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li data-hide-on-mobile><a href="index.html#culture">Culture</a></li>
+                    <li data-hide-on-mobile><a href="index.html#services">Services</a></li>
+                    <li data-hide-on-mobile>
+                        <a href="index.html#departments" class="active">Departments</a>
+                    </li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Department Header -->
+    <section class="department-header">
+        <div class="container">
+            <div class="department-icon">
+                <i class="fas fa-gavel"></i>
+            </div>
+            <h1>Judiciary Department</h1>
+            <p class="department-intro">
+                Legal affairs, dispute resolution, and justice administration in Ugwunagbo LGA
+            </p>
+        </div>
+    </section>
+
+    <!-- Department Content -->
+    <section class="department-content">
+        <div class="container">
+            <div class="department-card">
+                <div class="department-card-header">
+                    <h2>About the Judiciary Department</h2>
+                </div>
+                <div class="department-card-body">
+                    <p>The Judiciary Department of Ugwunagbo Local Government Area is responsible for administering justice, resolving disputes, and upholding the rule of law within our jurisdiction. We work to ensure fair and equitable access to justice for all residents.</p>
+                    
+                    <div class="department-details">
+                        <div class="department-services">
+                            <h3><i class="fas fa-tasks"></i> Our Services</h3>
+                            <ul class="service-list">
+                                <li><i class="fas fa-check-circle"></i> Civil dispute resolution</li>
+                                <li><i class="fas fa-check-circle"></i> Customary court proceedings</li>
+                                <li><i class="fas fa-check-circle"></i> Legal advisory services</li>
+                                <li><i class="fas fa-check-circle"></i> Marriage registration and dissolution</li>
+                                <li><i class="fas fa-check-circle"></i> Land dispute mediation</li>
+                                <li><i class="fas fa-check-circle"></i> Family law matters</li>
+                                <li><i class="fas fa-check-circle"></i> Small claims adjudication</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="department-contact">
+                            <h3><i class="fas fa-address-book"></i> Contact Information</h3>
+                            <div class="contact-info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <strong>Address:</strong><br>
+                                    Judiciary Department, Ugwunagbo LGA Secretariat,<br>
+                                    Ugwunagbo, Abia State
+                                </div>
+                            </div>
+                            <div class="contact-info-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <strong>Phone:</strong><br>
+                                    +234 803 456 7890
+                                </div>
+                            </div>
+                            <div class="contact-info-item">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <strong>Email:</strong><br>
+                                    judiciary@ugwunagbolga.gov.ng
+                                </div>
+                            </div>
+                            <div class="contact-info-item">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <strong>Working Hours:</strong><br>
+                                    Monday - Friday: 8:00 AM - 4:00 PM
+                                </div>
+                            </div>
+                            <div class="contact-info-item">
+                                <i class="fas fa-user-tie"></i>
+                                <div>
+                                    <strong>Head of Department:</strong><br>
+                                    Hon. Justice Chika Okoro
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Departments -->
+            <div class="back-to-departments">
+                <a href="index.html#departments">
+                    <i class="fas fa-arrow-left"></i> Back to All Departments
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Ugwunagbo LGA</h3>
+            <p>Committed to serving our community with integrity, transparency, and excellence.</p>
+            <div class="social-links">
+              <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+              <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+              <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+              <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#about">About Us</a></li>
+              <li><a href="index.html#leadership">Leadership</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+              <li><a href="index.html#services">Services</a></li>
+              <li><a href="index.html#departments">Departments</a></li>
+              <li><a href="index.html#news">News</a></li>
+              <li><a href="support.html">Support</a></li>
+              <li><a href="newvillages.html">Villages Directory</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Services</h3>
+            <ul class="footer-links">
+              <li><a href="#">Birth Registration</a></li>
+              <li><a href="#">Revenue Collection</a></li>
+              <li><a href="#">Business Permits</a></li>
+              <li><a href="#">Health Services</a></li>
+              <li><a href="#">Social Welfare</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Info</h3>
+            <ul class="footer-links">
+              <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Ugwunagbo LGA Secretariat</li>
+              <li><i class="fas fa-phone" aria-hidden="true"></i> +234 123 456 7890</li>
+              <li><i class="fas fa-envelope" aria-hidden="true"></i> info@ugwunagbolga.gov.ng</li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>Courtesy Of SmartDevTechs</p>
+          <p>&copy; <span id="currentYear"></span> Ugwunagbo Local Government Area. All Rights Reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+      <i class="fas fa-chevron-up" aria-hidden="true"></i>
+    </button>
+
+    <script src="js/events.js"></script>
+</body>
+</html>

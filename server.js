@@ -9,6 +9,8 @@ const helmet = require("helmet");
 const { body, validationResult } = require("express-validator");
 require("dotenv").config();
 
+const leadershipHistoryRoutes = require('./routes/leadership-history.routes');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -29,6 +31,13 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, "public")));
+
+
+
+
+
+
+
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, "public", "uploads");
@@ -89,6 +98,7 @@ async function connectToDatabase() {
     
     db = client.db(DB_NAME);
     console.log("✅ Connected to local MongoDB successfully!");
+    app.locals.db = db;
     
     await initializeCollections();
     return client;
@@ -101,11 +111,17 @@ async function connectToDatabase() {
 }
 
 // Initialize collections and default data
+// Initialize collections and default data
+// Update the initializeCollections function in server.js
 async function initializeCollections() {
   try {
     const collections = [
       "governor", "video", "villages", "leaders", 
-      "events", "news", "contacts", "support_requests", "admin"
+      "events", "news", "contacts", "support_requests", "admin",
+      "service_applications", "payments", "notifications",
+      "leadership_history",
+      "academia", "gallery"
+
     ];
     
     for (const collectionName of collections) {
@@ -131,8 +147,10 @@ async function initializeCollections() {
     console.log("⚠️  Database initialization note:", error.message);
   }
 }
-
 // Database connection check middleware
+
+app.use('/api/leadership-history', leadershipHistoryRoutes);
+
 app.use((req, res, next) => {
   if (!db) {
     if (req.path.startsWith('/api/') && !req.path.includes('/api/admin/login')) {
@@ -1087,6 +1105,7 @@ app.get("/api/service-applications", async (req, res) => {
   }
 });
 
+// Service Applications Routes
 app.post("/api/service-applications", async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: "Database not available" });
@@ -1100,6 +1119,7 @@ app.post("/api/service-applications", async (req, res) => {
       email,
       phone,
       address,
+      dateOfBirth, // Add this
       purpose,
       additionalInfo,
       documents
@@ -1123,10 +1143,12 @@ app.post("/api/service-applications", async (req, res) => {
       email: email.trim(),
       phone: phone.trim(),
       address: address.trim(),
+      dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null, // Add this
       purpose: purpose?.trim() || "",
       additionalInfo: additionalInfo?.trim() || "",
       documents: documents || [],
       status: "pending",
+      payment: null, // Initialize payment field
       createdAt: new Date(),
       updatedAt: new Date()
     });
@@ -1141,7 +1163,6 @@ app.post("/api/service-applications", async (req, res) => {
     res.status(500).json({ error: "Failed to submit application" });
   }
 });
-
 app.put("/api/service-applications/:id/status", async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: "Database not available" });
@@ -1211,28 +1232,321 @@ function generateApplicationId() {
 
 
 
-// Payment Routes
-app.post("/api/service-applications/:id/payment", async (req, res) => {
+
+
+
+
+
+
+
+// ========== ACADEMIA API ROUTES ==========
+
+// Get all academia entries
+app.get("/api/academia", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const academia = await db.collection("academia").find({})
+      .sort({ createdAt: -1 })
+      .toArray();
+    
+    // Ensure _id is converted to string
+    const formattedAcademia = academia.map(item => ({
+      ...item,
+      _id: item._id.toString()
+    }));
+    
+    res.json(formattedAcademia);
+  } catch (error) {
+    console.error("Error fetching academia:", error);
+    res.status(500).json({ error: "Failed to fetch academia" });
+  }
+});
+
+// Add new academia entry - FIXED VERSION
+app.post("/api/academia", upload.single("photo"), async (req, res) => {
+  try {
+    console.log("📝 Academia POST request received");
+    console.log("📦 Body:", req.body);
+    console.log("📁 File:", req.file);
+    
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { title, full_name, village, qualification } = req.body;
+    
+    console.log("🔍 Validation check:", { title, full_name, village, qualification });
+
+    if (!title || !full_name || !village || !qualification) {
+      console.log("❌ Missing fields");
+      return res.status(400).json({ 
+        error: "All fields are required",
+        missing: {
+          title: !title,
+          full_name: !full_name,
+          village: !village,
+          qualification: !qualification
+        }
+      });
+    }
+
+    let photoPath = null;
+    if (req.file) {
+      photoPath = "/uploads/" + req.file.filename;
+      console.log("📸 Photo uploaded:", photoPath);
+    }
+
+    const academiaData = {
+      title: title.trim(),
+      full_name: full_name.trim(),
+      village: village.trim(),
+      qualification: qualification.trim(),
+      photo: photoPath,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    console.log("💾 Saving to database:", academiaData);
+
+    const result = await db.collection("academia").insertOne(academiaData);
+
+    console.log("✅ Saved successfully, ID:", result.insertedId);
+
+    res.json({ 
+      success: true, 
+      message: "Academician added successfully",
+      id: result.insertedId,
+      data: academiaData
+    });
+  } catch (error) {
+    console.error("❌ Error adding academician:", error);
+    res.status(500).json({ 
+      error: "Failed to add academician",
+      details: error.message 
+    });
+  }
+});
+
+// Delete academia entry
+app.delete("/api/academia/:id", async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: "Database not available" });
     
     const { id } = req.params;
-    const { paymentMethod, transactionId, amount } = req.body;
 
-    if (!paymentMethod || !transactionId || !amount) {
-      return res.status(400).json({ error: "Payment method, transaction ID, and amount are required" });
+    if (!id) {
+      return res.status(400).json({ error: "Academician ID is required" });
     }
 
-    const result = await db.collection("service_applications").updateOne(
-      { _id: new ObjectId(id) },
+    const result = await db.collection("academia").deleteOne({ 
+      _id: new ObjectId(id) 
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Academician not found" });
+    }
+
+    res.json({ success: true, message: "Academician deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting academician:", error);
+    res.status(500).json({ error: "Failed to delete academician" });
+  }
+});
+
+// ========== GALLERY API ROUTES ==========
+
+// Get all gallery items
+app.get("/api/gallery", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const gallery = await db.collection("gallery").find({})
+      .sort({ createdAt: -1 })
+      .toArray();
+    
+    // Ensure _id is converted to string
+    const formattedGallery = gallery.map(item => ({
+      ...item,
+      _id: item._id.toString()
+    }));
+    
+    res.json(formattedGallery);
+  } catch (error) {
+    console.error("Error fetching gallery:", error);
+    res.status(500).json({ error: "Failed to fetch gallery" });
+  }
+});
+
+// Add new gallery item - FIXED VERSION
+app.post("/api/gallery", upload.single("file"), async (req, res) => {
+  try {
+    console.log("📝 Gallery POST request received");
+    console.log("📦 Body:", req.body);
+    console.log("📁 File:", req.file);
+    
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { type, description } = req.body;
+    const file = req.file;
+
+    if (!type) {
+      return res.status(400).json({ error: "Type is required" });
+    }
+
+    if (!file) {
+      return res.status(400).json({ error: "File is required" });
+    }
+
+    if (!["image", "video"].includes(type)) {
+      return res.status(400).json({ error: "Type must be either 'image' or 'video'" });
+    }
+
+    // Validate file types
+    if (type === "image" && !file.mimetype.startsWith("image/")) {
+      return res.status(400).json({ 
+        error: "Invalid image file type",
+        mimeType: file.mimetype 
+      });
+    }
+
+    if (type === "video" && !file.mimetype.startsWith("video/")) {
+      return res.status(400).json({ 
+        error: "Invalid video file type",
+        mimeType: file.mimetype 
+      });
+    }
+
+    const filePath = "/uploads/" + file.filename;
+
+    const galleryData = {
+      type: type.trim(),
+      file_url: filePath,
+      description: description?.trim() || "",
+      file_name: file.originalname,
+      file_size: file.size,
+      mime_type: file.mimetype,
+      createdAt: new Date()
+    };
+
+    console.log("💾 Saving gallery item:", galleryData);
+
+    const result = await db.collection("gallery").insertOne(galleryData);
+
+    console.log("✅ Gallery item saved successfully, ID:", result.insertedId);
+
+    res.json({ 
+      success: true, 
+      message: "Gallery item uploaded successfully",
+      id: result.insertedId,
+      data: galleryData
+    });
+  } catch (error) {
+    console.error("❌ Error uploading gallery item:", error);
+    res.status(500).json({ 
+      error: "Failed to upload gallery item",
+      details: error.message 
+    });
+  }
+});
+
+// Delete gallery item
+app.delete("/api/gallery/:id", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "Gallery item ID is required" });
+    }
+
+    // First get the item to delete the file
+    const item = await db.collection("gallery").findOne({ _id: new ObjectId(id) });
+    
+    if (!item) {
+      return res.status(404).json({ error: "Gallery item not found" });
+    }
+
+    // Delete the file from server
+    if (item.file_url) {
+      const filePath = path.join(__dirname, "public", item.file_url);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    // Delete from database
+    const result = await db.collection("gallery").deleteOne({ 
+      _id: new ObjectId(id) 
+    });
+
+    res.json({ success: true, message: "Gallery item deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting gallery item:", error);
+    res.status(500).json({ error: "Failed to delete gallery item" });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Payment Routes
+// Payment Routes
+app.post("/api/service-applications/payments", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { applicationId, paymentMethod, transactionId, amount } = req.body;
+
+    if (!applicationId || !paymentMethod || !transactionId || !amount) {
+      return res.status(400).json({ error: "All payment fields are required" });
+    }
+
+    // Check if application exists
+    const application = await db.collection("service_applications").findOne({ 
+      applicationId: applicationId 
+    });
+
+    if (!application) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    // Save payment to payments collection
+    const payment = await db.collection("payments").insertOne({
+      applicationId,
+      paymentMethod,
+      transactionId: transactionId.trim(),
+      amount: parseFloat(amount),
+      status: "pending_verification",
+      paidAt: new Date(),
+      createdAt: new Date()
+    });
+
+    // Update application with payment info
+    await db.collection("service_applications").updateOne(
+      { applicationId: applicationId },
       { 
         $set: { 
-          payment: {
-            method: paymentMethod,
+          "payment": {
+            paymentMethod,
             transactionId: transactionId.trim(),
             amount: parseFloat(amount),
-            paidAt: new Date(),
-            status: "pending_verification"
+            status: "pending_verification",
+            paidAt: new Date()
           },
           status: "payment_pending",
           updatedAt: new Date()
@@ -1240,17 +1554,31 @@ app.post("/api/service-applications/:id/payment", async (req, res) => {
       }
     );
 
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ error: "Application not found" });
-    }
+    // Create admin notification
+    await db.collection("notifications").insertOne({
+      type: "payment",
+      title: "💰 New Payment Received",
+      message: `Payment of ₦${amount} for Application #${applicationId}`,
+      applicationId: applicationId,
+      paymentId: payment.insertedId,
+      amount: parseFloat(amount),
+      transactionId: transactionId.trim(),
+      read: false,
+      createdAt: new Date()
+    });
 
-    res.json({ success: true, message: "Payment details submitted successfully" });
+    res.json({ 
+      success: true, 
+      message: "Payment submitted successfully",
+      paymentId: payment.insertedId
+    });
   } catch (error) {
-    console.error("Error recording payment:", error);
-    res.status(500).json({ error: "Failed to record payment" });
+    console.error("Error processing payment:", error);
+    res.status(500).json({ error: "Failed to process payment" });
   }
 });
 
+// Verify payment
 app.put("/api/service-applications/:id/payment/verify", async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: "Database not available" });
@@ -1262,12 +1590,13 @@ app.put("/api/service-applications/:id/payment/verify", async (req, res) => {
       return res.status(400).json({ error: "Verification status is required" });
     }
 
+    // Update payment status
     const result = await db.collection("service_applications").updateOne(
       { _id: new ObjectId(id) },
       { 
         $set: { 
           "payment.status": verified ? "verified" : "rejected",
-          status: verified ? "payment_verified" : "payment_rejected",
+          status: verified ? "in_review" : "payment_rejected",
           updatedAt: new Date()
         }
       }
@@ -1287,28 +1616,76 @@ app.put("/api/service-applications/:id/payment/verify", async (req, res) => {
   }
 });
 
-// Update the service applications GET route to include payment info
-app.get("/api/service-applications/:id", async (req, res) => {
+
+
+
+// Get notifications for admin
+app.get("/api/admin/notifications", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const notifications = await db.collection("notifications").find({})
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .toArray();
+    
+    // Count unread notifications
+    const unreadCount = await db.collection("notifications").countDocuments({ 
+      read: false 
+    });
+
+    res.json({ 
+      notifications, 
+      unreadCount 
+    });
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    res.status(500).json({ error: "Failed to fetch notifications" });
+  }
+});
+
+// Mark notification as read
+app.put("/api/admin/notifications/:id/read", async (req, res) => {
   try {
     if (!db) return res.status(503).json({ error: "Database not available" });
     
     const { id } = req.params;
 
-    const application = await db.collection("service_applications").findOne({ 
-      _id: new ObjectId(id) 
-    });
+    const result = await db.collection("notifications").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { read: true, readAt: new Date() } }
+    );
 
-    if (!application) {
-      return res.status(404).json({ error: "Application not found" });
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Notification not found" });
     }
 
-    res.json(application);
+    res.json({ success: true, message: "Notification marked as read" });
   } catch (error) {
-    console.error("Error fetching application:", error);
-    res.status(500).json({ error: "Failed to fetch application" });
+    console.error("Error marking notification as read:", error);
+    res.status(500).json({ error: "Failed to mark notification as read" });
   }
 });
 
+// Mark all notifications as read
+app.put("/api/admin/notifications/read-all", async (req, res) => {
+  try {
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const result = await db.collection("notifications").updateMany(
+      { read: false },
+      { $set: { read: true, readAt: new Date() } }
+    );
+
+    res.json({ 
+      success: true, 
+      message: `${result.modifiedCount} notifications marked as read` 
+    });
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    res.status(500).json({ error: "Failed to mark notifications as read" });
+  }
+});
 
 
 // Serve uploaded files
@@ -1346,6 +1723,10 @@ async function startServer() {
     console.log('🚀 Starting Ugwunagbo LGA website server...');
     const databaseClient = await connectToDatabase();
     
+    if (databaseClient) {
+      app.locals.db = db; // Make database available to routes
+    }
+    
     app.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
       console.log(`🌐 Website URL: http://localhost:${PORT}`);
@@ -1358,6 +1739,7 @@ async function startServer() {
       } else {
         console.log('✅ DATABASE STATUS: CONNECTED - All features available');
         console.log('📁 Uploads directory:', uploadsDir);
+        console.log('👥 Leadership History API: http://localhost:' + PORT + '/api/leadership-history');
       }
     });
   } catch (error) {
@@ -1374,3 +1756,46 @@ startServer();
 
 
 
+
+
+
+// Example Node.js/Express backend code
+app.post('/api/service-applications/payments', async (req, res) => {
+    try {
+        const { applicationId, paymentMethod, transactionId, amount } = req.body;
+        
+        // Save payment to database
+        const payment = await Payment.create({
+            applicationId,
+            paymentMethod,
+            transactionId,
+            amount,
+            status: 'pending_verification',
+            paymentDate: new Date()
+        });
+        
+        // Create admin notification
+        await Notification.create({
+            type: 'payment',
+            title: 'New Payment Received',
+            message: `Payment of ₦${amount} for Application #${applicationId}`,
+            data: { applicationId, paymentId: payment.id },
+            adminId: 'all', // For all admins
+            priority: 'high',
+            read: false
+        });
+        
+        // Send email notification to admin
+        await sendEmailToAdmin({
+            to: 'admin@ugwunagbolga.gov.ng',
+            subject: `New Payment - Application #${applicationId}`,
+            template: 'payment-notification',
+            data: { applicationId, amount, transactionId }
+        });
+        
+        res.json({ success: true, paymentId: payment.id });
+    } catch (error) {
+        console.error('Payment processing error:', error);
+        res.status(500).json({ error: 'Failed to process payment' });
+    }
+});

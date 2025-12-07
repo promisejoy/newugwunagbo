@@ -261,18 +261,175 @@ const apiService = {
     return await response.json();
   },
 
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
   // News API
   async getNews() {
-  const response = await fetch("/api/news");
-  if (!response.ok) throw new Error("Failed to fetch news");
-  return await response.json();
+    const response = await fetch("/api/news");
+    if (!response.ok) throw new Error("Failed to fetch news");
+    return await response.json();
+  },
+
+  // Leadership History API
+  async getLeadershipHistory() {
+    const response = await fetch("/api/leadership-history");
+    if (!response.ok) throw new Error("Failed to fetch leadership history");
+    const result = await response.json();
+    return result.data || result; // Handle both formats
+  },
+
+ 
+
+  async updateLeadership(id, leaderData) {
+    const formData = new FormData();
+
+    Object.keys(leaderData).forEach((key) => {
+      if (key === "image" && leaderData[key] instanceof File) {
+        formData.append("image", leaderData[key]);
+      } else if (key !== "image") {
+        formData.append(key, leaderData[key]);
+      }
+    });
+
+    const response = await fetch(`/api/leadership-history/${id}`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        result.error || result.message || "Failed to update leader"
+      );
+    }
+    return result;
+  },
+
+  async deleteLeadership(id) {
+    const response = await fetch(`/api/leadership-history/${id}`, {
+      method: "DELETE",
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        result.error || result.message || "Failed to delete leader"
+      );
+    }
+    return result;
+  },
+
+  // Leadership History API
+  async getLeadershipHistory() {
+    const response = await fetch("/api/leadership-history");
+    if (!response.ok) throw new Error("Failed to fetch leadership history");
+    return await response.json();
+  },
+
+  // Leadership History API - UPDATE THIS FUNCTION
+async addLeadership(leaderData) {
+    try {
+        const formData = new FormData();
+        
+        console.log('Sending leader data:', leaderData);
+        
+        // Add text fields
+        Object.keys(leaderData).forEach((key) => {
+            if (key === 'image' && leaderData[key] instanceof File) {
+                console.log('Adding image file:', leaderData[key].name);
+                formData.append("image", leaderData[key]);
+            } else if (key !== 'image') {
+                console.log(`Adding ${key}:`, leaderData[key]);
+                formData.append(key, leaderData[key]);
+            }
+        });
+
+        console.log('Sending request to /api/leadership-history');
+        
+        const response = await fetch("/api/leadership-history", {
+            method: "POST",
+            body: formData,
+            // Don't set Content-Type header for FormData - browser sets it automatically
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        let result;
+        try {
+            result = await response.json();
+            console.log('Response data:', result);
+        } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            const text = await response.text();
+            console.error('Raw response:', text);
+            throw new Error('Invalid JSON response from server');
+        }
+
+        if (!response.ok) {
+            throw new Error(result.error || result.message || `Server returned ${response.status}`);
+        }
+        
+        return result;
+    } catch (error) {
+        console.error('Error in addLeadership:', error);
+        throw error; // Re-throw so the calling function can handle it
+    }
 },
 
-async getNewsById(id) {
-  const response = await fetch(`/api/news/${id}`);
-  if (!response.ok) throw new Error("Failed to fetch news article");
-  return await response.json();
-},
+
+
+
+
+  async updateLeadership(id, leaderData) {
+    const formData = new FormData();
+    Object.keys(leaderData).forEach((key) => {
+      if (key === "image" && leaderData[key] instanceof File) {
+        formData.append("image", leaderData[key]);
+      } else {
+        formData.append(key, leaderData[key]);
+      }
+    });
+
+    const response = await fetch(`/api/leadership-history/${id}`, {
+      method: "PUT",
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error("Failed to update leader");
+    return await response.json();
+  },
+
+  async deleteLeadership(id) {
+    const response = await fetch(`/api/leadership-history/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) throw new Error("Failed to delete leader");
+    return await response.json();
+  },
+
+  async getNewsById(id) {
+    const response = await fetch(`/api/news/${id}`);
+    if (!response.ok) throw new Error("Failed to fetch news article");
+    return await response.json();
+  },
   async addNews(newsData) {
     const formData = new FormData();
     Object.keys(newsData).forEach((key) => {
@@ -382,6 +539,135 @@ async getNewsById(id) {
     if (!response.ok) throw new Error("Failed to delete support request");
     return await response.json();
   },
+
+
+
+
+
+
+
+
+
+
+
+// Academia API functions - UPDATED
+async getAcademia() {
+  const response = await fetch("/api/academia");
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to fetch academia");
+  }
+  return await response.json();
+},
+
+async addAcademician(academiaData) {
+  const formData = new FormData();
+  
+  console.log('📤 Adding academician:', academiaData);
+  
+  // Add all fields to formData
+  Object.keys(academiaData).forEach((key) => {
+    if (key === "photo" && academiaData[key] instanceof File) {
+      formData.append("photo", academiaData[key]);
+      console.log('📸 Added photo file:', academiaData[key].name);
+    } else if (key !== "photo") {
+      formData.append(key, academiaData[key]);
+      console.log(`📝 Added ${key}:`, academiaData[key]);
+    }
+  });
+
+  const response = await fetch("/api/academia", {
+    method: "POST",
+    body: formData,
+  });
+
+  const result = await response.json();
+  console.log('📥 Response:', result);
+  
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to add academician");
+  }
+  return result;
+},
+
+async deleteAcademician(id) {
+  const response = await fetch(`/api/academia/${id}`, {
+    method: "DELETE",
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to delete academician");
+  }
+  return result;
+},
+
+// Gallery API functions - UPDATED
+async getGallery() {
+  const response = await fetch("/api/gallery");
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to fetch gallery");
+  }
+  return await response.json();
+},
+
+async uploadGalleryItem(galleryData) {
+  const formData = new FormData();
+  
+  console.log('📤 Uploading gallery item:', galleryData);
+  
+  // Add all fields to formData
+  Object.keys(galleryData).forEach((key) => {
+    if (key === "file" && galleryData[key] instanceof File) {
+      formData.append("file", galleryData[key]);
+      console.log('📁 Added file:', galleryData[key].name);
+    } else if (key !== "file") {
+      formData.append(key, galleryData[key]);
+      console.log(`📝 Added ${key}:`, galleryData[key]);
+    }
+  });
+
+  const response = await fetch("/api/gallery", {
+    method: "POST",
+    body: formData,
+  });
+
+  const result = await response.json();
+  console.log('📥 Response:', result);
+  
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to upload gallery item");
+  }
+  return result;
+},
+
+async deleteGalleryItem(id) {
+  const response = await fetch(`/api/gallery/${id}`, {
+    method: "DELETE",
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to delete gallery item");
+  }
+  return result;
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Password Change API
   async changePassword(passwordData) {
@@ -1393,137 +1679,184 @@ async function deleteVillage(id) {
 }
 
 // Load leaders to the website
+// Load leaders to the website - SORTED BY POSITION
 async function loadLeaders() {
-  const leadershipContainer = document.getElementById("leadershipContainer");
-  if (!leadershipContainer) return;
+    const leadershipContainer = document.getElementById("leadershipContainer");
+    if (!leadershipContainer) return;
 
-  leadershipContainer.innerHTML = "<p>Loading leaders...</p>";
+    leadershipContainer.innerHTML = "<p>Loading leaders...</p>";
 
-  try {
-    const leadersData = await apiService.getLeaders();
+    try {
+        const leadersData = await apiService.getLeaders();
 
-    leadershipContainer.innerHTML = "";
+        leadershipContainer.innerHTML = "";
 
-    if (leadersData.length === 0) {
-      leadershipContainer.innerHTML =
-        "<p>No leadership information available.</p>";
-      return;
-    }
-
-    leadersData.forEach((leader) => {
-      const leaderCard = document.createElement("div");
-      leaderCard.className = "leader-card";
-
-      let socialMediaHTML = "";
-      if (leader.twitter || leader.facebook || leader.linkedin) {
-        socialMediaHTML = '<div class="social-media-icons">';
-        if (leader.twitter) {
-          socialMediaHTML += `<a href="${leader.twitter}" class="twitter" target="_blank"><i class="fab fa-twitter"></i></a>`;
+        if (leadersData.length === 0) {
+            leadershipContainer.innerHTML =
+                "<p>No leadership information available.</p>";
+            return;
         }
-        if (leader.facebook) {
-          socialMediaHTML += `<a href="${leader.facebook}" class="facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
-        }
-        if (leader.linkedin) {
-          socialMediaHTML += `<a href="${leader.linkedin}" class="linkedin" target="_blank"><i class="fab fa-linkedin-in"></i></a>`;
-        }
-        socialMediaHTML += "</div>";
-      }
 
-      const imageUrl = leader.image
-        ? leader.image.startsWith("http")
-          ? leader.image
-          : CONFIG.apiBaseUrl + leader.image
-        : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80";
+        // Sort leaders by position (1-Executive Chairman, 2-Deputy Chairman, 3-Secretary, 4-Other)
+        const sortedLeaders = leadersData.sort((a, b) => {
+            // Extract position index from position string (e.g., "1-Executive Chairman" -> 1)
+            const getPositionIndex = (position) => {
+                if (!position) return 999; // Put undefined positions last
+                const match = position.match(/^(\d+)-/);
+                return match ? parseInt(match[1]) : 999;
+            };
+            
+            return getPositionIndex(a.position) - getPositionIndex(b.position);
+        });
 
-      leaderCard.innerHTML = `
+        // Only show the first 3 positions (Chairman, Deputy, Secretary)
+        const displayLeaders = sortedLeaders.slice(0, 3);
+
+        displayLeaders.forEach((leader) => {
+            const leaderCard = document.createElement("div");
+            leaderCard.className = "leader-card";
+
+            // Extract display position (remove the index prefix)
+            const displayPosition = leader.position 
+                ? leader.position.replace(/^\d+-/, '') 
+                : leader.position || 'Leader';
+
+            let socialMediaHTML = "";
+            if (leader.twitter || leader.facebook || leader.linkedin) {
+                socialMediaHTML = '<div class="social-media-icons">';
+                if (leader.twitter) {
+                    socialMediaHTML += `<a href="${leader.twitter}" class="twitter" target="_blank"><i class="fab fa-twitter"></i></a>`;
+                }
+                if (leader.facebook) {
+                    socialMediaHTML += `<a href="${leader.facebook}" class="facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
+                }
+                if (leader.linkedin) {
+                    socialMediaHTML += `<a href="${leader.linkedin}" class="linkedin" target="_blank"><i class="fab fa-linkedin-in"></i></a>`;
+                }
+                socialMediaHTML += "</div>";
+            }
+
+            const imageUrl = leader.image
+                ? leader.image.startsWith("http")
+                    ? leader.image
+                    : CONFIG.apiBaseUrl + leader.image
+                : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80";
+
+            leaderCard.innerHTML = `
                 <div class="leader-image">
                     <img src="${imageUrl}" alt="${leader.name}">
                 </div>
                 <div class="leader-content">
                     <h3>${leader.name}</h3>
-                    <span class="leader-position">${leader.position}</span>
+                    <span class="leader-position">${displayPosition}</span>
                     <p class="leader-bio">${leader.bio}</p>
                     <div class="leader-contact">
                         ${
-                          leader.email
-                            ? `<a href="mailto:${leader.email}"><i class="fas fa-envelope"></i></a>`
-                            : ""
+                            leader.email
+                                ? `<a href="mailto:${leader.email}"><i class="fas fa-envelope"></i></a>`
+                                : ""
                         }
                         ${
-                          leader.phone
-                            ? `<a href="tel:${leader.phone}"><i class="fas fa-phone"></i></a>`
-                            : ""
+                            leader.phone
+                                ? `<a href="tel:${leader.phone}"><i class="fas fa-phone"></i></a>`
+                                : ""
                         }
                     </div>
                     ${socialMediaHTML}
                 </div>
             `;
-      leadershipContainer.appendChild(leaderCard);
-    });
-  } catch (error) {
-    leadershipContainer.innerHTML =
-      "<p>Error loading leaders. Please try again later.</p>";
-    console.error("Error loading leaders:", error);
-  }
+            leadershipContainer.appendChild(leaderCard);
+        });
+
+        // Show message if less than 3 leaders
+        if (displayLeaders.length < 3) {
+            const message = document.createElement("p");
+            message.style.textAlign = "center";
+            message.style.marginTop = "20px";
+            message.style.color = "#666";
+            message.innerHTML = `<i class="fas fa-info-circle"></i> Add more leaders through the admin dashboard`;
+            leadershipContainer.appendChild(message);
+        }
+    } catch (error) {
+        leadershipContainer.innerHTML =
+            "<p>Error loading leaders. Please try again later.</p>";
+        console.error("Error loading leaders:", error);
+    }
 }
+
+
 
 // Load leaders to admin panel - UPDATED FOR MONGODB _id
+// Load leaders to admin panel - SORTED BY POSITION
 async function loadLeaderList() {
-  const leaderListContainer = document.getElementById("leaderListContainer");
-  if (!leaderListContainer) return;
+    const leaderListContainer = document.getElementById("leaderListContainer");
+    if (!leaderListContainer) return;
 
-  leaderListContainer.innerHTML = "<p>Loading...</p>";
+    leaderListContainer.innerHTML = "<p>Loading...</p>";
 
-  try {
-    const leadersData = await apiService.getLeaders();
+    try {
+        const leadersData = await apiService.getLeaders();
 
-    leaderListContainer.innerHTML = "";
+        leaderListContainer.innerHTML = "";
 
-    if (leadersData.length === 0) {
-      leaderListContainer.innerHTML = "<p>No leaders added yet.</p>";
-      return;
-    }
+        if (leadersData.length === 0) {
+            leaderListContainer.innerHTML = "<p>No leaders added yet.</p>";
+            return;
+        }
 
-    leadersData.forEach((leader) => {
-      const leaderItem = document.createElement("div");
-      leaderItem.className = "leader-item";
-      leaderItem.innerHTML = `
+        // Sort leaders by position
+        const sortedLeaders = leadersData.sort((a, b) => {
+            const getPositionIndex = (position) => {
+                if (!position) return 999;
+                const match = position.match(/^(\d+)-/);
+                return match ? parseInt(match[1]) : 999;
+            };
+            return getPositionIndex(a.position) - getPositionIndex(b.position);
+        });
+
+        sortedLeaders.forEach((leader) => {
+            const displayPosition = leader.position 
+                ? leader.position.replace(/^\d+-/, '') 
+                : leader.position || 'Leader';
+                
+            const positionBadge = leader.position && leader.position.match(/^(\d+)-/)
+                ? `<span style="background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 10px;">Position ${leader.position.match(/^(\d+)-/)[1]}</span>`
+                : '';
+
+            const leaderItem = document.createElement("div");
+            leaderItem.className = "leader-item";
+            leaderItem.innerHTML = `
                 <div>
-                    <h4>${leader.name}</h4>
-                    <p>${leader.position}</p>
+                    <h4>${leader.name} ${positionBadge}</h4>
+                    <p>${displayPosition}</p>
                 </div>
                 <div class="item-actions">
-                    <!-- CHANGED: Use _id instead of id -->
-                    <button class="edit-btn" data-id="${
-                      leader._id || leader.id
-                    }">Edit</button>
-                    <button class="delete-btn" data-id="${
-                      leader._id || leader.id
-                    }">Delete</button>
+                    <button class="edit-btn" data-id="${leader._id || leader.id}">Edit</button>
+                    <button class="delete-btn" data-id="${leader._id || leader.id}">Delete</button>
                 </div>
             `;
-      leaderListContainer.appendChild(leaderItem);
-    });
+            leaderListContainer.appendChild(leaderItem);
+        });
 
-    // Use event delegation instead of multiple event listeners
-    leaderListContainer.addEventListener("click", (e) => {
-      if (e.target.classList.contains("edit-btn")) {
-        // CHANGED: Get string ID directly, no parseInt needed
-        const leaderId = e.target.getAttribute("data-id");
-        editLeader(leaderId);
-      }
+        // Use event delegation
+        leaderListContainer.addEventListener("click", (e) => {
+            if (e.target.classList.contains("edit-btn")) {
+                const leaderId = e.target.getAttribute("data-id");
+                editLeader(leaderId);
+            }
 
-      if (e.target.classList.contains("delete-btn")) {
-        // CHANGED: Get string ID directly, no parseInt needed
-        const leaderId = e.target.getAttribute("data-id");
-        deleteLeader(leaderId);
-      }
-    });
-  } catch (error) {
-    leaderListContainer.innerHTML = "<p>Error loading leaders.</p>";
-    console.error("Error loading leader list:", error);
-  }
+            if (e.target.classList.contains("delete-btn")) {
+                const leaderId = e.target.getAttribute("data-id");
+                deleteLeader(leaderId);
+            }
+        });
+    } catch (error) {
+        leaderListContainer.innerHTML = "<p>Error loading leaders.</p>";
+        console.error("Error loading leader list:", error);
+    }
 }
+
+
 
 // Load news to the website
 // Load news to the website - FIXED VERSION
@@ -1535,7 +1868,7 @@ async function loadNews() {
 
   try {
     const newsData = await apiService.getNews();
-    console.log('📰 Loaded news from API:', newsData);
+    console.log("📰 Loaded news from API:", newsData);
 
     newsContainer.innerHTML = "";
 
@@ -1555,15 +1888,16 @@ async function loadNews() {
         : "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80";
 
       // Truncate content for preview
-      const previewContent = newsItem.content.length > 150 
-        ? newsItem.content.substring(0, 150) + '...' 
-        : newsItem.content;
+      const previewContent =
+        newsItem.content.length > 150
+          ? newsItem.content.substring(0, 150) + "..."
+          : newsItem.content;
 
       // Use the correct ID - try _id first, then id
       const newsId = newsItem._id || newsItem.id;
       console.log(`Creating news card for: ${newsItem.title} (ID: ${newsId})`);
 
-     newsCard.innerHTML = `
+      newsCard.innerHTML = `
     <div class="news-image">
         <img src="${imageUrl}" alt="${newsItem.title}">
     </div>
@@ -1571,14 +1905,15 @@ async function loadNews() {
         <div class="news-date">${formatDate(newsItem.date)}</div>
         <h3>${newsItem.title}</h3>
         <p>${previewContent}</p>
-        <a href="full-news.html?id=${newsItem._id || newsItem.id}" class="read-more-btn">
+        <a href="full-news.html?id=${
+          newsItem._id || newsItem.id
+        }" class="read-more-btn">
             Read More <i class="fas fa-arrow-right"></i>
         </a>
     </div>
 `;
       newsContainer.appendChild(newsCard);
     });
-
   } catch (error) {
     newsContainer.innerHTML =
       "<p>Error loading news. Please try again later.</p>";
@@ -1586,20 +1921,10 @@ async function loadNews() {
   }
 }
 
-
-
-
-
 // Navigate to full news page
 function navigateToFullNews(newsId) {
- 
   window.location.href = `news-details.html?id=${newsId}`;
-  
-  
 }
-
-
-
 
 // Load news to admin panel - UPDATED FOR MONGODB _id
 async function loadNewsList() {
@@ -1875,44 +2200,48 @@ async function loadSupportRequests() {
 }
 
 // Edit leader - UPDATED FOR MONGODB _id
+// Edit leader - handle position dropdown
 async function editLeader(id) {
-  try {
-    const leadersData = await apiService.getLeaders();
-    // CHANGED: Use _id instead of id for comparison
-    const leader = leadersData.find((l) => (l._id || l.id) === id);
-    if (!leader) return;
+    try {
+        const leadersData = await apiService.getLeaders();
+        const leader = leadersData.find((l) => (l._id || l.id) === id);
+        if (!leader) return;
 
-    document.getElementById("leaderName").value = leader.name;
-    document.getElementById("leaderPosition").value = leader.position;
-    document.getElementById("leaderBio").value = leader.bio;
-    document.getElementById("leaderEmail").value = leader.email || "";
-    document.getElementById("leaderPhone").value = leader.phone || "";
-    document.getElementById("leaderTwitter").value = leader.twitter || "";
-    document.getElementById("leaderFacebook").value = leader.facebook || "";
-    document.getElementById("leaderLinkedin").value = leader.linkedin || "";
-    // CHANGED: Store string ID directly
-    document.getElementById("leaderId").value = leader._id || leader.id;
+        document.getElementById("leaderName").value = leader.name;
+        
+        // Set position dropdown
+        const positionSelect = document.getElementById("leaderPosition");
+        if (positionSelect) {
+            positionSelect.value = leader.position || "";
+        }
+        
+        document.getElementById("leaderBio").value = leader.bio;
+        document.getElementById("leaderEmail").value = leader.email || "";
+        document.getElementById("leaderPhone").value = leader.phone || "";
+        document.getElementById("leaderTwitter").value = leader.twitter || "";
+        document.getElementById("leaderFacebook").value = leader.facebook || "";
+        document.getElementById("leaderLinkedin").value = leader.linkedin || "";
+        document.getElementById("leaderId").value = leader._id || leader.id;
 
-    // Update image preview
-    const leaderImagePreview = document.getElementById("leaderImagePreview");
-    if (leaderImagePreview) {
-      const imageUrl = leader.image
-        ? leader.image.startsWith("http")
-          ? leader.image
-          : CONFIG.apiBaseUrl + leader.image
-        : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80";
-      leaderImagePreview.innerHTML = `<img src="${imageUrl}" alt="Preview">`;
+        // Update image preview
+        const leaderImagePreview = document.getElementById("leaderImagePreview");
+        if (leaderImagePreview) {
+            const imageUrl = leader.image
+                ? leader.image.startsWith("http")
+                    ? leader.image
+                    : CONFIG.apiBaseUrl + leader.image
+                : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80";
+            leaderImagePreview.innerHTML = `<img src="${imageUrl}" alt="Preview">`;
+        }
+
+        // Update form title and button
+        document.getElementById("leaderFormTitle").textContent = "Edit Leader";
+        document.getElementById("leaderSubmitBtn").textContent = "Update Leader";
+        document.getElementById("cancelEdit").style.display = "inline-block";
+    } catch (error) {
+        SweetPopup.error("Error loading leader data: " + error.message);
     }
-
-    // Update form title and button
-    document.getElementById("leaderFormTitle").textContent = "Edit Leader";
-    document.getElementById("leaderSubmitBtn").textContent = "Update Leader";
-    document.getElementById("cancelEdit").style.display = "inline-block";
-  } catch (error) {
-    SweetPopup.error("Error loading leader data: " + error.message);
-  }
 }
-
 // Delete leader - UPDATED FOR MONGODB _id
 async function deleteLeader(id) {
   SweetPopup.confirm(
@@ -2683,9 +3012,15 @@ async function loadServiceApplications() {
 
     // Calculate stats
     const total = applications.length;
-    const pending = applications.filter(app => app.status === 'pending').length;
-    const approved = applications.filter(app => app.status === 'approved').length;
-    const rejected = applications.filter(app => app.status === 'rejected').length;
+    const pending = applications.filter(
+      (app) => app.status === "pending"
+    ).length;
+    const approved = applications.filter(
+      (app) => app.status === "approved"
+    ).length;
+    const rejected = applications.filter(
+      (app) => app.status === "rejected"
+    ).length;
 
     updateApplicationsStats(total, pending, approved, rejected);
 
@@ -2695,11 +3030,19 @@ async function loadServiceApplications() {
       appElement.className = "application-item";
       appElement.innerHTML = `
         <div class="application-header">
-          <div class="application-id">${application.applicationId || "N/A"}</div>
+          <div class="application-id">${
+            application.applicationId || "N/A"
+          }</div>
           <div class="application-service">${application.serviceType}</div>
-          <div class="application-status status-${application.status}">${application.status}</div>
-          <div class="application-payment status-${application.paymentStatus}">${application.paymentStatus}</div>
-          <div class="application-date">${formatDate(application.applicationDate)}</div>
+          <div class="application-status status-${application.status}">${
+        application.status
+      }</div>
+          <div class="application-payment status-${
+            application.paymentStatus
+          }">${application.paymentStatus}</div>
+          <div class="application-date">${formatDate(
+            application.applicationDate
+          )}</div>
         </div>
         
         <div class="application-details">
@@ -2711,21 +3054,35 @@ async function loadServiceApplications() {
             <p><strong>Address:</strong> ${application.address}</p>
           </div>
           
-          ${application.additionalInfo ? `
+          ${
+            application.additionalInfo
+              ? `
             <div class="application-content">
               <p><strong>Additional Info:</strong> ${application.additionalInfo}</p>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
         
         <div class="application-actions">
           <select class="status-select" data-id="${application._id}">
-            <option value="pending" ${application.status === 'pending' ? 'selected' : ''}>Pending</option>
-            <option value="under_review" ${application.status === 'under_review' ? 'selected' : ''}>Under Review</option>
-            <option value="approved" ${application.status === 'approved' ? 'selected' : ''}>Approved</option>
-            <option value="rejected" ${application.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+            <option value="pending" ${
+              application.status === "pending" ? "selected" : ""
+            }>Pending</option>
+            <option value="under_review" ${
+              application.status === "under_review" ? "selected" : ""
+            }>Under Review</option>
+            <option value="approved" ${
+              application.status === "approved" ? "selected" : ""
+            }>Approved</option>
+            <option value="rejected" ${
+              application.status === "rejected" ? "selected" : ""
+            }>Rejected</option>
           </select>
-          <button class="btn btn-danger delete-application" data-id="${application._id}">Delete</button>
+          <button class="btn btn-danger delete-application" data-id="${
+            application._id
+          }">Delete</button>
         </div>
       `;
       container.appendChild(appElement);
@@ -2746,26 +3103,31 @@ async function loadServiceApplications() {
         await deleteServiceApplication(applicationId);
       }
     });
-
   } catch (error) {
     console.error("Error loading service applications:", error);
     container.innerHTML = "<p>Error loading service applications.</p>";
   }
   // Update the displayServiceApplications function in admin dashboard
-function displayServiceApplications(applications) {
-  const container = document.getElementById('serviceApplicationsContainer');
-  
-  if (applications.length === 0) {
-    container.innerHTML = '<div class="no-data">No service applications found</div>';
-    return;
-  }
+  function displayServiceApplications(applications) {
+    const container = document.getElementById("serviceApplicationsContainer");
 
-  container.innerHTML = applications.map(application => `
+    if (applications.length === 0) {
+      container.innerHTML =
+        '<div class="no-data">No service applications found</div>';
+      return;
+    }
+
+    container.innerHTML = applications
+      .map(
+        (application) => `
     <div class="application-card" data-id="${application._id}">
       <div class="application-header">
         <div class="application-id">${application.applicationId}</div>
         <div class="application-status status-${application.status}">
-          ${application.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+          ${application.status
+            .split("_")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ")}
         </div>
       </div>
       <div class="application-body">
@@ -2774,44 +3136,80 @@ function displayServiceApplications(applications) {
             <strong>Service:</strong> ${application.serviceType}
           </div>
           <div class="info-row">
-            <strong>Applicant:</strong> ${application.firstName} ${application.lastName}
+            <strong>Applicant:</strong> ${application.firstName} ${
+          application.lastName
+        }
           </div>
           <div class="info-row">
-            <strong>Contact:</strong> ${application.email} | ${application.phone}
+            <strong>Contact:</strong> ${application.email} | ${
+          application.phone
+        }
           </div>
           <div class="info-row">
             <strong>Ward:</strong> ${application.wardNumber}
           </div>
           <div class="info-row">
-            <strong>Applied:</strong> ${new Date(application.applicationDate).toLocaleDateString()}
+            <strong>Applied:</strong> ${new Date(
+              application.applicationDate
+            ).toLocaleDateString()}
           </div>
-          ${application.payment ? `
+          ${
+            application.payment
+              ? `
             <div class="info-row">
               <strong>Payment:</strong> 
               <span class="payment-status status-${application.payment.status}">
-                ${application.payment.status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                ${application.payment.status
+                  .split("_")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(" ")}
               </span>
             </div>
             <div class="info-row">
               <strong>Amount:</strong> ₦${application.payment.amount}
             </div>
             <div class="info-row">
-              <strong>Transaction ID:</strong> ${application.payment.transactionId}
+              <strong>Transaction ID:</strong> ${
+                application.payment.transactionId
+              }
             </div>
-          ` : '<div class="info-row"><strong>Payment:</strong> Not Submitted</div>'}
+          `
+              : '<div class="info-row"><strong>Payment:</strong> Not Submitted</div>'
+          }
         </div>
-        ${application.purpose ? `<div class="info-row"><strong>Purpose:</strong> ${application.purpose}</div>` : ''}
+        ${
+          application.purpose
+            ? `<div class="info-row"><strong>Purpose:</strong> ${application.purpose}</div>`
+            : ""
+        }
       </div>
       <div class="application-actions">
-        <select class="status-select" onchange="updateApplicationStatus('${application._id}', this.value)">
-          <option value="pending" ${application.status === 'pending' ? 'selected' : ''}>Pending</option>
-          <option value="payment_pending" ${application.status === 'payment_pending' ? 'selected' : ''}>Payment Pending</option>
-          <option value="payment_verified" ${application.status === 'payment_verified' ? 'selected' : ''}>Payment Verified</option>
-          <option value="in_review" ${application.status === 'in_review' ? 'selected' : ''}>In Review</option>
-          <option value="approved" ${application.status === 'approved' ? 'selected' : ''}>Approved</option>
-          <option value="rejected" ${application.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+        <select class="status-select" onchange="updateApplicationStatus('${
+          application._id
+        }', this.value)">
+          <option value="pending" ${
+            application.status === "pending" ? "selected" : ""
+          }>Pending</option>
+          <option value="payment_pending" ${
+            application.status === "payment_pending" ? "selected" : ""
+          }>Payment Pending</option>
+          <option value="payment_verified" ${
+            application.status === "payment_verified" ? "selected" : ""
+          }>Payment Verified</option>
+          <option value="in_review" ${
+            application.status === "in_review" ? "selected" : ""
+          }>In Review</option>
+          <option value="approved" ${
+            application.status === "approved" ? "selected" : ""
+          }>Approved</option>
+          <option value="rejected" ${
+            application.status === "rejected" ? "selected" : ""
+          }>Rejected</option>
         </select>
-        ${application.payment && application.payment.status === 'pending_verification' ? `
+        ${
+          application.payment &&
+          application.payment.status === "pending_verification"
+            ? `
           <div class="payment-actions">
             <button class="btn btn-success btn-sm" onclick="verifyPayment('${application._id}', true)">
               <i class="fas fa-check"></i> Verify Payment
@@ -2820,39 +3218,54 @@ function displayServiceApplications(applications) {
               <i class="fas fa-times"></i> Reject
             </button>
           </div>
-        ` : ''}
-        <button class="btn btn-danger btn-sm" onclick="deleteApplication('${application._id}')">
+        `
+            : ""
+        }
+        <button class="btn btn-danger btn-sm" onclick="deleteApplication('${
+          application._id
+        }')">
           <i class="fas fa-trash"></i> Delete
         </button>
       </div>
     </div>
-  `).join('');
-}
-
-// Add payment verification function
-async function verifyPayment(applicationId, verified) {
-  try {
-    const response = await fetch(`/api/service-applications/${applicationId}/payment/verify`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ verified })
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      showSweetPopup('success', 'Payment Verified', result.message);
-      loadServiceApplications(document.getElementById('applicationFilter').value);
-    } else {
-      showSweetPopup('error', 'Verification Failed', result.error);
-    }
-  } catch (error) {
-    console.error('Error verifying payment:', error);
-    showSweetPopup('error', 'Verification Failed', 'Failed to verify payment');
+  `
+      )
+      .join("");
   }
-}
+
+  // Add payment verification function
+  async function verifyPayment(applicationId, verified) {
+    try {
+      const response = await fetch(
+        `/api/service-applications/${applicationId}/payment/verify`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ verified }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        showSweetPopup("success", "Payment Verified", result.message);
+        loadServiceApplications(
+          document.getElementById("applicationFilter").value
+        );
+      } else {
+        showSweetPopup("error", "Verification Failed", result.error);
+      }
+    } catch (error) {
+      console.error("Error verifying payment:", error);
+      showSweetPopup(
+        "error",
+        "Verification Failed",
+        "Failed to verify payment"
+      );
+    }
+  }
 }
 
 // Add this missing function
@@ -2937,81 +3350,1816 @@ function initializeServiceApplicationButtons() {
   });
 }
 
-
-
-
-
 // Service Application Button Handlers
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle Apply Now button clicks
-    const applyServiceButtons = document.querySelectorAll('.apply-service-btn');
-    
-    applyServiceButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const serviceType = this.getAttribute('data-service');
-            console.log('Applying for service:', serviceType);
-            
-            // Redirect to apply_for_service.html with service type as parameter
-            window.location.href = `apply_for_service.html?service=${encodeURIComponent(serviceType)}`;
-        });
+document.addEventListener("DOMContentLoaded", function () {
+  // Handle Apply Now button clicks
+  const applyServiceButtons = document.querySelectorAll(".apply-service-btn");
+
+  applyServiceButtons.forEach((button) => {
+    button.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      const serviceType = this.getAttribute("data-service");
+      console.log("Applying for service:", serviceType);
+
+      // Redirect to apply_for_service.html with service type as parameter
+      window.location.href = `apply_for_service.html?service=${encodeURIComponent(
+        serviceType
+      )}`;
     });
-    
-    // If we're on the apply_for_service.html page, pre-select the service type from URL parameter
-    if (window.location.pathname.includes('apply_for_service.html')) {
-        preSelectServiceType();
-    }
+  });
+
+  // If we're on the apply_for_service.html page, pre-select the service type from URL parameter
+  if (window.location.pathname.includes("apply_for_service.html")) {
+    preSelectServiceType();
+  }
 });
 
 function preSelectServiceType() {
-    // Get the service type from URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const serviceType = urlParams.get('service');
-    
-    if (serviceType && document.getElementById('serviceType')) {
-        const serviceSelect = document.getElementById('serviceType');
-        
-        // Find the option that matches the service type
-        for (let i = 0; i < serviceSelect.options.length; i++) {
-            const option = serviceSelect.options[i];
-            if (option.textContent.toLowerCase().includes(serviceType.toLowerCase()) || 
-                option.value.toLowerCase().includes(serviceType.toLowerCase().replace(' ', '-'))) {
-                option.selected = true;
-                break;
-            }
-        }
-        
-        // If no exact match found, try to map common service names
-        if (!serviceSelect.value) {
-            mapServiceType(serviceType, serviceSelect);
-        }
+  // Get the service type from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  const serviceType = urlParams.get("service");
+
+  if (serviceType && document.getElementById("serviceType")) {
+    const serviceSelect = document.getElementById("serviceType");
+
+    // Find the option that matches the service type
+    for (let i = 0; i < serviceSelect.options.length; i++) {
+      const option = serviceSelect.options[i];
+      if (
+        option.textContent.toLowerCase().includes(serviceType.toLowerCase()) ||
+        option.value
+          .toLowerCase()
+          .includes(serviceType.toLowerCase().replace(" ", "-"))
+      ) {
+        option.selected = true;
+        break;
+      }
     }
+
+    // If no exact match found, try to map common service names
+    if (!serviceSelect.value) {
+      mapServiceType(serviceType, serviceSelect);
+    }
+  }
 }
 
 function mapServiceType(serviceType, selectElement) {
-    const serviceMappings = {
-        'civil registration': 'birth-certificate',
-        'birth registration': 'birth-certificate',
-        'death registration': 'death-certificate',
-        'marriage registration': 'marriage-certificate',
-        'local origin': 'local-origin',
-        'business permit': 'business-permit',
-        'revenue collection': 'business-permit',
-        'tax collection': 'tax-clearance',
-        'building approval': 'building-approval',
-        'market permit': 'market-permit'
+  const serviceMappings = {
+    "civil registration": "birth-certificate",
+    "birth registration": "birth-certificate",
+    "death registration": "death-certificate",
+    "marriage registration": "marriage-certificate",
+    "local origin": "local-origin",
+    "business permit": "business-permit",
+    "revenue collection": "business-permit",
+    "tax collection": "tax-clearance",
+    "building approval": "building-approval",
+    "market permit": "market-permit",
+  };
+
+  const normalizedService = serviceType.toLowerCase();
+  const mappedValue = serviceMappings[normalizedService];
+
+  if (mappedValue) {
+    for (let i = 0; i < selectElement.options.length; i++) {
+      if (selectElement.options[i].value === mappedValue) {
+        selectElement.options[i].selected = true;
+        break;
+      }
+    }
+  }
+}
+
+// Notification System
+function initNotificationSystem() {
+  const notificationBell = document.getElementById("notificationBell");
+  if (!notificationBell) return;
+
+  // Check for notifications every 30 seconds
+  checkNotifications();
+  setInterval(checkNotifications, 30000);
+
+  // Setup notification bell click
+  notificationBell.addEventListener("click", showNotificationsPanel);
+}
+
+function checkNotifications() {
+  // Check localStorage for notifications
+  const notifications = JSON.parse(
+    localStorage.getItem("adminNotifications") || "[]"
+  );
+  const payments = JSON.parse(
+    localStorage.getItem("confirmedPayments") || "[]"
+  );
+
+  // Count unread notifications
+  const unreadNotifications = notifications.filter((n) => !n.read).length;
+
+  // Count pending payments (not verified)
+  const pendingPayments = payments.filter((p) => !p.verified).length;
+
+  const totalUnread = unreadNotifications + pendingPayments;
+
+  // Update notification badge
+  const badge = document.getElementById("notificationBadge");
+  if (badge) {
+    badge.textContent = totalUnread > 99 ? "99+" : totalUnread;
+    badge.style.display = totalUnread > 0 ? "flex" : "none";
+  }
+}
+
+function showNotificationsPanel() {
+  // Create or show notifications panel
+  let panel = document.getElementById("notificationsPanel");
+
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "notificationsPanel";
+    panel.className = "notifications-panel";
+    document.body.appendChild(panel);
+  }
+
+  renderNotificationsPanel();
+  panel.style.display = "block";
+
+  // Mark notifications as read when viewing
+  markNotificationsAsRead();
+}
+
+function renderNotificationsPanel() {
+  const panel = document.getElementById("notificationsPanel");
+  const notifications = JSON.parse(
+    localStorage.getItem("adminNotifications") || "[]"
+  );
+  const payments = JSON.parse(
+    localStorage.getItem("confirmedPayments") || "[]"
+  );
+  const pendingPayments = payments.filter((p) => !p.verified);
+
+  panel.innerHTML = `
+    <div style="padding: 20px; border-bottom: 1px solid #eee; background: var(--primary); color: white;">
+      <h3 style="margin: 0;"><i class="fas fa-bell"></i> Notifications</h3>
+    </div>
+    <div style="max-height: 500px; overflow-y: auto;">
+      ${
+        pendingPayments.length > 0
+          ? `
+        <div style="padding: 15px; background: #fff3cd; border-bottom: 1px solid #ffeaa7;">
+          <strong><i class="fas fa-exclamation-triangle"></i> Pending Payments (${
+            pendingPayments.length
+          })</strong>
+        </div>
+        ${pendingPayments
+          .map(
+            (payment) => `
+          <div style="padding: 15px; border-bottom: 1px solid #eee;">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+              <span style="font-size: 20px; margin-right: 10px;">💰</span>
+              <div style="flex: 1;">
+                <strong>Payment Needs Verification</strong>
+                <div style="color: #666; font-size: 14px;">
+                  Application #${payment.applicationId || "N/A"}
+                </div>
+              </div>
+            </div>
+            <div style="color: #666; margin-bottom: 10px;">
+              <div>Amount: <strong>₦${
+                payment.amount?.toLocaleString() || "0"
+              }</strong></div>
+              <div>Transaction: ${payment.transactionId || "N/A"}</div>
+            </div>
+            <div>
+              <button onclick="verifyPaymentFromNotification('${
+                payment.applicationId
+              }', '${payment.transactionId}')" 
+                      style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-right: 5px;">
+                Verify Payment
+              </button>
+              <button onclick="viewApplicationDetails('${
+                payment.applicationId
+              }')" 
+                      style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                View Application
+              </button>
+            </div>
+          </div>
+        `
+          )
+          .join("")}
+      `
+          : ""
+      }
+      
+      ${
+        notifications.length > 0
+          ? `
+        ${
+          pendingPayments.length > 0
+            ? `<div style="padding: 15px; background: #f8f9fa; border-bottom: 1px solid #e9ecef;"><strong>Other Notifications</strong></div>`
+            : ""
+        }
+        ${notifications
+          .map(
+            (notification) => `
+          <div style="padding: 15px; border-bottom: 1px solid #eee; background: ${
+            notification.read ? "#fff" : "#f8f9fa"
+          };">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+              <span style="font-size: 20px; margin-right: 10px;">${
+                notification.type === "payment" ? "💰" : "📢"
+              }</span>
+              <strong style="flex: 1;">${
+                notification.title || "Notification"
+              }</strong>
+              <small style="color: #999;">${formatTimeAgo(
+                notification.timestamp
+              )}</small>
+            </div>
+            <div style="color: #666; margin-bottom: 10px;">${
+              notification.message || ""
+            }</div>
+            ${
+              notification.applicationId
+                ? `
+              <button onclick="viewApplicationDetails('${notification.applicationId}')" 
+                      style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                View Application
+              </button>
+            `
+                : ""
+            }
+          </div>
+        `
+          )
+          .join("")}
+      `
+          : ""
+      }
+      
+      ${
+        notifications.length === 0 && pendingPayments.length === 0
+          ? '<div style="padding: 40px; text-align: center; color: #999;">No notifications</div>'
+          : ""
+      }
+    </div>
+    ${
+      notifications.length > 0 || pendingPayments.length > 0
+        ? `
+      <div style="padding: 15px; text-align: center; border-top: 1px solid #eee;">
+        <button onclick="markAllNotificationsRead()" 
+                style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+          Mark All as Read
+        </button>
+      </div>
+    `
+        : ""
+    }
+  `;
+
+  // Close when clicking outside
+  setTimeout(() => {
+    document.addEventListener("click", closeNotificationsOutside);
+  }, 100);
+}
+
+function markNotificationsAsRead() {
+  const notifications = JSON.parse(
+    localStorage.getItem("adminNotifications") || "[]"
+  );
+  notifications.forEach((n) => (n.read = true));
+  localStorage.setItem("adminNotifications", JSON.stringify(notifications));
+  checkNotifications();
+}
+
+function markAllNotificationsRead() {
+  markNotificationsAsRead();
+  showNotificationsPanel();
+}
+
+function closeNotificationsOutside(e) {
+  const panel = document.getElementById("notificationsPanel");
+  const bell = document.getElementById("notificationBell");
+
+  if (
+    panel &&
+    !panel.contains(e.target) &&
+    (!bell || !bell.contains(e.target))
+  ) {
+    panel.style.display = "none";
+    document.removeEventListener("click", closeNotificationsOutside);
+  }
+}
+
+function verifyPaymentFromNotification(applicationId, transactionId) {
+  // Find the payment
+  const payments = JSON.parse(
+    localStorage.getItem("confirmedPayments") || "[]"
+  );
+  const payment = payments.find(
+    (p) =>
+      p.applicationId === applicationId && p.transactionId === transactionId
+  );
+
+  if (payment) {
+    if (
+      confirm(
+        `Verify payment of ₦${payment.amount} for Application #${applicationId}?`
+      )
+    ) {
+      payment.verified = true;
+      localStorage.setItem("confirmedPayments", JSON.stringify(payments));
+
+      // Update application status
+      const applications = JSON.parse(
+        localStorage.getItem("serviceApplications") || "[]"
+      );
+      const appIndex = applications.findIndex(
+        (app) => app.applicationId === applicationId
+      );
+      if (appIndex !== -1) {
+        applications[appIndex].paymentVerified = true;
+        applications[appIndex].transactionId = transactionId;
+        localStorage.setItem(
+          "serviceApplications",
+          JSON.stringify(applications)
+        );
+      }
+
+      alert("✅ Payment verified!");
+      showNotificationsPanel();
+      checkNotifications();
+
+      // Refresh applications list if on service applications tab
+      if (
+        document.querySelector(".admin-tab.active").dataset.tab ===
+        "service-applications"
+      ) {
+        loadServiceApplications();
+      }
+    }
+  }
+}
+
+function viewApplicationDetails(applicationId) {
+  // Close notifications panel
+  const panel = document.getElementById("notificationsPanel");
+  if (panel) panel.style.display = "none";
+
+  // Switch to service applications tab
+  const serviceTab = document.querySelector(
+    '.admin-tab[data-tab="service-applications"]'
+  );
+  if (serviceTab) {
+    serviceTab.click();
+
+    // Highlight the application
+    setTimeout(() => {
+      const appCard = document.querySelector(
+        `.application-card[data-id*="${applicationId}"]`
+      );
+      if (appCard) {
+        appCard.style.animation = "pulse 2s";
+        appCard.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 500);
+  }
+}
+
+function formatTimeAgo(timestamp) {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
+}
+
+// Initialize notification system when admin dashboard opens
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize notification system
+  initNotificationSystem();
+
+  // Update loadServiceApplications to include DOB field
+  async function loadServiceApplications(filter = "all") {
+    try {
+      // Your existing code...
+      // Make sure to include dateOfBirth in the display
+    } catch (error) {
+      console.error("Error loading service applications:", error);
+    }
+  }
+});
+
+// Notification System
+async function initNotificationSystem() {
+  const notificationBell = document.getElementById("notificationBell");
+  if (!notificationBell) return;
+
+  // Check for notifications every 30 seconds
+  await checkNotifications();
+  setInterval(checkNotifications, 30000);
+
+  // Setup notification bell click
+  notificationBell.addEventListener("click", showNotificationsPanel);
+}
+
+async function checkNotifications() {
+  try {
+    const response = await fetch("/api/admin/notifications");
+    const data = await response.json();
+
+    if (response.ok) {
+      updateNotificationBadge(data.unreadCount);
+    }
+  } catch (error) {
+    console.error("Error checking notifications:", error);
+  }
+}
+
+function updateNotificationBadge(unreadCount) {
+  const badge = document.getElementById("notificationBadge");
+  if (badge) {
+    badge.textContent = unreadCount > 99 ? "99+" : unreadCount;
+    badge.style.display = unreadCount > 0 ? "flex" : "none";
+  }
+}
+
+async function showNotificationsPanel() {
+  try {
+    const response = await fetch("/api/admin/notifications");
+    const data = await response.json();
+
+    if (!response.ok) return;
+
+    renderNotificationsPanel(data.notifications);
+  } catch (error) {
+    console.error("Error loading notifications:", error);
+  }
+}
+
+function renderNotificationsPanel(notifications) {
+  let panel = document.getElementById("notificationsPanel");
+
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "notificationsPanel";
+    panel.className = "notifications-panel";
+    document.body.appendChild(panel);
+  }
+
+  panel.innerHTML = `
+    <div style="padding: 20px; border-bottom: 1px solid #eee; background: var(--primary); color: white;">
+      <h3 style="margin: 0;"><i class="fas fa-bell"></i> Notifications</h3>
+    </div>
+    <div style="max-height: 500px; overflow-y: auto;">
+      ${
+        notifications.length > 0
+          ? notifications
+              .map(
+                (notification) => `
+          <div style="padding: 15px; border-bottom: 1px solid #eee; background: ${
+            notification.read ? "#fff" : "#f8f9fa"
+          };">
+            <div style="display: flex; align-items: center; margin-bottom: 5px;">
+              <span style="font-size: 20px; margin-right: 10px;">${
+                notification.type === "payment" ? "💰" : "📢"
+              }</span>
+              <strong style="flex: 1;">${notification.title}</strong>
+              <small style="color: #999;">${formatTimeAgo(
+                notification.createdAt
+              )}</small>
+            </div>
+            <div style="color: #666; margin-bottom: 10px;">${
+              notification.message
+            }</div>
+            ${
+              notification.applicationId
+                ? `
+              <div style="font-size: 12px; color: #888;">
+                <div>Transaction: ${notification.transactionId || "N/A"}</div>
+                <div>Amount: ₦${
+                  notification.amount?.toLocaleString() || "0"
+                }</div>
+              </div>
+              <button onclick="viewApplicationFromNotification('${
+                notification.applicationId
+              }')" 
+                      style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-top: 10px;">
+                View Application
+              </button>
+              <button onclick="markNotificationAsRead('${notification._id}')" 
+                      style="background: #6c757d; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-top: 10px; margin-left: 5px;">
+                Mark as Read
+              </button>
+            `
+                : ""
+            }
+          </div>
+        `
+              )
+              .join("")
+          : '<div style="padding: 40px; text-align: center; color: #999;">No notifications</div>'
+      }
+    </div>
+    ${
+      notifications.length > 0
+        ? `
+      <div style="padding: 15px; text-align: center; border-top: 1px solid #eee;">
+        <button onclick="markAllNotificationsAsRead()" 
+                style="background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+          Mark All as Read
+        </button>
+      </div>
+    `
+        : ""
+    }
+  `;
+
+  panel.style.display = "block";
+
+  // Close when clicking outside
+  setTimeout(() => {
+    document.addEventListener("click", closeNotificationsOutside);
+  }, 100);
+}
+
+async function markNotificationAsRead(notificationId) {
+  try {
+    const response = await fetch(
+      `/api/admin/notifications/${notificationId}/read`,
+      {
+        method: "PUT",
+      }
+    );
+
+    if (response.ok) {
+      showNotificationsPanel();
+      checkNotifications();
+    }
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+  }
+}
+
+async function markAllNotificationsAsRead() {
+  try {
+    const response = await fetch("/api/admin/notifications/read-all", {
+      method: "PUT",
+    });
+
+    if (response.ok) {
+      showNotificationsPanel();
+      checkNotifications();
+    }
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+  }
+}
+
+function viewApplicationFromNotification(applicationId) {
+  // Switch to service applications tab
+  const serviceTab = document.querySelector(
+    '.admin-tab[data-tab="service-applications"]'
+  );
+  if (serviceTab) {
+    serviceTab.click();
+
+    // Load applications and scroll to the specific one
+    setTimeout(() => {
+      loadServiceApplications().then(() => {
+        const appCard = document.querySelector(
+          `.application-card[data-id*="${applicationId}"]`
+        );
+        if (appCard) {
+          appCard.style.animation = "pulse 2s";
+          appCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
+    }, 500);
+  }
+}
+
+function closeNotificationsOutside(e) {
+  const panel = document.getElementById("notificationsPanel");
+  const bell = document.getElementById("notificationBell");
+
+  if (
+    panel &&
+    !panel.contains(e.target) &&
+    (!bell || !bell.contains(e.target))
+  ) {
+    panel.style.display = "none";
+    document.removeEventListener("click", closeNotificationsOutside);
+  }
+}
+
+// Helper function
+function formatTimeAgo(timestamp) {
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
+}
+
+// Initialize when admin dashboard opens
+document.addEventListener("DOMContentLoaded", function () {
+  // Check if admin dashboard is open
+  if (document.getElementById("adminDashboard")) {
+    initNotificationSystem();
+  }
+});
+
+// Initialize Leadership History Form
+function initializeLeadershipHistoryForm() {
+  const form = document.getElementById("leadershipHistoryForm");
+  const resetBtn = document.getElementById("resetLeadershipHistoryForm");
+  const cancelBtn = document.getElementById("cancelLeadershipHistoryEdit");
+  const imageInput = document.getElementById("historicalLeaderImage");
+  const imagePreview = document.getElementById("historicalLeaderImagePreview");
+
+  if (form && !form.hasAttribute("data-initialized")) {
+    form.setAttribute("data-initialized", "true");
+
+    // Update the form submission handler in initializeLeadershipHistoryForm
+    // Update the form submission handler - ADD THIS CONSOLE LOGGING
+form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    console.log('Form submission started...');
+    
+    const id = document.getElementById('historicalLeaderId').value;
+    const name = document.getElementById('historicalLeaderName').value;
+    const village = document.getElementById('historicalLeaderVillage').value;
+    const position = document.getElementById('historicalLeaderPosition').value;
+    const period = document.getElementById('historicalLeaderPeriod').value;
+    const achievements = document.getElementById('historicalLeaderAchievements').value;
+    const imageFile = imageInput.files[0];
+    
+    console.log('Form data:', { id, name, village, position, period, achievements, imageFile });
+    
+    // Validate required fields
+    if (!name || !village || !position || !period) {
+        SweetPopup.error('Please fill in all required fields: Name, Village, Position, and Period');
+        return;
+    }
+    
+    const leaderData = {
+        name,
+        village,
+        position,
+        period,
+        achievements: achievements || '',
+        image: imageFile
     };
     
-    const normalizedService = serviceType.toLowerCase();
-    const mappedValue = serviceMappings[normalizedService];
-    
-    if (mappedValue) {
-        for (let i = 0; i < selectElement.options.length; i++) {
-            if (selectElement.options[i].value === mappedValue) {
-                selectElement.options[i].selected = true;
-                break;
-            }
+    try {
+        console.log('Attempting to save leader...');
+        
+        if (id) {
+            const result = await apiService.updateLeadership(id, leaderData);
+            SweetPopup.success(result.message || 'Leader updated successully!');
+        } else {
+            const result = await apiService.addLeadership(leaderData);
+            SweetPopup.success(result.message || 'Leader added to history successfully!');
         }
+        
+        await loadHistoricalLeadersList();
+        resetLeadershipHistoryFormToAddMode();
+        
+        console.log('Leader saved successfully!');
+    } catch (error) {
+        console.error('Full error saving leader:', error);
+        console.error('Error stack:', error.stack);
+        
+        // More detailed error message
+        let errorMessage = 'Error saving leader: ';
+        if (error.message.includes('NetworkError')) {
+            errorMessage += 'Network error. Please check your internet connection and server status.';
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMessage += 'Cannot connect to server. Make sure the server is running on http://localhost:3000';
+        } else {
+            errorMessage += error.message;
+        }
+        
+        SweetPopup.error(errorMessage);
     }
+});
+  }
+
+  // Image preview
+  if (imageInput && imagePreview) {
+    imageInput.addEventListener("change", function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        imagePreview.innerHTML = "<span>No image selected</span>";
+      }
+    });
+  }
+
+  // Reset form
+  if (resetBtn && !resetBtn.hasAttribute("data-initialized")) {
+    resetBtn.setAttribute("data-initialized", "true");
+    resetBtn.addEventListener("click", resetLeadershipHistoryFormToAddMode);
+  }
+
+  // Cancel edit
+  if (cancelBtn && !cancelBtn.hasAttribute("data-initialized")) {
+    cancelBtn.setAttribute("data-initialized", "true");
+    cancelBtn.addEventListener("click", resetLeadershipHistoryFormToAddMode);
+  }
 }
+
+// Load historical leaders list
+async function loadHistoricalLeadersList() {
+  const container = document.getElementById("historicalLeadersListContainer");
+  if (!container) return;
+
+  try {
+    const leaders = await apiService.getLeadershipHistory();
+
+    container.innerHTML = "";
+
+    if (leaders.length === 0) {
+      container.innerHTML = "<p>No historical leaders added yet.</p>";
+      return;
+    }
+
+    leaders.forEach((leader) => {
+      const leaderItem = document.createElement("div");
+      leaderItem.className = "leader-item";
+      leaderItem.innerHTML = `
+                <div class="leader-item-content">
+                    <div class="leader-item-image">
+                        ${
+                          leader.image
+                            ? `<img src="${leader.image}" alt="${leader.name}">`
+                            : `<i class="fas fa-user-circle"></i>`
+                        }
+                    </div>
+                    <div class="leader-item-details">
+                        <h4>${leader.name}</h4>
+                        <p><strong>Village:</strong> ${leader.village}</p>
+                        <p><strong>Position:</strong> ${leader.position}</p>
+                        <p><strong>Period:</strong> ${leader.period}</p>
+                    </div>
+                </div>
+                <div class="leader-item-actions">
+                    <button class="edit-btn" data-id="${
+                      leader._id
+                    }">Edit</button>
+                    <button class="delete-btn" data-id="${
+                      leader._id
+                    }">Delete</button>
+                </div>
+            `;
+      container.appendChild(leaderItem);
+    });
+
+    // Add event listeners for edit/delete
+    container.addEventListener("click", async (e) => {
+      if (e.target.classList.contains("edit-btn")) {
+        const leaderId = e.target.getAttribute("data-id");
+        await editHistoricalLeader(leaderId);
+      }
+
+      if (e.target.classList.contains("delete-btn")) {
+        const leaderId = e.target.getAttribute("data-id");
+        await deleteHistoricalLeader(leaderId);
+      }
+    });
+  } catch (error) {
+    console.error("Error loading historical leaders:", error);
+    container.innerHTML = "<p>Error loading leaders. Please try again.</p>";
+  }
+}
+
+// Edit historical leader
+async function editHistoricalLeader(id) {
+  try {
+    const leaders = await apiService.getLeadershipHistory();
+    const leader = leaders.find((l) => l._id === id);
+
+    if (!leader) return;
+
+    document.getElementById("historicalLeaderId").value = leader._id;
+    document.getElementById("historicalLeaderName").value = leader.name;
+    document.getElementById("historicalLeaderVillage").value = leader.village;
+    document.getElementById("historicalLeaderPosition").value = leader.position;
+    document.getElementById("historicalLeaderPeriod").value = leader.period;
+    document.getElementById("historicalLeaderAchievements").value =
+      leader.achievements || "";
+
+    // Update image preview
+    const imagePreview = document.getElementById(
+      "historicalLeaderImagePreview"
+    );
+    if (imagePreview && leader.image) {
+      imagePreview.innerHTML = `<img src="${leader.image}" alt="Preview">`;
+    }
+
+    // Update form title and button
+    document.getElementById("leadershipHistoryFormTitle").textContent =
+      "Edit Historical Leader";
+    document.getElementById("leadershipHistorySubmitBtn").textContent =
+      "Update Leader";
+    document.getElementById("cancelLeadershipHistoryEdit").style.display =
+      "inline-block";
+  } catch (error) {
+    SweetPopup.error("Error loading leader data: " + error.message);
+  }
+}
+
+// Delete historical leader
+async function deleteHistoricalLeader(id) {
+  SweetPopup.confirm(
+    "Are you sure you want to delete this historical leader?",
+    "Confirm Deletion",
+    async () => {
+      try {
+        await apiService.deleteLeadership(id);
+        await loadHistoricalLeadersList();
+        SweetPopup.success("Leader deleted successfully!");
+      } catch (error) {
+        SweetPopup.error("Error deleting leader: " + error.message);
+      }
+    }
+  );
+}
+
+// Reset leadership history form
+function resetLeadershipHistoryFormToAddMode() {
+  const form = document.getElementById("leadershipHistoryForm");
+  if (form) form.reset();
+
+  document.getElementById("historicalLeaderId").value = "";
+  document.getElementById("leadershipHistoryFormTitle").textContent =
+    "Add Historical Leader";
+  document.getElementById("leadershipHistorySubmitBtn").textContent =
+    "Add Historical Leader";
+  document.getElementById("cancelLeadershipHistoryEdit").style.display = "none";
+
+  const imagePreview = document.getElementById("historicalLeaderImagePreview");
+  if (imagePreview) imagePreview.innerHTML = "<span>No image selected</span>";
+}
+
+// Add to loadAdminData function
+async function loadAdminData() {
+  console.log("Loading admin data...");
+  await loadGovernorData();
+  await loadLeaderList();
+  await loadVideoData();
+  await loadVillagesList();
+  await loadNewsList();
+  await loadEventsList();
+  await loadContactRequests();
+  await loadSupportRequests();
+  await loadServiceApplications();
+  await loadHistoricalLeadersList(); // ADD THIS LINE
+  initializeAdminTabs();
+  initializeAdminForms();
+  initializePasswordForm();
+  initializeSupportManagement();
+  initializeServiceApplicationsManagement();
+  initializeLeadershipHistoryForm(); // ADD THIS LINE
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// Academia Management
+function initializeAcademiaManagement() {
+  const academiaForm = document.getElementById('academiaForm');
+  const resetBtn = document.getElementById('resetAcademiaForm');
+  const cancelBtn = document.getElementById('cancelAcademiaEdit');
+  const photoInput = document.getElementById('academiaPhoto');
+  const photoPreview = document.getElementById('academiaPhotoPreview');
+
+  if (academiaForm && !academiaForm.hasAttribute('data-initialized')) {
+    academiaForm.setAttribute('data-initialized', 'true');
+    
+    academiaForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('academiaId').value;
+      const title = document.getElementById('academiaTitle').value;
+      const full_name = document.getElementById('academiaName').value;
+      const village = document.getElementById('academiaVillage').value;
+      const qualification = document.getElementById('academiaQualification').value;
+      const photoFile = photoInput.files[0];
+      
+      if (!title || !full_name || !village || !qualification) {
+        SweetPopup.error('Please fill in all required fields');
+        return;
+      }
+      
+      const academiaData = {
+        title,
+        full_name,
+        village,
+        qualification,
+        photo: photoFile
+      };
+      
+      try {
+        if (id) {
+          await apiService.updateAcademician(id, academiaData);
+          SweetPopup.success('Academician updated successfully!');
+        } else {
+          await apiService.addAcademician(academiaData);
+          SweetPopup.success('Academician added successfully!');
+        }
+        
+        await loadAcademiaList();
+        resetAcademiaForm();
+      } catch (error) {
+        SweetPopup.error('Error saving academician: ' + error.message);
+      }
+    });
+  }
+
+  // Photo preview
+  if (photoInput && photoPreview) {
+    photoInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          photoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 200px;">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        photoPreview.innerHTML = '';
+      }
+    });
+  }
+
+  // Reset form
+  if (resetBtn && !resetBtn.hasAttribute('data-initialized')) {
+    resetBtn.setAttribute('data-initialized', 'true');
+    resetBtn.addEventListener('click', resetAcademiaForm);
+  }
+
+  // Cancel edit
+  if (cancelBtn && !cancelBtn.hasAttribute('data-initialized')) {
+    cancelBtn.setAttribute('data-initialized', 'true');
+    cancelBtn.addEventListener('click', resetAcademiaForm);
+  }
+}
+
+// Load academia list for admin
+async function loadAcademiaList() {
+  const container = document.getElementById('academiaListContainer');
+  if (!container) return;
+  
+  try {
+    const academia = await apiService.getAcademia();
+    
+    if (academia.length === 0) {
+      container.innerHTML = '<p>No academicians added yet.</p>';
+      return;
+    }
+    
+    let html = '<table class="admin-table">';
+    html += '<thead><tr><th>Photo</th><th>Name</th><th>Title</th><th>Village</th><th>Actions</th></tr></thead><tbody>';
+    
+    academia.forEach(person => {
+      html += `
+        <tr>
+          <td>
+            ${person.photo 
+              ? `<img src="${person.photo}" alt="${person.full_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">`
+              : '<i class="fas fa-user-circle fa-2x"></i>'
+            }
+          </td>
+          <td>${person.full_name}</td>
+          <td>${person.title}</td>
+          <td>${person.village}</td>
+          <td>
+            <button class="btn-edit edit-academia" data-id="${person._id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-danger delete-academia" data-id="${person._id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    
+    // Add event listeners
+    container.addEventListener('click', async (e) => {
+      if (e.target.closest('.edit-academia')) {
+        const id = e.target.closest('.edit-academia').dataset.id;
+        await editAcademician(id);
+      }
+      
+      if (e.target.closest('.delete-academia')) {
+        const id = e.target.closest('.delete-academia').dataset.id;
+        await deleteAcademician(id);
+      }
+    });
+  } catch (error) {
+    container.innerHTML = '<p>Error loading academia list.</p>';
+    console.error('Error:', error);
+  }
+}
+
+// Edit academician
+async function editAcademician(id) {
+  try {
+    const academia = await apiService.getAcademia();
+    const person = academia.find(p => p._id === id);
+    
+    if (!person) return;
+    
+    document.getElementById('academiaId').value = person._id;
+    document.getElementById('academiaTitle').value = person.title;
+    document.getElementById('academiaName').value = person.full_name;
+    document.getElementById('academiaVillage').value = person.village;
+    document.getElementById('academiaQualification').value = person.qualification;
+    
+    // Update photo preview
+    const photoPreview = document.getElementById('academiaPhotoPreview');
+    if (photoPreview && person.photo) {
+      photoPreview.innerHTML = `<img src="${person.photo}" alt="Preview" style="max-width: 200px; max-height: 200px;">`;
+    }
+    
+    // Update form title and buttons
+    document.querySelector('#academiaForm h3').textContent = 'Edit Academician';
+    document.querySelector('#academiaForm .btn-primary').innerHTML = '<i class="fas fa-save"></i> Update Academician';
+    document.getElementById('cancelAcademiaEdit').style.display = 'inline-block';
+  } catch (error) {
+    SweetPopup.error('Error loading academician data: ' + error.message);
+  }
+}
+
+// Delete academician
+async function deleteAcademician(id) {
+  SweetPopup.confirm(
+    'Are you sure you want to delete this academician?',
+    'Confirm Deletion',
+    async () => {
+      try {
+        await apiService.deleteAcademician(id);
+        await loadAcademiaList();
+        SweetPopup.success('Academician deleted successfully!');
+      } catch (error) {
+        SweetPopup.error('Error deleting academician: ' + error.message);
+      }
+    }
+  );
+}
+
+// Reset academia form
+function resetAcademiaForm() {
+  const form = document.getElementById('academiaForm');
+  if (form) form.reset();
+  
+  document.getElementById('academiaId').value = '';
+  document.getElementById('academiaPhotoPreview').innerHTML = '';
+  document.querySelector('#academiaForm h3').textContent = 'Add Academician';
+  document.querySelector('#academiaForm .btn-primary').innerHTML = '<i class="fas fa-plus"></i> Add Academician';
+  document.getElementById('cancelAcademiaEdit').style.display = 'none';
+}
+
+// Gallery Management
+function initializeGalleryManagement() {
+  const galleryForm = document.getElementById('galleryForm');
+  const typeSelect = document.getElementById('galleryType');
+  const fileInput = document.getElementById('galleryFile');
+  const fileHelp = document.getElementById('fileHelp');
+  
+  // File type validation
+  if (typeSelect && fileHelp) {
+    typeSelect.addEventListener('change', function() {
+      if (this.value === 'image') {
+        fileInput.accept = 'image/*';
+        fileHelp.textContent = 'Accepted: JPG, PNG, GIF, WebP (Max 50MB)';
+      } else if (this.value === 'video') {
+        fileInput.accept = 'video/*';
+        fileHelp.textContent = 'Accepted: MP4, WebM, MOV (Max 50MB)';
+      } else {
+        fileInput.accept = '';
+        fileHelp.textContent = '';
+      }
+    });
+  }
+  
+  if (galleryForm && !galleryForm.hasAttribute('data-initialized')) {
+    galleryForm.setAttribute('data-initialized', 'true');
+    
+    galleryForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const type = document.getElementById('galleryType').value;
+      const description = document.getElementById('galleryDescription').value;
+      const file = fileInput.files[0];
+      
+      if (!type || !file) {
+        SweetPopup.error('Please select type and upload a file');
+        return;
+      }
+      
+      const galleryData = {
+        type,
+        description,
+        file
+      };
+      
+      try {
+        await apiService.uploadGalleryItem(galleryData);
+        SweetPopup.success('Gallery item uploaded successfully!');
+        galleryForm.reset();
+        await loadGalleryList();
+      } catch (error) {
+        SweetPopup.error('Error uploading gallery item: ' + error.message);
+      }
+    });
+  }
+}
+
+// Load gallery list for admin
+async function loadGalleryList() {
+  const container = document.getElementById('galleryListContainer');
+  if (!container) return;
+  
+  try {
+    const gallery = await apiService.getGallery();
+    
+    if (gallery.length === 0) {
+      container.innerHTML = '<p>No gallery items added yet.</p>';
+      return;
+    }
+    
+    let html = '<div class="gallery-admin-grid">';
+    
+    gallery.forEach(item => {
+      const isImage = item.type === 'image';
+      const date = new Date(item.createdAt).toLocaleDateString();
+      
+      html += `
+        <div class="gallery-admin-item">
+          <div class="gallery-admin-media">
+            ${isImage 
+              ? `<img src="${item.file_url}" alt="${item.description}">`
+              : `<div class="video-thumbnail">
+                   <video>
+                     <source src="${item.file_url}" type="${item.mime_type}">
+                   </video>
+                   <div class="video-overlay">
+                     <i class="fas fa-play"></i>
+                   </div>
+                 </div>`
+            }
+          </div>
+          <div class="gallery-admin-info">
+            <p><strong>Type:</strong> ${item.type}</p>
+            <p><strong>Description:</strong> ${item.description || 'N/A'}</p>
+            <p><strong>Date:</strong> ${date}</p>
+            <p><strong>File:</strong> ${item.file_name} (${(item.file_size / 1024 / 1024).toFixed(2)} MB)</p>
+            <button class="btn-danger delete-gallery" data-id="${item._id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    // Add event listeners for delete buttons
+    container.addEventListener('click', async (e) => {
+      if (e.target.closest('.delete-gallery')) {
+        const id = e.target.closest('.delete-gallery').dataset.id;
+        await deleteGalleryItem(id);
+      }
+    });
+    
+    // Add hover effect for video thumbnails
+    document.querySelectorAll('.video-thumbnail').forEach(thumb => {
+      thumb.addEventListener('mouseenter', function() {
+        this.querySelector('video').play();
+      });
+      thumb.addEventListener('mouseleave', function() {
+        this.querySelector('video').pause();
+        this.querySelector('video').currentTime = 0;
+      });
+    });
+  } catch (error) {
+    container.innerHTML = '<p>Error loading gallery list.</p>';
+    console.error('Error:', error);
+  }
+}
+
+// Delete gallery item
+async function deleteGalleryItem(id) {
+  SweetPopup.confirm(
+    'Are you sure you want to delete this gallery item?',
+    'Confirm Deletion',
+    async () => {
+      try {
+        await apiService.deleteGalleryItem(id);
+        await loadGalleryList();
+        SweetPopup.success('Gallery item deleted successfully!');
+      } catch (error) {
+        SweetPopup.error('Error deleting gallery item: ' + error.message);
+      }
+    }
+  );
+}
+
+// Update loadAdminData function
+async function loadAdminData() {
+  console.log("Loading admin data...");
+  await loadGovernorData();
+  await loadLeaderList();
+  await loadVideoData();
+  await loadVillagesList();
+  await loadNewsList();
+  await loadEventsList();
+  await loadContactRequests();
+  await loadSupportRequests();
+  await loadServiceApplications();
+  await loadHistoricalLeadersList();
+  await loadAcademiaList(); // ADD THIS
+  await loadGalleryList(); // ADD THIS
+  initializeAdminTabs();
+  initializeAdminForms();
+  initializePasswordForm();
+  initializeSupportManagement();
+  initializeServiceApplicationsManagement();
+  initializeLeadershipHistoryForm();
+  initializeAcademiaManagement(); // ADD THIS
+  initializeGalleryManagement(); // ADD THIS
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ========== ACADEMIA MANAGEMENT ==========
+
+function initializeAcademiaManagement() {
+  console.log('🎓 Initializing academia management...');
+  
+  const academiaForm = document.getElementById('academiaForm');
+  const resetBtn = document.getElementById('resetAcademiaForm');
+  const cancelBtn = document.getElementById('cancelAcademiaEdit');
+  const photoInput = document.getElementById('academiaPhoto');
+  const photoPreview = document.getElementById('academiaPhotoPreview');
+
+  if (academiaForm && !academiaForm.hasAttribute('data-initialized')) {
+    academiaForm.setAttribute('data-initialized', 'true');
+    console.log('✅ Academia form initialized');
+    
+    academiaForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      console.log('📝 Academia form submitted');
+      
+      const id = document.getElementById('academiaId').value;
+      const title = document.getElementById('academiaTitle').value;
+      const full_name = document.getElementById('academiaName').value;
+      const village = document.getElementById('academiaVillage').value;
+      const qualification = document.getElementById('academiaQualification').value;
+      const photoFile = photoInput.files[0];
+      
+      console.log('📋 Form data:', { id, title, full_name, village, qualification, photoFile });
+      
+      // Validate required fields
+      if (!title || !full_name || !village || !qualification) {
+        SweetPopup.error('Please fill in all required fields: Title, Name, Village, and Qualifications');
+        return;
+      }
+      
+      const academiaData = {
+        title: title,
+        full_name: full_name,
+        village: village,
+        qualification: qualification,
+        photo: photoFile
+      };
+      
+      console.log('📤 Sending academia data:', academiaData);
+      
+      try {
+        if (id) {
+          console.log('🔄 Updating existing academician with ID:', id);
+          const result = await apiService.updateAcademician(id, academiaData);
+          SweetPopup.success(result.message || 'Academician updated successfully!');
+          console.log('✅ Update successful:', result);
+        } else {
+          console.log('➕ Adding new academician');
+          const result = await apiService.addAcademician(academiaData);
+          SweetPopup.success(result.message || 'Academician added successfully!');
+          console.log('✅ Add successful:', result);
+        }
+        
+        // Refresh the list
+        await loadAcademiaList();
+        resetAcademiaForm();
+        
+      } catch (error) {
+        console.error('❌ Error saving academician:', error);
+        SweetPopup.error('Error saving academician: ' + error.message);
+      }
+    });
+  }
+
+  // Photo preview
+  if (photoInput && photoPreview) {
+    photoInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          photoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        photoPreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+      }
+    });
+  }
+
+  // Reset form
+  if (resetBtn && !resetBtn.hasAttribute('data-initialized')) {
+    resetBtn.setAttribute('data-initialized', 'true');
+    resetBtn.addEventListener('click', resetAcademiaForm);
+  }
+
+  // Cancel edit
+  if (cancelBtn && !cancelBtn.hasAttribute('data-initialized')) {
+    cancelBtn.setAttribute('data-initialized', 'true');
+    cancelBtn.addEventListener('click', resetAcademiaForm);
+  }
+}
+
+// Load academia list for admin
+async function loadAcademiaList() {
+  const container = document.getElementById('academiaListContainer');
+  if (!container) {
+    console.log('❌ Academia list container not found');
+    return;
+  }
+  
+  container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading academicians...</p></div>';
+  
+  try {
+    console.log('📥 Loading academia list...');
+    const academia = await apiService.getAcademia();
+    console.log('✅ Academia data loaded:', academia);
+    
+    if (academia.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-user-graduate"></i>
+          <h3>No Academicians Added Yet</h3>
+          <p>Add academicians using the form above</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = `
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Title</th>
+            <th>Name</th>
+            <th>Village</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    academia.forEach(person => {
+      html += `
+        <tr>
+          <td>
+            ${person.photo 
+              ? `<img src="${person.photo}" alt="${person.full_name}">`
+              : '<i class="fas fa-user-circle"></i>'
+            }
+          </td>
+          <td>${person.title}</td>
+          <td><strong>${person.full_name}</strong></td>
+          <td>${person.village}</td>
+          <td>
+            <button class="btn-edit edit-academia" data-id="${person._id}">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-danger delete-academia" data-id="${person._id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    
+    // Add event listeners
+    container.addEventListener('click', async (e) => {
+      if (e.target.closest('.edit-academia')) {
+        const id = e.target.closest('.edit-academia').dataset.id;
+        await editAcademician(id);
+      }
+      
+      if (e.target.closest('.delete-academia')) {
+        const id = e.target.closest('.delete-academia').dataset.id;
+        await deleteAcademician(id);
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Error loading academia list:', error);
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Error Loading Data</h3>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+// Edit academician
+async function editAcademician(id) {
+  try {
+    console.log('✏️ Editing academician with ID:', id);
+    const academia = await apiService.getAcademia();
+    const person = academia.find(p => p._id === id);
+    
+    if (!person) {
+      SweetPopup.error('Academician not found');
+      return;
+    }
+    
+    document.getElementById('academiaId').value = person._id;
+    document.getElementById('academiaTitle').value = person.title;
+    document.getElementById('academiaName').value = person.full_name;
+    document.getElementById('academiaVillage').value = person.village;
+    document.getElementById('academiaQualification').value = person.qualification;
+    
+    // Update photo preview
+    const photoPreview = document.getElementById('academiaPhotoPreview');
+    if (photoPreview) {
+      if (person.photo) {
+        photoPreview.innerHTML = `<img src="${person.photo}" alt="Preview">`;
+      } else {
+        photoPreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+      }
+    }
+    
+    // Update form title and buttons
+    const formTitle = document.querySelector('#academiaForm h3');
+    const submitBtn = document.querySelector('#academiaForm .btn-primary');
+    
+    if (formTitle) formTitle.textContent = 'Edit Academician';
+    if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Academician';
+    
+    document.getElementById('cancelAcademiaEdit').style.display = 'inline-block';
+    
+    console.log('✅ Academician loaded for editing:', person);
+  } catch (error) {
+    console.error('❌ Error loading academician data:', error);
+    SweetPopup.error('Error loading academician data: ' + error.message);
+  }
+}
+
+// Delete academician
+async function deleteAcademician(id) {
+  SweetPopup.confirm(
+    'Are you sure you want to delete this academician?',
+    'Confirm Deletion',
+    async () => {
+      try {
+        console.log('🗑️ Deleting academician with ID:', id);
+        await apiService.deleteAcademician(id);
+        await loadAcademiaList();
+        SweetPopup.success('Academician deleted successfully!');
+      } catch (error) {
+        console.error('❌ Error deleting academician:', error);
+        SweetPopup.error('Error deleting academician: ' + error.message);
+      }
+    }
+  );
+}
+
+// Reset academia form
+function resetAcademiaForm() {
+  const form = document.getElementById('academiaForm');
+  if (form) form.reset();
+  
+  document.getElementById('academiaId').value = '';
+  const photoPreview = document.getElementById('academiaPhotoPreview');
+  if (photoPreview) photoPreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+  
+  const formTitle = document.querySelector('#academiaForm h3');
+  const submitBtn = document.querySelector('#academiaForm .btn-primary');
+  
+  if (formTitle) formTitle.textContent = 'Add Academician';
+  if (submitBtn) submitBtn.innerHTML = '<i class="fas fa-plus"></i> Add Academician';
+  
+  document.getElementById('cancelAcademiaEdit').style.display = 'none';
+}
+
+// ========== GALLERY MANAGEMENT ==========
+
+function initializeGalleryManagement() {
+  console.log('🖼️ Initializing gallery management...');
+  
+  const galleryForm = document.getElementById('galleryForm');
+  const typeSelect = document.getElementById('galleryType');
+  const fileInput = document.getElementById('galleryFile');
+  const fileHelp = document.getElementById('fileHelp');
+  
+  // File type validation
+  if (typeSelect && fileHelp) {
+    typeSelect.addEventListener('change', function() {
+      if (this.value === 'image') {
+        fileInput.accept = 'image/*';
+        fileHelp.textContent = 'Accepted formats: JPG, PNG, GIF, WebP (Max 50MB)';
+        fileHelp.style.color = '#3498db';
+      } else if (this.value === 'video') {
+        fileInput.accept = 'video/*';
+        fileHelp.textContent = 'Accepted formats: MP4, WebM, MOV (Max 50MB)';
+        fileHelp.style.color = '#e74c3c';
+      } else {
+        fileInput.accept = '';
+        fileHelp.textContent = 'Please select a media type';
+        fileHelp.style.color = '#999';
+      }
+    });
+  }
+  
+  if (galleryForm && !galleryForm.hasAttribute('data-initialized')) {
+    galleryForm.setAttribute('data-initialized', 'true');
+    console.log('✅ Gallery form initialized');
+    
+    galleryForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      console.log('📝 Gallery form submitted');
+      
+      const type = document.getElementById('galleryType').value;
+      const description = document.getElementById('galleryDescription').value;
+      const file = fileInput.files[0];
+      
+      console.log('📋 Form data:', { type, description, file });
+      
+      if (!type) {
+        SweetPopup.error('Please select media type (Image or Video)');
+        return;
+      }
+      
+      if (!file) {
+        SweetPopup.error('Please select a file to upload');
+        return;
+      }
+      
+      const galleryData = {
+        type: type,
+        description: description,
+        file: file
+      };
+      
+      console.log('📤 Sending gallery data:', galleryData);
+      
+      try {
+        const result = await apiService.uploadGalleryItem(galleryData);
+        SweetPopup.success(result.message || 'Gallery item uploaded successfully!');
+        console.log('✅ Upload successful:', result);
+        
+        galleryForm.reset();
+        fileHelp.textContent = 'Please select a media type';
+        fileHelp.style.color = '#999';
+        await loadGalleryList();
+        
+      } catch (error) {
+        console.error('❌ Error uploading gallery item:', error);
+        SweetPopup.error('Error uploading gallery item: ' + error.message);
+      }
+    });
+  }
+}
+
+// Load gallery list for admin
+async function loadGalleryList() {
+  const container = document.getElementById('galleryListContainer');
+  if (!container) {
+    console.log('❌ Gallery list container not found');
+    return;
+  }
+  
+  container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading gallery items...</p></div>';
+  
+  try {
+    console.log('📥 Loading gallery list...');
+    const gallery = await apiService.getGallery();
+    console.log('✅ Gallery data loaded:', gallery);
+    
+    if (gallery.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-photo-video"></i>
+          <h3>No Gallery Items Added Yet</h3>
+          <p>Upload images and videos using the form above</p>
+        </div>
+      `;
+      return;
+    }
+    
+    let html = '<div class="gallery-admin-grid">';
+    
+    gallery.forEach(item => {
+      const isImage = item.type === 'image';
+      const date = new Date(item.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+      
+      html += `
+        <div class="gallery-admin-item">
+          <div class="gallery-admin-media">
+            ${isImage 
+              ? `<img src="${item.file_url}" alt="${item.description || 'Image'}">`
+              : `<div class="video-thumbnail">
+                   <video muted>
+                     <source src="${item.file_url}" type="${item.mime_type}">
+                   </video>
+                   <div class="video-overlay">
+                     <i class="fas fa-play"></i>
+                   </div>
+                 </div>`
+            }
+          </div>
+          <div class="gallery-admin-info">
+            <p>
+              <strong>Type:</strong>
+              <span class="file-badge ${isImage ? 'image-badge' : 'video-badge'}">
+                ${isImage ? 'Image' : 'Video'}
+              </span>
+            </p>
+            <p><strong>Description:</strong> ${item.description || 'No description'}</p>
+            <p><strong>Uploaded:</strong> ${date}</p>
+            <p><strong>File:</strong> ${item.file_name}</p>
+            <p><strong>Size:</strong> ${(item.file_size / 1024 / 1024).toFixed(2)} MB</p>
+            <button class="btn-danger delete-gallery" data-id="${item._id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    // Add event listeners for delete buttons
+    container.addEventListener('click', async (e) => {
+      if (e.target.closest('.delete-gallery')) {
+        const id = e.target.closest('.delete-gallery').dataset.id;
+        await deleteGalleryItem(id);
+      }
+    });
+    
+    // Add hover effect for video thumbnails
+    document.querySelectorAll('.video-thumbnail').forEach(thumb => {
+      const video = thumb.querySelector('video');
+      if (video) {
+        thumb.addEventListener('mouseenter', function() {
+          video.play().catch(e => console.log('Video play failed:', e));
+        });
+        thumb.addEventListener('mouseleave', function() {
+          video.pause();
+          video.currentTime = 0;
+        });
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Error loading gallery list:', error);
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Error Loading Data</h3>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+// Delete gallery item
+async function deleteGalleryItem(id) {
+  SweetPopup.confirm(
+    'Are you sure you want to delete this gallery item?',
+    'Confirm Deletion',
+    async () => {
+      try {
+        console.log('🗑️ Deleting gallery item with ID:', id);
+        await apiService.deleteGalleryItem(id);
+        await loadGalleryList();
+        SweetPopup.success('Gallery item deleted successfully!');
+      } catch (error) {
+        console.error('❌ Error deleting gallery item:', error);
+        SweetPopup.error('Error deleting gallery item: ' + error.message);
+      }
+    }
+  );
+}
+
+// Update loadAdminData function
+async function loadAdminData() {
+  console.log("🔄 Loading admin data...");
+  try {
+    await loadGovernorData();
+    await loadLeaderList();
+    await loadVideoData();
+    await loadVillagesList();
+    await loadNewsList();
+    await loadEventsList();
+    await loadContactRequests();
+    await loadSupportRequests();
+    await loadServiceApplications();
+    await loadHistoricalLeadersList();
+    
+    // Load new features
+    await loadAcademiaList();
+    await loadGalleryList();
+    
+    initializeAdminTabs();
+    initializeAdminForms();
+    initializePasswordForm();
+    initializeSupportManagement();
+    initializeServiceApplicationsManagement();
+    initializeLeadershipHistoryForm();
+    
+    // Initialize new features
+    initializeAcademiaManagement();
+    initializeGalleryManagement();
+    
+    console.log("✅ All admin data loaded successfully");
+  } catch (error) {
+    console.error("❌ Error loading admin data:", error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
