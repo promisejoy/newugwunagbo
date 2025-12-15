@@ -82,11 +82,16 @@ const upload = multer({
 });
 
 // MongoDB Connection
+// MongoDB Connection
 async function connectToDatabase() {
   try {
     console.log('🔗 Connecting to local MongoDB...');
     
-    client = new MongoClient(MONGODB_URI, {
+    // Use a default connection string if MONGODB_URI is not defined
+    const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017";
+    console.log('📡 Using MongoDB URI:', mongoURI);
+    
+    client = new MongoClient(mongoURI, {
       serverSelectionTimeoutMS: 5000,
       connectTimeoutMS: 5000,
     });
@@ -106,6 +111,7 @@ async function connectToDatabase() {
     console.error("❌ MongoDB connection failed:", error.message);
     console.log('💡 Please make sure MongoDB is installed and running on your system');
     console.log('💡 Run: sudo systemctl start mongod (Linux) or start MongoDB service (Windows)');
+    console.log('💡 On Linux/Kali: mongod --dbpath ~/mongodb_data --port 27017');
     return null;
   }
 }
