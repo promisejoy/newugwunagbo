@@ -116,18 +116,19 @@
             <ul class="nav-links">
               <li><a href="index.html" class="active">Home</a></li>
               <li><a href="#about">About Us</a></li>
-              <li data-hide-on-mobile><a href="#leadership">Leadership</a></li>
+              <li><a href="#leadership">Leadership</a></li>
               <li><a href="forum.html">Diaspora Forum</a></li>
-              <li><a href="support.html">Support</a></li>
+              <li><a href="#services">Services</a></li>
+
               <li><a href="#news">News</a></li>
               <li><a href="academia.html">Academia</a></li>
+              <li><a href="#departments">Departments</a></li>
+
+              <li><a href="#culture">Culture</a></li>
+              <li><a href="#contact">Support</a></li>
+              
               <li><a href="gallery.html">Gallery</a></li>
 
-              <li data-hide-on-mobile><a href="#culture">Culture</a></li>
-              <li data-hide-on-mobile><a href="#services">Services</a></li>
-              <li data-hide-on-mobile>
-                <a href="#departments">Departments</a>
-              </li>
               <li><a href="#contact">Contact</a></li>
             </ul>
           </div>
@@ -240,7 +241,7 @@
       <div class="container">
         <div class="section-title">
           <h2>Executive Governor</h2>
-          <p>at the State Level</p>
+          <p>At The State Level</p>
         </div>
         <div class="governor-content" id="governorContainer">
           <!-- Governor information will be dynamically loaded here -->
@@ -842,7 +843,6 @@
             <div class="admin-tab" data-tab="villages">Villages Management</div>
             <div class="admin-tab" data-tab="news">News Management</div>
             <div class="admin-tab" data-tab="events">Events Management</div>
-            <div class="admin-tab" data-tab="support">Support Requests</div>
             <div class="admin-tab" data-tab="contacts">Contact Requests</div>
             <div class="admin-tab" data-tab="password">Change Password</div>
             <div class="admin-tab" data-tab="leadership-history">
@@ -1237,51 +1237,7 @@
             </div>
           </div>
 
-          <!-- Support Requests Tab -->
-          <div class="tab-content" id="supportTab">
-            <h3>Support Requests</h3>
-            <div class="support-actions">
-              <button class="btn btn-primary" id="refreshSupport">
-                <i class="fas fa-sync-alt"></i> Refresh
-              </button>
-              <button class="btn btn-danger" id="clearSupport">
-                <i class="fas fa-trash"></i> Clear All
-              </button>
-            </div>
-
-            <div class="support-stats">
-              <div class="stat-card">
-                <span class="stat-number" id="totalRequests">0</span>
-                <span class="stat-label">Total Requests</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-number" id="pendingRequests">0</span>
-                <span class="stat-label">Pending</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-number" id="resolvedRequests">0</span>
-                <span class="stat-label">Resolved</span>
-              </div>
-            </div>
-
-            <div class="support-filters">
-              <select id="supportFilter" class="form-control">
-                <option value="all">All Requests</option>
-                <option value="pending">Pending</option>
-                <option value="resolved">Resolved</option>
-                <option value="critical">Critical Priority</option>
-                <option value="high">High Priority</option>
-              </select>
-            </div>
-
-            <div
-              id="supportRequestsContainer"
-              class="support-requests-container"
-            >
-              <!-- Support requests will be dynamically loaded here -->
-            </div>
-          </div>
-
+          
           <!-- Contact Requests Tab -->
           <div class="tab-content" id="contactsTab">
             <h3>Contact Requests</h3>
@@ -1929,12 +1885,34 @@
                     <a href="tel:+2348064661450" aria-label="Phone">
                         <i class="fas fa-phone"></i>
                     </a>
-                    <!-- <a href="https://dribbble.com/johndev" target="_blank" aria-label="Dribbble">
-                        <i class="fab fa-dribbble"></i>
+                   
+                </div>
+            </div>
+            <div class="developer-card">
+                <div class="developer-image">
+                    <img src="img/wisdom.png" alt="Engr. Excel Chibuike Chiemela.">
+                </div>
+                <div class="developer-role-badge">Front End Developer</div>
+                <h3 class="developer-name">Adiele Wisdom Chinonso</h3>
+                <div class="developer-title">Frontend Specialist</div>
+                
+                <p class="developer-bio">
+                    A digital architect who bridges design and technology, transforms creative concepts into interactive, user-friendly web experiences. With a keen eye for aesthetics and a logical approach to problem-solving.
+                </p>
+                
+                <div class="developer-village">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>From Aba, Abia State</span>
+                </div>
+                
+                <div class="developer-contact">
+                    <a href="mailto:johndeveloper@example.com" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
                     </a>
-                    <a href="https://twitter.com/johndev" target="_blank" aria-label="Twitter">
-                        <i class="fab fa-twitter"></i>
-                    </a> -->
+                    <a href="tel:+2348108972372" aria-label="Phone">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                   
                 </div>
             </div>
             
