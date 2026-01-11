@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,8 +10,8 @@
     <style>
         /* Gallery Specific Styles */
         .gallery-hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                        url('img/gala1.jpeg');
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('img/gala1.jpeg');
             background-size: cover;
             background-position: center;
             color: white;
@@ -93,6 +94,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
             border: 1px solid #eaeaea;
+            cursor: pointer;
         }
 
         .gallery-item:hover {
@@ -105,20 +107,25 @@
             height: 250px;
             overflow: hidden;
             position: relative;
-            cursor: pointer;
         }
 
-        .gallery-media img,
-        .gallery-media video {
+        .gallery-media img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background-color: #f5f5f5;
             transition: transform 0.5s ease;
         }
 
-        .gallery-item:hover .gallery-media img,
-        .gallery-item:hover .gallery-media video {
+        .gallery-item:hover .gallery-media img {
             transform: scale(1.05);
+        }
+
+        .gallery-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #000;
         }
 
         .gallery-media .play-btn {
@@ -126,7 +133,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(52, 152, 219, 0.9);
             color: white;
             width: 60px;
             height: 60px;
@@ -135,12 +142,15 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            opacity: 1;
+            transition: all 0.3s ease;
+            z-index: 2;
+            border: 3px solid rgba(255, 255, 255, 0.3);
         }
 
-        .gallery-media:hover .play-btn {
-            opacity: 1;
+        .gallery-media .play-btn:hover {
+            background: rgba(41, 128, 185, 1);
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
         .gallery-content {
@@ -191,6 +201,64 @@
             color: #bdc3c7;
         }
 
+        /* Video Preview Styles */
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-wrapper:hover .video-controls {
+            opacity: 1;
+        }
+
+        .video-controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .video-controls button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .video-time {
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
         /* Modal Styles */
         .gallery-modal {
             display: none;
@@ -199,39 +267,69 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
 
+        .gallery-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
         .modal-content {
-            max-width: 90%;
+            width: 90%;
+            max-width: 1200px;
             max-height: 90%;
             border-radius: 10px;
             overflow: hidden;
-            background: white;
+            background: #000;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        .modal-content img,
-        .modal-content video {
+        #modalMedia {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            min-height: 0;
+            padding: 20px;
+        }
+
+        #modalMedia img {
             width: 100%;
             height: auto;
-            max-height: 80vh;
+            max-height: 70vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        #modalMedia video {
+            width: 100%;
+            height: auto;
+            max-height: 70vh;
+            object-fit: contain;
             display: block;
         }
 
         .modal-description {
-            padding: 20px;
+            padding: 15px 20px;
             background: white;
+            text-align: center;
+            font-size: 1rem;
+            color: #333;
+            border-top: 1px solid #eee;
         }
 
         .close-modal {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: -40px;
+            right: 0;
             background: rgba(0, 0, 0, 0.7);
             color: white;
             width: 40px;
@@ -243,11 +341,133 @@
             font-size: 1.2rem;
             cursor: pointer;
             z-index: 1001;
-            border: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
         }
 
         .close-modal:hover {
             background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Navigation arrows for modal */
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .modal-nav:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .modal-nav.prev {
+            left: 20px;
+        }
+
+        .modal-nav.next {
+            right: 20px;
+        }
+
+        /* Sample video indicator */
+        .sample-badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        /* Modal video controls */
+        .modal-video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #modalMedia:hover .modal-video-controls {
+            opacity: 1;
+        }
+
+        .modal-video-controls button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-video-controls button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .modal-video-time {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-width: 120px;
+        }
+
+        .modal-volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .modal-volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .modal-volume-slider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 70%;
+            background: #3498db;
+            border-radius: 2px;
         }
 
         @media (max-width: 768px) {
@@ -273,6 +493,41 @@
             .gallery-media {
                 height: 200px;
             }
+
+            .modal-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .modal-nav.prev {
+                left: 10px;
+            }
+
+            .modal-nav.next {
+                right: 10px;
+            }
+
+            .close-modal {
+                top: 10px;
+                right: 10px;
+            }
+
+            .modal-video-controls {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .modal-video-controls button {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .modal-video-time {
+                font-size: 0.8rem;
+                min-width: 100px;
+            }
         }
 
         @keyframes fadeInDown {
@@ -280,6 +535,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -291,6 +547,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -301,70 +558,60 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
         }
     </style>
 </head>
+
 <body>
     <header>
-      <div class="container">
-        <div class="header-top">
-          <div class="logo">
-            <div class="logo-placeholder">
-              <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-placeholder">
+                        <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Ugwunagbo LGA</h1>
+                        <p>Abia State, Nigeria</p>
+                    </div>
+                </div>
+                <div class="header-contact-info">
+                    <div class="header-contact-item">
+                        <i class="fas fa-phone" aria-hidden="true"></i>
+                        <span>+234 123 456 7890</span>
+                    </div>
+                    <div class="header-contact-item">
+                        <i class="fas fa-envelope" aria-hidden="true"></i>
+                        <span>info@ugwunagbolga.gov.ng</span>
+                    </div>
+                </div>
             </div>
-            <div class="logo-text">
-              <h1>Ugwunagbo LGA</h1>
-              <p>Abia State, Nigeria</p>
-            </div>
-          </div>
-          <div class="header-contact-info">
-            <div class="header-contact-item">
-              <i class="fas fa-phone" aria-hidden="true"></i>
-              <span>+234 123 456 7890</span>
-            </div>
-            <div class="header-contact-item">
-              <i class="fas fa-envelope" aria-hidden="true"></i>
-              <span>info@ugwunagbolga.gov.ng</span>
-            </div>
-          </div>
-          <!-- <div class="admin-login">
-            <button class="admin-btn" id="adminLoginBtn">
-              <i class="fas fa-user-shield" aria-hidden="true"></i> Admin
-            </button>
-          </div> -->
+            <nav>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+          <i class="fas fa-bars" aria-hidden="true"></i> Menu
+        </button>
+        <div class="nav-scroll-container">
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#about">About Us</a></li>
+            <li><a href="index.html#services">Services</a></li>
+            <li><a href="forum.html">Diaspora</a></li>
+            <li><a href="traditional-rulers.html">Traditional Rulers</a></li>
+            <li><a href="ngos-foundations.html">NGOs & Foundations</a></li>
+            <li><a href="academia.html">Academia</a></li>
+            <li><a href="index.html#departments">Departments</a></li>
+            <li><a href="index.html#news">News</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+            <li><a href="gallery.html" class="active">Gallery</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
         </div>
-        <nav>
-          <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
-            <i class="fas fa-bars" aria-hidden="true"></i> Menu
-          </button>
-          <div class="nav-scroll-container">
-            <ul class="nav-links">
-              <li><a href="index.html">Home</a></li>
-              <li><a href="index.html#about">About Us</a></li>
-              <li data-hide-on-mobile><a href="index.html#leadership">Leadership</a></li>
-              <li><a href="forum.html">Diaspora Forum</a></li>
-              <li><a href="support.html">Support</a></li>
-              <!-- <li><a href="events.html">Events</a></li> -->
-              <li><a href="index.html#news">News</a></li> 
-              <li><a href="academia.html">Academia</a></li>
-              <li><a href="gallery.html" class="active">Gallery</a></li>
-
-
-              <li data-hide-on-mobile><a href="index.html#culture">Culture</a></li>
-              <li data-hide-on-mobile><a href="index.html#services">Services</a></li>
-              <li data-hide-on-mobile>
-                <a href="index.html#departments">Departments</a>
-              </li>
-              <li><a href="index.html#contact">Contact</a></li>
-
-              
-            </ul>
-          </div>
-        </nav>
-      </div>
+      </nav>
+        </div>
     </header>
 
     <!-- Gallery Hero Section -->
@@ -406,129 +653,243 @@
     <!-- Gallery Modal -->
     <div class="gallery-modal" id="galleryModal">
         <button class="close-modal">&times;</button>
+        <div class="modal-nav prev">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="modal-nav next">
+            <i class="fas fa-chevron-right"></i>
+        </div>
         <div class="modal-content">
             <div id="modalMedia"></div>
+            <div class="modal-video-controls" id="modalVideoControls" style="display: none;">
+                <button id="modalPlayPauseBtn" aria-label="Play/Pause">
+                    <i class="fas fa-play"></i>
+                </button>
+                <span class="modal-video-time" id="modalVideoTime">0:00 / 0:00</span>
+                <button id="modalFullscreenBtn" aria-label="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <div class="modal-volume-control">
+                    <button id="modalVolumeBtn" aria-label="Mute/Unmute">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <div class="modal-volume-slider" id="modalVolumeSlider"></div>
+                </div>
+            </div>
             <div class="modal-description" id="modalDescription"></div>
         </div>
     </div>
 
     <footer>
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>Ugwunagbo LGA</h3>
-            <p>
-              Committed to serving our community with integrity, transparency,
-              and excellence.
-            </p>
-            <div class="social-links">
-              <a href="#" aria-label="Facebook"
-                ><i class="fab fa-facebook-f" aria-hidden="true"></i
-              ></a>
-              <a href="#" aria-label="Twitter"
-                ><i class="fab fa-twitter" aria-hidden="true"></i
-              ></a>
-              <a href="#" aria-label="Instagram"
-                ><i class="fab fa-instagram" aria-hidden="true"></i
-              ></a>
-              <a href="#" aria-label="YouTube"
-                ><i class="fab fa-youtube" aria-hidden="true"></i
-              ></a>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Ugwunagbo LGA</h3>
+                    <p>
+                        Committed to serving our community with integrity, transparency,
+                        and excellence.
+                    </p>
+                    <div class="social-links">
+                        <a href="https://web.facebook.com/p/Ugwunagbo-L-G-A-100078652665899/?_rdc=1&_rdr#"
+                            aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="https://x.com/UgwunagboCarn" aria-label="Twitter"><i class="fab fa-twitter"
+                                aria-hidden="true"></i></a>
+                        <a href="https://www.instagram.com/ugwunagbocarnival/" aria-label="Instagram"><i
+                                class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="https://www.youtube.com/watch?v=_avhi4oZEQ0" aria-label="YouTube"><i
+                                class="fab fa-youtube" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Departments</h3>
+                    <ul class="footer-links">
+                        <li><a href="department-admin.html">Administration</a></li>
+                        <li><a href="department-finance.html">Finance</a></li>
+                        <li><a href="department-planning.html">Planning</a></li>
+                        <li><a href="department-health.html">Health</a></li>
+                        <li><a href="department-judiciary.html">Judiciary</a></li>
+                        <li><a href="department-inec.html">INEC</a></li>
+                        <li><a href="department-security.html">Security</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Birth Registration</a></li>
+                        <li><a href="#">Revenue Collection</a></li>
+                        <li><a href="#">Business Permits</a></li>
+                        <li><a href="#">Health Services</a></li>
+                        <li><a href="#">Social Welfare</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Info</h3>
+                    <ul class="footer-links">
+                        <li>
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                            Ugwunagbo LGA Secretariat
+                        </li>
+                        <li>
+                            <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
+                            7890
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                            info@ugwunagbolga.gov.ng
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
-          <div class="footer-column">
-    <h3>Departments</h3>
-    <ul class="footer-links">
-        <li><a href="department-admin.html">Administration</a></li>
-        <li><a href="department-finance.html">Finance</a></li>
-        <li><a href="department-planning.html">Planning</a></li>
-        <li><a href="department-health.html">Health</a></li>
-        <li><a href="department-judiciary.html">Judiciary</a></li>
-        <li><a href="department-inec.html">INEC</a></li>
-        <li><a href="department-security.html">Security</a></li>
-    </ul>
-</div>
-          <div class="footer-column">
-            <h3>Services</h3>
-            <ul class="footer-links">
-              <li><a href="#">Birth Registration</a></li>
-              <li><a href="#">Revenue Collection</a></li>
-              <li><a href="#">Business Permits</a></li>
-              <li><a href="#">Health Services</a></li>
-              <li><a href="#">Social Welfare</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>Contact Info</h3>
-            <ul class="footer-links">
-              <li>
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                Ugwunagbo LGA Secretariat
-              </li>
-              <li>
-                <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
-                7890
-              </li>
-              <li>
-                <i class="fas fa-envelope" aria-hidden="true"></i>
-                info@ugwunagbolga.gov.ng
-              </li>
-            </ul>
-          </div>
+            <div class="copyright">
+                <p>Courtesy Of SmartDevTechs</p>
+                <p>
+                    &copy; <span id="currentYear"></span> Ugwunagbo Local Government
+                    Area. All Rights Reserved.
+                </p>
+            </div>
         </div>
-        <div class="copyright">
-          <p>Courtesy Of SmartDevTechs</p>
-          <p>
-            &copy; <span id="currentYear"></span> Ugwunagbo Local Government
-            Area. All Rights Reserved.
-          </p>
-        </div>
-      </div>
     </footer>
 
     <!-- Scroll to Top Button -->
     <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
-      <i class="fas fa-chevron-up" aria-hidden="true"></i>
+        <i class="fas fa-chevron-up" aria-hidden="true"></i>
     </button>
-    <script src="events.html"></script>
     <script src="js/app.js"></script>
 
     <script>
-        // Current year in footer
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Update active tab button
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                // Show active tab content
-                const tabId = btn.dataset.tab;
-                document.querySelectorAll('.gallery-container').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.getElementById(`${tabId}Container`).classList.add('active');
-                
-                // Load content if not already loaded
-                if (tabId === 'images') {
-                    loadImages();
-                } else {
-                    loadVideos();
-                }
-            });
+        // Gallery Application Script
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Gallery page loaded');
+            initGallery();
         });
 
-        // Fetch gallery data
+        // Global variables for gallery management
+        let currentGalleryItems = [];
+        let currentIndex = 0;
+        let currentType = 'image';
+        let modalVideo = null;
+        let isVideoPlaying = false;
+
+        function initGallery() {
+            // Set current year in footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Initialize tab switching
+            initTabs();
+
+            // Initialize mobile menu
+            initMobileMenu();
+
+            // Initialize scroll to top
+            initScrollToTop();
+
+            // Load images on page load
+            loadImages();
+
+            // Initialize modal with navigation
+            initModal();
+        }
+
+        function initTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active tab button
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Show active tab content
+                    const tabId = btn.dataset.tab;
+                    document.querySelectorAll('.gallery-container').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}Container`).classList.add('active');
+
+                    // Load content if not already loaded
+                    if (tabId === 'images') {
+                        loadImages();
+                    } else {
+                        loadVideos();
+                    }
+                });
+            });
+        }
+
+        // Sample gallery data - Replace with actual API call
+        const sampleGalleryData = [
+            // Images
+            {
+                id: 1,
+                type: 'image',
+                file_url: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80',
+                description: 'Community Development Project - Full team photo showing all members',
+                createdAt: '2024-01-15'
+            },
+            {
+                id: 2,
+                type: 'image',
+                file_url: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80',
+                description: 'Infrastructure Development - Bridge construction with complete view',
+                createdAt: '2024-01-10'
+            },
+            {
+                id: 3,
+                type: 'image',
+                file_url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80',
+                description: 'Local Government Office - Complete building exterior',
+                createdAt: '2024-01-05'
+            },
+            {
+                id: 4,
+                type: 'image',
+                file_url: 'https://images.unsplash.com/photo-1551135049-8a33b2fb2f4f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80',
+                description: 'Community Meeting - All participants visible',
+                createdAt: '2023-12-20'
+            },
+            // Videos - FIXED: Changed to videos that support autoplay with sound
+            {
+                id: 5,
+                type: 'video',
+                file_url: 'https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_30fps.mp4',
+                description: 'Community Development Progress - Full video showing complete project',
+                createdAt: '2024-01-12',
+                duration: '1:23',
+                thumbnail: 'https://images.pexels.com/photos/3209828/pexels-photo-3209828.jpeg'
+            },
+            {
+                id: 6,
+                type: 'video',
+                file_url: 'https://videos.pexels.com/video-files/852430/852430-hd_1920_1080_25fps.mp4',
+                description: 'Cultural Festival Highlights - Complete cultural performance',
+                createdAt: '2024-01-08',
+                duration: '2:45',
+                thumbnail: 'https://images.pexels.com/photos/852430/pexels-photo-852430.jpeg'
+            },
+            {
+                id: 7,
+                type: 'video',
+                file_url: 'https://videos.pexels.com/video-files/854967/854967-hd_1920_1080_25fps.mp4',
+                description: 'Infrastructure Projects Update - Full project overview',
+                createdAt: '2023-12-28',
+                duration: '0:45',
+                thumbnail: 'https://images.pexels.com/photos/854967/pexels-photo-854967.jpeg'
+            }
+        ];
+
+        // Fetch gallery data from API or use sample data
         async function fetchGallery() {
             try {
+                // Try to fetch from API first
                 const response = await fetch('/api/gallery');
-                if (!response.ok) throw new Error('Failed to fetch gallery data');
-                return await response.json();
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Gallery data fetched from API:', data);
+                    return data;
+                }
+                throw new Error('API not available');
             } catch (error) {
-                console.error('Error:', error);
-                return [];
+                console.log('Using sample gallery data:', error.message);
+                // Return sample data if API fails
+                return sampleGalleryData;
             }
         }
 
@@ -536,29 +897,115 @@
         async function loadImages() {
             const container = document.getElementById('imagesGrid');
             container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading images...</p></div>';
-            
-            const data = await fetchGallery();
-            const images = data.filter(item => item.type === 'image');
-            
-            if (images.length === 0) {
+
+            try {
+                const data = await fetchGallery();
+                const images = data.filter(item => item.type === 'image');
+
+                if (images.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-image"></i>
+                            <h2>No Images Available</h2>
+                            <p>Images will appear here once uploaded through the admin dashboard</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                images.forEach((item, index) => {
+                    const itemElement = createGalleryItem(item, index);
+                    container.appendChild(itemElement);
+                });
+
+                // Store current gallery items for navigation
+                currentGalleryItems = images;
+                currentType = 'image';
+
+                // Add click events for modal
+                attachModalEvents();
+
+            } catch (error) {
+                console.error('Error loading images:', error);
                 container.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-image"></i>
-                        <h2>No Images Available</h2>
-                        <p>Images will appear here once uploaded through the admin dashboard</p>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Unable to Load Images</h2>
+                        <p>There was an error loading the content. Please try again later.</p>
+                        <button onclick="loadImages()" style="margin-top:20px;padding:10px 20px;background:#3498db;color:white;border:none;border-radius:5px;cursor:pointer;">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
                     </div>
                 `;
-                return;
             }
-            
-            container.innerHTML = '';
-            
-            images.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'gallery-item';
+        }
+
+        // Load videos with preview
+        async function loadVideos() {
+            const container = document.getElementById('videosGrid');
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading videos...</p></div>';
+
+            try {
+                const data = await fetchGallery();
+                const videos = data.filter(item => item.type === 'video');
+
+                if (videos.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-video"></i>
+                            <h2>No Videos Available</h2>
+                            <p>Videos will appear here once uploaded through the admin dashboard</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                videos.forEach((item, index) => {
+                    const itemElement = createGalleryItem(item, index);
+                    container.appendChild(itemElement);
+                });
+
+                // Store current gallery items for navigation
+                currentGalleryItems = videos;
+                currentType = 'video';
+
+                // Initialize video previews
+                initializeVideoPreviews();
+
+                // Add click events for modal
+                attachModalEvents();
+
+            } catch (error) {
+                console.error('Error loading videos:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Unable to Load Videos</h2>
+                        <p>There was an error loading the content. Please try again later.</p>
+                        <button onclick="loadVideos()" style="margin-top:20px;padding:10px 20px;background:#3498db;color:white;border:none;border-radius:5px;cursor:pointer;">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Create gallery item element
+        function createGalleryItem(item, index) {
+            const itemElement = document.createElement('div');
+            itemElement.className = 'gallery-item';
+            itemElement.dataset.id = item.id;
+            itemElement.dataset.index = index;
+            itemElement.dataset.type = item.type;
+
+            if (item.type === 'image') {
                 itemElement.innerHTML = `
-                    <div class="gallery-media" data-type="image" data-src="${item.file_url}">
-                        <img src="${item.file_url}" alt="${item.description || 'Gallery image'}">
+                    <div class="gallery-media" data-type="image" data-src="${item.file_url}" data-index="${index}">
+                        <img src="${item.file_url}" alt="${item.description}" loading="lazy">
                     </div>
                     <div class="gallery-content">
                         <div class="gallery-description">
@@ -566,138 +1013,575 @@
                         </div>
                         <div class="gallery-date">
                             <i class="far fa-calendar-alt"></i>
-                            <span>${new Date(item.createdAt).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}</span>
+                            <span>${formatDate(item.createdAt)}</span>
                         </div>
                     </div>
                 `;
-                container.appendChild(itemElement);
-            });
-            
-            // Add click events for modal
-            document.querySelectorAll('.gallery-media[data-type="image"]').forEach(media => {
-                media.addEventListener('click', () => {
-                    openModal(media.dataset.src, 'image', media.nextElementSibling.querySelector('.gallery-description').textContent);
-                });
-            });
-        }
+            } else if (item.type === 'video') {
+                // Create video element with preview controls
+                const isSampleVideo = item.file_url.includes('pexels.com');
 
-        // Load videos
-        async function loadVideos() {
-            const container = document.getElementById('videosGrid');
-            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading videos...</p></div>';
-            
-            const data = await fetchGallery();
-            const videos = data.filter(item => item.type === 'video');
-            
-            if (videos.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-video"></i>
-                        <h2>No Videos Available</h2>
-                        <p>Videos will appear here once uploaded through the admin dashboard</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            videos.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'gallery-item';
                 itemElement.innerHTML = `
-                    <div class="gallery-media" data-type="video" data-src="${item.file_url}">
-                        <video src="${item.file_url}" poster="https://images.unsplash.com/photo-1611605698335-8b1569810432?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="play-btn">
-                            <i class="fas fa-play"></i>
+                    <div class="gallery-media" data-type="video" data-src="${item.file_url}" data-index="${index}">
+                        <div class="video-wrapper">
+                            <video 
+                                src="${item.file_url}" 
+                                preload="metadata"
+                                poster="${item.thumbnail || ''}">
+                            </video>
+                            <div class="play-btn">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="video-controls">
+                                <button class="play-pause-btn" aria-label="Play/Pause video">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <span class="video-time">${item.duration || '0:00'}</span>
+                                <button class="fullscreen-btn" aria-label="Toggle fullscreen">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="gallery-content">
                         <div class="gallery-description">
                             ${item.description || 'Video'}
+                            ${isSampleVideo ? '<span class="sample-badge">Sample</span>' : ''}
                         </div>
                         <div class="gallery-date">
                             <i class="far fa-calendar-alt"></i>
-                            <span>${new Date(item.createdAt).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            })}</span>
+                            <span>${formatDate(item.createdAt)}</span>
+                            ${item.duration ? `<i class="fas fa-clock" style="margin-left: 10px;"></i><span>${item.duration}</span>` : ''}
                         </div>
                     </div>
                 `;
-                container.appendChild(itemElement);
-            });
-            
-            // Add click events for modal
-            document.querySelectorAll('.gallery-media[data-type="video"]').forEach(media => {
-                media.addEventListener('click', () => {
-                    openModal(media.dataset.src, 'video', media.nextElementSibling.querySelector('.gallery-description').textContent);
+            }
+
+            return itemElement;
+        }
+
+        // Initialize video preview controls
+        function initializeVideoPreviews() {
+            document.querySelectorAll('.video-wrapper').forEach(wrapper => {
+                const video = wrapper.querySelector('video');
+                const playBtn = wrapper.querySelector('.play-btn');
+                const playPauseBtn = wrapper.querySelector('.play-pause-btn');
+                const fullscreenBtn = wrapper.querySelector('.fullscreen-btn');
+                const videoTime = wrapper.querySelector('.video-time');
+
+                // Set up video metadata
+                video.addEventListener('loadedmetadata', function () {
+                    if (!wrapper.querySelector('.video-time').textContent || wrapper.querySelector('.video-time').textContent === '0:00') {
+                        const duration = formatVideoTime(video.duration);
+                        videoTime.textContent = duration;
+                    }
+                });
+
+                // Play button click
+                playBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    toggleVideoPlay(video, playBtn, playPauseBtn);
+                });
+
+                // Play/Pause button in controls
+                playPauseBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    toggleVideoPlay(video, playBtn, playPauseBtn);
+                });
+
+                // Video click to play/pause
+                video.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    toggleVideoPlay(video, playBtn, playPauseBtn);
+                });
+
+                // Update time during playback
+                video.addEventListener('timeupdate', function () {
+                    const currentTime = formatVideoTime(video.currentTime);
+                    const duration = formatVideoTime(video.duration);
+                    videoTime.textContent = `${currentTime} / ${duration}`;
+
+                    // Update play button icon
+                    const icon = playBtn.querySelector('i');
+                    const controlIcon = playPauseBtn.querySelector('i');
+                    if (video.paused) {
+                        icon.className = 'fas fa-play';
+                        controlIcon.className = 'fas fa-play';
+                    } else {
+                        icon.className = 'fas fa-pause';
+                        controlIcon.className = 'fas fa-pause';
+                    }
+                });
+
+                // When video ends
+                video.addEventListener('ended', function () {
+                    playBtn.style.opacity = '1';
+                    playBtn.querySelector('i').className = 'fas fa-play';
+                    playPauseBtn.querySelector('i').className = 'fas fa-play';
+                    videoTime.textContent = formatVideoTime(video.duration);
+                });
+
+                // Fullscreen button
+                fullscreenBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    toggleFullscreen(wrapper);
+                });
+
+                // Pause all other videos when one starts playing
+                video.addEventListener('play', function () {
+                    pauseAllOtherVideos(video);
                 });
             });
         }
 
-        // Modal functions
+        // Toggle video play/pause
+        function toggleVideoPlay(video, playBtn, controlBtn) {
+            if (video.paused) {
+                video.play().catch(() => { });
+                playBtn.style.opacity = '0.4';
+            } else {
+                video.pause();
+                playBtn.style.opacity = '1';
+            }
+        }
+
+        // Pause all other videos
+        function pauseAllOtherVideos(currentVideo) {
+            document.querySelectorAll('.video-wrapper video').forEach(vid => {
+                if (vid !== currentVideo && !vid.paused) {
+                    vid.pause();
+                    const wrapper = vid.closest('.video-wrapper');
+                    const playBtn = wrapper.querySelector('.play-btn');
+                    const controlBtn = wrapper.querySelector('.play-pause-btn');
+                    if (playBtn) playBtn.style.opacity = '1';
+                    if (controlBtn) controlBtn.querySelector('i').className = 'fas fa-play';
+                }
+            });
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen(element) {
+            if (!document.fullscreenElement) {
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.webkitRequestFullscreen) {
+                    element.webkitRequestFullscreen();
+                } else if (element.msRequestFullscreen) {
+                    element.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // Format video time
+        function formatVideoTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Attach modal events
+        function attachModalEvents() {
+            document.querySelectorAll(`.gallery-item`).forEach(item => {
+                item.addEventListener('click', function (e) {
+                    // Don't open modal if clicking on video controls
+                    if (e.target.closest('.video-controls') || 
+                        e.target.closest('.play-btn') || 
+                        e.target.closest('.play-pause-btn') || 
+                        e.target.closest('.fullscreen-btn')) {
+                        return;
+                    }
+
+                    const index = parseInt(this.dataset.index);
+                    openModalAtIndex(index);
+                });
+            });
+        }
+
+        // Initialize modal
+        function initModal() {
+            const modal = document.getElementById('galleryModal');
+            const closeBtn = document.querySelector('.close-modal');
+            const prevBtn = document.querySelector('.modal-nav.prev');
+            const nextBtn = document.querySelector('.modal-nav.next');
+            const playPauseBtn = document.getElementById('modalPlayPauseBtn');
+            const fullscreenBtn = document.getElementById('modalFullscreenBtn');
+            const volumeBtn = document.getElementById('modalVolumeBtn');
+            const volumeSlider = document.getElementById('modalVolumeSlider');
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // Close modal with ESC key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+                // Navigation with arrow keys
+                if (modal.classList.contains('active')) {
+                    if (e.key === 'ArrowLeft') {
+                        navigateModal('prev');
+                    } else if (e.key === 'ArrowRight') {
+                        navigateModal('next');
+                    }
+                    // Space bar to play/pause video
+                    if (e.key === ' ' && modalVideo) {
+                        e.preventDefault();
+                        toggleModalVideoPlay();
+                    }
+                }
+            });
+
+            // Close button
+            closeBtn.addEventListener('click', closeModal);
+
+            // Navigation buttons
+            prevBtn.addEventListener('click', () => navigateModal('prev'));
+            nextBtn.addEventListener('click', () => navigateModal('next'));
+
+            // Video controls
+            if (playPauseBtn) {
+                playPauseBtn.addEventListener('click', toggleModalVideoPlay);
+            }
+
+            if (fullscreenBtn) {
+                fullscreenBtn.addEventListener('click', () => {
+                    if (modalVideo) {
+                        if (!document.fullscreenElement) {
+                            modalVideo.requestFullscreen().catch(err => {
+                                console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                            });
+                        } else {
+                            document.exitFullscreen();
+                        }
+                    }
+                });
+            }
+
+            if (volumeBtn) {
+                volumeBtn.addEventListener('click', toggleModalVideoMute);
+            }
+
+            if (volumeSlider) {
+                volumeSlider.addEventListener('click', (e) => {
+                    if (modalVideo) {
+                        const rect = volumeSlider.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const percentage = Math.max(0, Math.min(1, x / rect.width));
+                        modalVideo.volume = percentage;
+                        updateVolumeUI();
+                    }
+                });
+            }
+
+            // Listen for fullscreen changes
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+
+        function handleFullscreenChange() {
+            const fullscreenBtn = document.getElementById('modalFullscreenBtn');
+            if (fullscreenBtn) {
+                if (document.fullscreenElement) {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                }
+            }
+        }
+
+        // Toggle modal video play/pause
+        function toggleModalVideoPlay() {
+            if (modalVideo) {
+                if (modalVideo.paused) {
+                    modalVideo.play().then(() => {
+                        isVideoPlaying = true;
+                        updateModalPlayButton();
+                    }).catch(e => {
+                        console.log('Video play failed:', e);
+                        // If autoplay is blocked, show play button
+                        modalVideo.controls = true;
+                    });
+                } else {
+                    modalVideo.pause();
+                    isVideoPlaying = false;
+                    updateModalPlayButton();
+                }
+            }
+        }
+
+        // Toggle modal video mute
+        function toggleModalVideoMute() {
+            if (modalVideo) {
+                modalVideo.muted = !modalVideo.muted;
+                updateVolumeUI();
+            }
+        }
+
+        // Update modal play button
+        function updateModalPlayButton() {
+            const playBtn = document.getElementById('modalPlayPauseBtn');
+            if (playBtn && modalVideo) {
+                if (modalVideo.paused) {
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                } else {
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+            }
+        }
+
+        // Update volume UI
+        function updateVolumeUI() {
+            const volumeBtn = document.getElementById('modalVolumeBtn');
+            const volumeSlider = document.getElementById('modalVolumeSlider');
+            
+            if (volumeBtn && modalVideo) {
+                if (modalVideo.muted || modalVideo.volume === 0) {
+                    volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    if (volumeSlider) {
+                        volumeSlider.style.setProperty('--volume-width', '0%');
+                    }
+                } else {
+                    if (modalVideo.volume < 0.5) {
+                        volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+                    } else {
+                        volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    }
+                    if (volumeSlider) {
+                        const volumePercent = modalVideo.volume * 100;
+                        volumeSlider.style.setProperty('--volume-width', `${volumePercent}%`);
+                    }
+                }
+            }
+        }
+
+        // Open modal at specific index
+        function openModalAtIndex(index) {
+            if (index < 0 || index >= currentGalleryItems.length) return;
+            
+            currentIndex = index;
+            const item = currentGalleryItems[index];
+            openModal(item.file_url, item.type, item.description);
+        }
+
+        // Navigate modal
+        function navigateModal(direction) {
+            if (direction === 'prev') {
+                currentIndex = currentIndex > 0 ? currentIndex - 1 : currentGalleryItems.length - 1;
+            } else if (direction === 'next') {
+                currentIndex = currentIndex < currentGalleryItems.length - 1 ? currentIndex + 1 : 0;
+            }
+            
+            const item = currentGalleryItems[currentIndex];
+            openModal(item.file_url, item.type, item.description);
+        }
+
+        // Open modal
         function openModal(src, type, description) {
             const modal = document.getElementById('galleryModal');
             const modalMedia = document.getElementById('modalMedia');
             const modalDescription = document.getElementById('modalDescription');
-            
+            const modalVideoControls = document.getElementById('modalVideoControls');
+
+            // Pause all videos before opening modal
+            pauseAllVideos();
+
+            modalMedia.innerHTML = '';
+            modalVideo = null;
+
             if (type === 'image') {
-                modalMedia.innerHTML = `<img src="${src}" alt="${description}">`;
-            } else {
                 modalMedia.innerHTML = `
-                    <video controls autoplay>
-                        <source src="${src}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                    <img src="${src}" alt="${description}">
                 `;
-            }
-            
-            modalDescription.textContent = description;
-            modal.style.display = 'flex';
-        }
+                modalVideoControls.style.display = 'none';
+            } else {
+                modalVideo = document.createElement('video');
+                modalVideo.src = src;
+                modalVideo.controls = false; // We'll use custom controls
+                modalVideo.autoplay = true;
+                modalVideo.muted = false;
+                modalVideo.playsInline = false;
+                modalVideo.style.width = '100%';
+                modalVideo.style.maxHeight = '70vh';
 
-        // Close modal
-        document.querySelector('.close-modal').addEventListener('click', () => {
-            document.getElementById('galleryModal').style.display = 'none';
-            // Stop video playback when closing modal
-            const video = document.querySelector('#modalMedia video');
-            if (video) {
-                video.pause();
-                video.currentTime = 0;
-            }
-        });
+                modalMedia.appendChild(modalVideo);
+                modalVideoControls.style.display = 'flex';
 
-        // Close modal when clicking outside
-        document.getElementById('galleryModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                e.currentTarget.style.display = 'none';
-                const video = document.querySelector('#modalMedia video');
-                if (video) {
-                    video.pause();
-                    video.currentTime = 0;
+                // Setup modal video controls
+                setupModalVideoControls();
+
+                // Try to play video with sound
+                const playPromise = modalVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        isVideoPlaying = true;
+                        updateModalPlayButton();
+                    }).catch(error => {
+                        console.log('Autoplay prevented:', error);
+                        modalVideo.controls = true; // Fallback to native controls
+                        isVideoPlaying = false;
+                        updateModalPlayButton();
+                    });
                 }
             }
-        });
+
+            modalDescription.textContent = description || (type === 'image' ? 'Image' : 'Video');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Setup modal video controls
+        function setupModalVideoControls() {
+            if (!modalVideo) return;
+
+            const modalVideoTime = document.getElementById('modalVideoTime');
+            const playPauseBtn = document.getElementById('modalPlayPauseBtn');
+
+            // Update time display
+            modalVideo.addEventListener('timeupdate', function() {
+                if (modalVideoTime) {
+                    const currentTime = formatVideoTime(modalVideo.currentTime);
+                    const duration = formatVideoTime(modalVideo.duration);
+                    modalVideoTime.textContent = `${currentTime} / ${duration}`;
+                }
+                updateModalPlayButton();
+            });
+
+            // Update play button on play/pause
+            modalVideo.addEventListener('play', function() {
+                isVideoPlaying = true;
+                updateModalPlayButton();
+            });
+
+            modalVideo.addEventListener('pause', function() {
+                isVideoPlaying = false;
+                updateModalPlayButton();
+            });
+
+            // Update volume UI
+            modalVideo.addEventListener('volumechange', updateVolumeUI);
+
+            // When video ends
+            modalVideo.addEventListener('ended', function() {
+                isVideoPlaying = false;
+                updateModalPlayButton();
+            });
+
+            // Click on video to play/pause
+            modalVideo.addEventListener('click', function(e) {
+                if (e.target === modalVideo) {
+                    toggleModalVideoPlay();
+                }
+            });
+
+            // Initialize volume UI
+            updateVolumeUI();
+            updateModalPlayButton();
+        }
+
+        // Pause all videos
+        function pauseAllVideos() {
+            // Pause gallery preview videos
+            document.querySelectorAll('.video-wrapper video').forEach(video => {
+                if (!video.paused) {
+                    video.pause();
+                    const wrapper = video.closest('.video-wrapper');
+                    if (wrapper) {
+                        const playBtn = wrapper.querySelector('.play-btn');
+                        const controlBtn = wrapper.querySelector('.play-pause-btn');
+                        if (playBtn) playBtn.style.opacity = '1';
+                        if (controlBtn) controlBtn.querySelector('i').className = 'fas fa-play';
+                    }
+                }
+            });
+
+            // Pause modal video if exists
+            if (modalVideo && !modalVideo.paused) {
+                modalVideo.pause();
+                isVideoPlaying = false;
+                updateModalPlayButton();
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('galleryModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+
+            // Stop and reset modal video
+            if (modalVideo) {
+                modalVideo.pause();
+                modalVideo.currentTime = 0;
+                modalVideo = null;
+            }
+
+            // Hide video controls
+            const modalVideoControls = document.getElementById('modalVideoControls');
+            if (modalVideoControls) {
+                modalVideoControls.style.display = 'none';
+            }
+
+            // Pause all videos in gallery
+            pauseAllVideos();
+        }
 
         // Mobile menu toggle
-        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
-            const navLinks = document.querySelector('.nav-links');
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
-            
-            this.setAttribute('aria-expanded', !isExpanded);
-            navLinks.classList.toggle('active');
-        });
+        function initMobileMenu() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function () {
+                    const navLinks = document.querySelector('.nav-links');
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    navLinks.classList.toggle('active');
+                });
+            }
+        }
 
-        // Load images on page load
-        document.addEventListener('DOMContentLoaded', loadImages);
+        // Scroll to top
+        function initScrollToTop() {
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            if (scrollToTopBtn) {
+                window.addEventListener('scroll', function () {
+                    if (window.pageYOffset > 300) {
+                        scrollToTopBtn.classList.add('show');
+                    } else {
+                        scrollToTopBtn.classList.remove('show');
+                    }
+                });
+
+                scrollToTopBtn.addEventListener('click', function () {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+        }
     </script>
 </body>
+
 </html>

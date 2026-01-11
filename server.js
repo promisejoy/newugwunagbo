@@ -32,13 +32,6 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, "public")));
 
-
-
-
-
-
-
-
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, "public", "uploads");
 if (!fs.existsSync(uploadsDir)) {
@@ -117,7 +110,6 @@ async function connectToDatabase() {
 }
 
 // Initialize collections and default data
-// Initialize collections and default data
 // Update the initializeCollections function in server.js
 async function initializeCollections() {
   try {
@@ -126,7 +118,9 @@ async function initializeCollections() {
       "events", "news", "contacts", "support_requests", "admin",
       "service_applications", "payments", "notifications",
       "leadership_history",
-      "academia", "gallery"
+      "academia", "gallery",
+      "traditional_rulers", // Note the underscore
+    "ngos_foundations" // Note the underscore
 
     ];
     
@@ -191,6 +185,305 @@ const validateSupport = [
 
 // ========== API ROUTES ==========
 
+// ========== TRADITIONAL RULERS API ROUTES ==========
+// Get all traditional rulers
+app.get("/api/traditional-rulers", async (req, res) => {
+  try {
+    console.log("🔍 GET /api/traditional-rulers called");
+    
+    if (!db) {
+      console.error("❌ Database not available");
+      return res.status(503).json({ error: "Database not available" });
+    }
+    
+    const collection = db.collection("traditional_rulers");
+    console.log("📊 Collection name:", collection.collectionName);
+    
+    const count = await collection.countDocuments();
+    console.log(`📊 Found ${count} documents in traditional_rulers collection`);
+    
+    const rulers = await collection.find({})
+      .sort({ year: 1 })
+      .toArray();
+    
+    console.log(`✅ Returning ${rulers.length} traditional rulers`);
+    res.json(rulers);
+  } catch (error) {
+    console.error("❌ Error fetching traditional rulers:", error);
+    res.status(500).json({ error: "Failed to fetch traditional rulers" });
+  }
+});
+
+// Add new traditional ruler
+app.post("/api/traditional-rulers", upload.single("image"), async (req, res) => {
+  try {
+    console.log("📝 POST /api/traditional-rulers called");
+    console.log("📦 Request body:", req.body);
+    console.log("📁 Request file:", req.file);
+    console.log("📋 Request headers:", req.headers);
+    
+    if (!db) {
+      console.error("❌ Database not available");
+      return res.status(503).json({ error: "Database not available" });
+    }
+    
+    const { 
+      name, 
+      title, 
+      role, 
+      village, 
+      bio, 
+      year, 
+      phone, 
+      email,
+      achievements 
+    } = req.body;
+
+    console.log("🔍 Parsed form data:", {
+      name, title, role, village, bio, year, phone, email, achievements
+    });
+
+    // Validate required fields
+    if (!name || !title || !role || !village || !bio || !year) {
+      console.error("❌ Missing required fields");
+      return res.status(400).json({ 
+        error: "Name, title, role, village, bio, and year are required",
+        received: { name, title, role, village, bio, year }
+      });
+    }
+
+    let imagePath = null;
+    if (req.file) {
+      imagePath = "/uploads/" + req.file.filename;
+      console.log("📸 Image uploaded to:", imagePath);
+    }
+
+    const rulerData = {
+      name: name.trim(),
+      title: title.trim(),
+      role: role.trim(),
+      village: village.trim(),
+      bio: bio.trim(),
+      year: parseInt(year),
+      phone: phone?.trim() || "",
+      email: email?.trim() || "",
+      achievements: achievements?.trim() || "",
+      image: imagePath,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    console.log("💾 Saving traditional ruler data:", rulerData);
+
+    const collection = db.collection("traditional_rulers");
+    const result = await collection.insertOne(rulerData);
+
+    console.log("✅ Traditional ruler saved successfully, ID:", result.insertedId);
+
+    res.json({ 
+      success: true, 
+      message: "Traditional ruler added successfully",
+      id: result.insertedId,
+      data: rulerData
+    });
+  } catch (error) {
+    console.error("❌ Error adding traditional ruler:", error);
+    console.error("❌ Error stack:", error.stack);
+    res.status(500).json({ 
+      error: "Failed to add traditional ruler",
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+app.delete("/api/traditional-rulers/:id", async (req, res) => {
+  try {
+    console.log('🗑️ DELETE /api/traditional-rulers/:id called with ID:', req.params.id);
+    
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+    console.log('🔍 Attempting to delete traditional ruler with ID:', id);
+    
+    // Validate ObjectId
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+
+    const result = await db.collection("traditional_rulers").deleteOne({ 
+      _id: new ObjectId(id) 
+    });
+
+    console.log('📊 Delete result:', result);
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Traditional ruler not found" });
+    }
+
+    res.json({ 
+      success: true, 
+      message: "Traditional ruler deleted successfully" 
+    });
+  } catch (error) {
+    console.error("❌ Error deleting traditional ruler:", error);
+    res.status(500).json({ 
+      error: "Failed to delete traditional ruler",
+      details: error.message 
+    });
+  }
+});
+
+// ========== NGOs & FOUNDATIONS API ROUTES - DEBUG VERSION ==========
+
+// Get all NGOs and foundations
+app.get("/api/ngos-foundations", async (req, res) => {
+  try {
+    console.log("🔍 GET /api/ngos-foundations called");
+    
+    if (!db) {
+      console.error("❌ Database not available");
+      return res.status(503).json({ error: "Database not available" });
+    }
+    
+    const collection = db.collection("ngos_foundations");
+    console.log("📊 Collection name:", collection.collectionName);
+    
+    const count = await collection.countDocuments();
+    console.log(`📊 Found ${count} documents in ngos_foundations collection`);
+    
+    const ngos = await collection.find({})
+      .sort({ name: 1 })
+      .toArray();
+    
+    console.log(`✅ Returning ${ngos.length} NGOs/foundations`);
+    res.json(ngos);
+  } catch (error) {
+    console.error("❌ Error fetching NGOs:", error);
+    res.status(500).json({ error: "Failed to fetch NGOs" });
+  }
+});
+
+// Add new NGO or foundation
+app.post("/api/ngos-foundations", upload.single("logo"), async (req, res) => {
+  try {
+    console.log("📝 POST /api/ngos-foundations called");
+    console.log("📦 Request body:", req.body);
+    console.log("📁 Request file:", req.file);
+    console.log("📋 Request headers:", req.headers);
+    
+    if (!db) {
+      console.error("❌ Database not available");
+      return res.status(503).json({ error: "Database not available" });
+    }
+    
+    const { 
+      name, 
+      type, 
+      description, 
+      location, 
+      yearFounded, 
+      focusArea, 
+      website, 
+      email, 
+      phone,
+      projects 
+    } = req.body;
+
+    console.log("🔍 Parsed form data:", {
+      name, type, description, location, yearFounded, focusArea, website, email, phone, projects
+    });
+
+    // Validate required fields
+    if (!name || !type || !description || !location || !yearFounded || !focusArea) {
+      console.error("❌ Missing required fields");
+      return res.status(400).json({ 
+        error: "Name, type, description, location, year founded, and focus area are required",
+        received: { name, type, description, location, yearFounded, focusArea }
+      });
+    }
+
+    let logoPath = null;
+    if (req.file) {
+      logoPath = "/uploads/" + req.file.filename;
+      console.log("📸 Logo uploaded to:", logoPath);
+    }
+
+    const ngoData = {
+      name: name.trim(),
+      type: type.trim(),
+      description: description.trim(),
+      location: location.trim(),
+      yearFounded: parseInt(yearFounded),
+      focusArea: focusArea.trim(),
+      website: website?.trim() || "",
+      email: email?.trim() || "",
+      phone: phone?.trim() || "",
+      projects: projects?.trim() || "",
+      logo: logoPath,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    console.log("💾 Saving NGO data:", ngoData);
+
+    const collection = db.collection("ngos_foundations");
+    const result = await collection.insertOne(ngoData);
+
+    console.log("✅ NGO saved successfully, ID:", result.insertedId);
+
+    res.json({ 
+      success: true, 
+      message: "NGO/Foundation added successfully",
+      id: result.insertedId,
+      data: ngoData
+    });
+  } catch (error) {
+    console.error("❌ Error adding NGO:", error);
+    console.error("❌ Error stack:", error.stack);
+    res.status(500).json({ 
+      error: "Failed to add NGO/Foundation",
+      details: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+});
+app.delete("/api/ngos-foundations/:id", async (req, res) => {
+  try {
+    console.log('🗑️ DELETE /api/ngos-foundations/:id called with ID:', req.params.id);
+    
+    if (!db) return res.status(503).json({ error: "Database not available" });
+    
+    const { id } = req.params;
+    console.log('🔍 Attempting to delete NGO with ID:', id);
+    
+    // Validate ObjectId
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid ID format" });
+    }
+
+    const result = await db.collection("ngos_foundations").deleteOne({ 
+      _id: new ObjectId(id) 
+    });
+
+    console.log('📊 Delete result:', result);
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "NGO/Foundation not found" });
+    }
+
+    res.json({ 
+      success: true, 
+      message: "NGO/Foundation deleted successfully" 
+    });
+  } catch (error) {
+    console.error("❌ Error deleting NGO:", error);
+    res.status(500).json({ 
+      error: "Failed to delete NGO/Foundation",
+      details: error.message 
+    });
+  }
+});
+
 // Governor Routes
 app.get("/api/governor", async (req, res) => {
   try {
@@ -240,52 +533,6 @@ app.put("/api/governor", upload.single("image"), async (req, res) => {
   }
 });
 
-// Video Routes
-app.get("/api/video", async (req, res) => {
-  try {
-    if (!db) return res.status(503).json({ error: "Database not available" });
-    
-    const video = await db.collection("video").findOne({});
-    res.json(video || {});
-  } catch (error) {
-    console.error("Error fetching video:", error);
-    res.status(500).json({ error: "Failed to fetch video" });
-  }
-});
-
-app.put("/api/video", upload.single("video"), async (req, res) => {
-  try {
-    if (!db) return res.status(503).json({ error: "Database not available" });
-    
-    const { title, description } = req.body;
-
-    let videoPath = null;
-    if (req.file) {
-      videoPath = "/uploads/" + req.file.filename;
-    }
-
-    const updateData = {
-      title: title?.trim() || "Ugwunagbo Video",
-      description: description?.trim() || "A video showcasing Ugwunagbo LGA",
-      updatedAt: new Date()
-    };
-
-    if (videoPath) {
-      updateData.video = videoPath;
-    }
-
-    await db.collection("video").updateOne(
-      {},
-      { $set: updateData },
-      { upsert: true }
-    );
-
-    res.json({ success: true, message: "Video updated successfully" });
-  } catch (error) {
-    console.error("Error updating video:", error);
-    res.status(500).json({ error: "Failed to update video" });
-  }
-});
 
 // Villages Routes
 app.get("/api/villages", async (req, res) => {
@@ -596,130 +843,6 @@ app.delete("/api/news/:id", async (req, res) => {
   }
 });
 
-// Events Routes
-app.get("/api/events", async (req, res) => {
-  try {
-    if (!db) return res.status(503).json({ error: "Database not available" });
-    
-    const events = await db.collection("events").find({}).sort({ date: 1 }).toArray();
-    res.json(events);
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    res.status(500).json({ error: "Failed to fetch events" });
-  }
-});
-
-app.post("/api/events", upload.single("image"), async (req, res) => {
-  try {
-    if (!db) return res.status(503).json({ error: "Database not available" });
-    
-    const { title, category, description, date, time, location, organizer } = req.body;
-
-    if (!title || !category || !description || !date || !location) {
-      return res.status(400).json({ error: "Title, category, description, date, and location are required" });
-    }
-
-    let imagePath = null;
-    if (req.file) {
-      imagePath = "/uploads/" + req.file.filename;
-    }
-
-    const result = await db.collection("events").insertOne({
-      title: title.trim(),
-      category: category.trim(),
-      description: description.trim(),
-      date: new Date(date),
-      time: time?.trim() || "",
-      location: location.trim(),
-      organizer: organizer?.trim() || "",
-      image: imagePath,
-      createdAt: new Date()
-    });
-
-    res.json({ 
-      success: true, 
-      message: "Event added successfully",
-      id: result.insertedId 
-    });
-  } catch (error) {
-    console.error("Error adding event:", error);
-    res.status(500).json({ error: "Failed to add event" });
-  }
-});
-
-app.put("/api/events/:id", upload.single("image"), async (req, res) => {
-  try {
-    if (!db) return res.status(503).json({ error: "Database not available" });
-    
-    const { id } = req.params;
-    const { title, category, description, date, time, location, organizer } = req.body;
-
-    if (!id) {
-      return res.status(400).json({ error: "Event ID is required" });
-    }
-
-    const updateData = {
-      title: title?.trim(),
-      category: category?.trim(),
-      description: description?.trim(),
-      date: date ? new Date(date) : undefined,
-      time: time?.trim() || "",
-      location: location?.trim(),
-      organizer: organizer?.trim() || "",
-      updatedAt: new Date()
-    };
-
-    if (req.file) {
-      updateData.image = "/uploads/" + req.file.filename;
-    }
-
-    // Remove undefined fields
-    Object.keys(updateData).forEach(key => {
-      if (updateData[key] === undefined) {
-        delete updateData[key];
-      }
-    });
-
-    const result = await db.collection("events").updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updateData }
-    );
-
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ error: "Event not found" });
-    }
-
-    res.json({ success: true, message: "Event updated successfully" });
-  } catch (error) {
-    console.error("Error updating event:", error);
-    res.status(500).json({ error: "Failed to update event" });
-  }
-});
-
-app.delete("/api/events/:id", async (req, res) => {
-  try {
-    if (!db) return res.status(503).json({ error: "Database not available" });
-    
-    const { id } = req.params;
-
-    if (!id) {
-      return res.status(400).json({ error: "Event ID is required" });
-    }
-
-    const result = await db.collection("events").deleteOne({ 
-      _id: new ObjectId(id) 
-    });
-
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ error: "Event not found" });
-    }
-
-    res.json({ success: true, message: "Event deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting event:", error);
-    res.status(500).json({ error: "Failed to delete event" });
-  }
-});
 
 
 // Forum API Routes
@@ -1092,10 +1215,6 @@ app.put("/api/admin/password", async (req, res) => {
 });
 
 
-
-
-
-
 // Service Applications Routes
 app.get("/api/service-applications", async (req, res) => {
   try {
@@ -1231,18 +1350,6 @@ function generateApplicationId() {
   const random = Math.random().toString(36).substr(2, 5);
   return `UGW-${timestamp}-${random}`.toUpperCase();
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // ========== ACADEMIA API ROUTES ==========
@@ -1493,23 +1600,6 @@ app.delete("/api/gallery/:id", async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Payment Routes
 // Payment Routes
 app.post("/api/service-applications/payments", async (req, res) => {
@@ -1621,9 +1711,6 @@ app.put("/api/service-applications/:id/payment/verify", async (req, res) => {
     res.status(500).json({ error: "Failed to verify payment" });
   }
 });
-
-
-
 
 // Get notifications for admin
 app.get("/api/admin/notifications", async (req, res) => {
@@ -1756,13 +1843,6 @@ async function startServer() {
 
 // Start the server
 startServer();
-
-
-
-
-
-
-
 
 
 // Example Node.js/Express backend code

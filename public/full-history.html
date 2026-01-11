@@ -1,744 +1,709 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Full History of Ugwunagbo LGA | Abia State</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <style>
-      /* Additional styles for the full history page */
-      .full-history-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 40px 20px;
-      }
 
-      .history-header {
-        text-align: center;
-        margin-bottom: 40px;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #e0e0e0;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full History of Ugwunagbo LGA | Abia State</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Additional styles for the full history page */
+    .full-history-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .history-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .history-header h1 {
+      color: #2c3e50;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .history-header .subtitle {
+      color: #3498db;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .history-header p {
+      color: #7f8c8d;
+      font-size: 1.1rem;
+    }
+
+    .history-content {
+      background: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+
+    .history-section {
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .history-section:last-child {
+      border-bottom: none;
+    }
+
+    .history-section h2 {
+      color: #e74c3c;
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #3498db;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .history-section h2 i {
+      margin-right: 10px;
+      color: #3498db;
+    }
+
+    .history-section p {
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      text-align: justify;
+    }
+
+    .highlight-box {
+      background: #f8f9fa;
+      border-left: 4px solid #3498db;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .highlight-box h3 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+    }
+
+    .lgas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
+    }
+
+    .lga-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 3px solid #3498db;
+      transition: transform 0.3s ease;
+    }
+
+    .lga-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .lga-item h4 {
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .important-note {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 25px 0;
+      position: relative;
+    }
+
+    .important-note:before {
+      content: "📌";
+      position: absolute;
+      left: 15px;
+      top: 15px;
+      font-size: 1.2rem;
+    }
+
+    .important-note p {
+      padding-left: 30px;
+      margin: 0;
+      color: #856404;
+    }
+
+    .history-navigation {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+
+    .history-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 30px;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .history-btn:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .history-btn.leadership {
+      background: #e74c3c;
+    }
+
+    .history-btn.leadership:hover {
+      background: #c0392b;
+    }
+
+    .back-btn {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .back-btn a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #3498db;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      gap: 8px;
+    }
+
+    .back-btn a:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .history-content {
+        padding: 20px;
       }
 
       .history-header h1 {
-        color: #2c3e50;
-        font-size: 2.5rem;
-        margin-bottom: 15px;
-        font-weight: 700;
-      }
-
-      .history-header .subtitle {
-        color: #3498db;
-        font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 10px;
-      }
-
-      .history-header p {
-        color: #7f8c8d;
-        font-size: 1.1rem;
-      }
-
-      .history-content {
-        background: #fff;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        margin-bottom: 40px;
-      }
-
-      .history-section {
-        margin-bottom: 50px;
-        padding-bottom: 30px;
-        border-bottom: 1px solid #f0f0f0;
-      }
-
-      .history-section:last-child {
-        border-bottom: none;
+        font-size: 2rem;
       }
 
       .history-section h2 {
-        color: #e74c3c;
-        font-size: 1.8rem;
-        margin-bottom: 25px;
-        padding-bottom: 10px;
-        border-bottom: 3px solid #3498db;
-        font-weight: 700;
-        position: relative;
-      }
-
-      .history-section h2 i {
-        margin-right: 10px;
-        color: #3498db;
-      }
-
-      .history-section p {
-        line-height: 1.8;
-        color: #333;
-        margin-bottom: 20px;
-        font-size: 1.1rem;
-        text-align: justify;
-      }
-
-      .highlight-box {
-        background: #f8f9fa;
-        border-left: 4px solid #3498db;
-        padding: 20px;
-        margin: 25px 0;
-        border-radius: 0 8px 8px 0;
-      }
-
-      .highlight-box h3 {
-        color: #2c3e50;
-        margin-bottom: 10px;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
       }
 
       .lgas-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-        margin: 25px 0;
-      }
-
-      .lga-item {
-        background: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 3px solid #3498db;
-        transition: transform 0.3s ease;
-      }
-
-      .lga-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-
-      .lga-item h4 {
-        color: #2c3e50;
-        margin-bottom: 8px;
-        font-size: 1.1rem;
-      }
-
-      .important-note {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
-        border-radius: 8px;
-        padding: 20px;
-        margin: 25px 0;
-        position: relative;
-      }
-
-      .important-note:before {
-        content: "📌";
-        position: absolute;
-        left: 15px;
-        top: 15px;
-        font-size: 1.2rem;
-      }
-
-      .important-note p {
-        padding-left: 30px;
-        margin: 0;
-        color: #856404;
+        grid-template-columns: 1fr;
       }
 
       .history-navigation {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin: 40px 0;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
       }
 
       .history-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 12px 30px;
-        background: #3498db;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
+        width: 100%;
+        max-width: 300px;
       }
+    }
+  </style>
+</head>
 
-      .history-btn:hover {
-        background: #2980b9;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-
-      .history-btn.leadership {
-        background: #e74c3c;
-      }
-
-      .history-btn.leadership:hover {
-        background: #c0392b;
-      }
-
-      .back-btn {
-        text-align: center;
-        margin-top: 40px;
-      }
-
-      .back-btn a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: #3498db;
-        color: white;
-        padding: 12px 30px;
-        border-radius: 5px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        gap: 8px;
-      }
-
-      .back-btn a:hover {
-        background: #2980b9;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      }
-
-      @media (max-width: 768px) {
-        .history-content {
-          padding: 20px;
-        }
-
-        .history-header h1 {
-          font-size: 2rem;
-        }
-
-        .history-section h2 {
-          font-size: 1.5rem;
-        }
-
-        .lgas-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .history-navigation {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .history-btn {
-          width: 100%;
-          max-width: 300px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Copy your header from index.html -->
-    <header>
-      <div class="container">
-        <div class="header-top">
-          <div class="logo">
-            <div class="logo-placeholder">
-              <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
-            </div>
-            <div class="logo-text">
-              <h1>Ugwunagbo LGA</h1>
-              <p>Abia State, Nigeria</p>
-            </div>
+<body>
+  <!-- Copy your header from index.html -->
+  <header>
+    <div class="container">
+      <div class="header-top">
+        <div class="logo">
+          <div class="logo-placeholder">
+            <i class="fas fa-landmark fa-2x" aria-hidden="true"></i>
           </div>
-          <div class="header-contact-info">
-            <div class="header-contact-item">
-              <i class="fas fa-phone" aria-hidden="true"></i>
-              <span>+234 123 456 7890</span>
-            </div>
-            <div class="header-contact-item">
-              <i class="fas fa-envelope" aria-hidden="true"></i>
-              <span>info@ugwunagbolga.gov.ng</span>
-            </div>
+          <div class="logo-text">
+            <h1>Ugwunagbo LGA</h1>
+            <p>Abia State, Nigeria</p>
           </div>
-          <!-- <div class="admin-login">
+        </div>
+        <div class="header-contact-info">
+          <div class="header-contact-item">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>+234 123 456 7890</span>
+          </div>
+          <div class="header-contact-item">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>info@ugwunagbolga.gov.ng</span>
+          </div>
+        </div>
+        <!-- <div class="admin-login">
             <button class="admin-btn" id="adminLoginBtn">
               <i class="fas fa-user-shield" aria-hidden="true"></i> Admin
             </button>
           </div> -->
-        </div>
-        <nav>
-          <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
-            <i class="fas fa-bars" aria-hidden="true"></i> Menu
-          </button>
-          <div class="nav-scroll-container">
-            <ul class="nav-links">
-              <li><a href="index.html">Home</a></li>
-              <li><a href="index.html#about" class="active">About Us</a></li>
-              <li data-hide-on-mobile><a href="index.html#leadership">Leadership</a></li>
-              <li><a href="forum.html">Diaspora Forum</a></li>
-              <li><a href="support.html">Support</a></li>
-              <!-- <li><a href="events.html">Events</a></li> -->
-              <li><a href="index.html#news">News</a></li> 
-              <li><a href="academia.html">Academia</a></li>
-              <li><a href="gallery.html">Gallery</a></li>
-
-
-              <li data-hide-on-mobile><a href="index.html#culture">Culture</a></li>
-              <li data-hide-on-mobile><a href="index.html#services">Services</a></li>
-              <li data-hide-on-mobile>
-                <a href="index.html#departments">Departments</a>
-              </li>
-              <li><a href="index.html#contact">Contact</a></li>
-
-              
-            </ul>
-          </div>
-        </nav>
       </div>
-    </header>
+      <nav>
+        <button class="mobile-menu-btn" aria-label="Toggle navigation menu">
+          <i class="fas fa-bars" aria-hidden="true"></i> Menu
+        </button>
+        <div class="nav-scroll-container">
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#about" class="active">About Us</a></li>
+            <li><a href="index.html#services">Services</a></li>
+            <li><a href="forum.html">Diaspora</a></li>
+            <li><a href="traditional-rulers.html">Traditional Rulers</a></li>
+            <li><a href="ngos-foundations.html">NGOs & Foundations</a></li>
+            <li><a href="academia.html">Academia</a></li>
+            <li><a href="index.html#departments">Departments</a></li>
+            <li><a href="index.html#news">News</a></li>
+              <li><a href="index.html#culture">Culture</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
 
-    <main>
-      <div class="full-history-container">
-        <div class="history-header">
-          <h1>Complete History of Ugwunagbo Local Government Area</h1>
-          <div class="subtitle">Abia State, Nigeria</div>
+  <main>
+    <div class="full-history-container">
+      <div class="history-header">
+        <h1>Complete History of Ugwunagbo Local Government Area</h1>
+        <div class="subtitle">Abia State, Nigeria</div>
+        <p>
+          A comprehensive account from Abia State creation to present
+          leadership
+        </p>
+      </div>
+
+      <div class="history-content">
+        <!-- Section 1: Abia State History -->
+        <div class="history-section">
+          <h2><i class="fas fa-landmark"></i> History of Abia State</h2>
           <p>
-            A comprehensive account from Abia State creation to present
-            leadership
+            Abia State is one of the 36 states in Nigeria, located in the
+            southeastern part of the country. The state was created on
+            <strong>August 27, 1991</strong> during the military regime of
+            General Ibrahim Babangida. It was carved out of the former Imo
+            State and derives its name from the acronym of the four main
+            groups of people in the state at creation: <strong>A</strong>ba,
+            <strong>B</strong>ende, <strong>I</strong>suikwuato, and
+            <strong>A</strong>fikpo.
+          </p>
+
+          <div class="highlight-box">
+            <h3>Key Facts About Abia State</h3>
+            <p><strong>Capital:</strong> Umuahia</p>
+            <p>
+              <strong>Commercial Hub:</strong> Aba (often called "Japan of
+              Africa")
+            </p>
+            <p><strong>Geopolitical Zone:</strong> South East</p>
+            <p><strong>Major Ethnic Groups:</strong> Igbo (predominant)</p>
+            <p><strong>Number of LGAs:</strong> 17 Local Government Areas</p>
+          </div>
+
+          <h3 style="color: #2c3e50; margin-top: 25px">
+            The 17 Local Government Areas of Abia State
+          </h3>
+          <div class="lgas-grid">
+            <div class="lga-item">
+              <h4>1. Aba North</h4>
+              <p>Commercial & industrial center</p>
+            </div>
+            <div class="lga-item">
+              <h4>2. Aba South</h4>
+              <p>Commercial & industrial hub</p>
+            </div>
+            <div class="lga-item">
+              <h4>3. Arochukwu</h4>
+              <p>Historical & cultural center</p>
+            </div>
+            <div class="lga-item">
+              <h4>4. Bende</h4>
+              <p>Agricultural hub</p>
+            </div>
+            <div class="lga-item">
+              <h4>5. Ikwuano</h4>
+              <p>Educational center</p>
+            </div>
+            <div class="lga-item">
+              <h4>6. Isiala Ngwa North</h4>
+              <p>Agricultural zone</p>
+            </div>
+            <div class="lga-item">
+              <h4>7. Isiala Ngwa South</h4>
+              <p>Agricultural zone</p>
+            </div>
+            <div class="lga-item">
+              <h4>8. Isuikwuato</h4>
+              <p>Agricultural zone</p>
+            </div>
+            <div class="lga-item">
+              <h4>9. Obingwa</h4>
+              <p>Mixed economy</p>
+            </div>
+            <div class="lga-item">
+              <h4>10. Ohafia</h4>
+              <p>Cultural heritage zone</p>
+            </div>
+            <div class="lga-item">
+              <h4>11. Osisioma Ngwa</h4>
+              <p>Industrial area</p>
+            </div>
+            <div class="lga-item">
+              <h4>12. Ugwunagbo</h4>
+              <p>Mixed urban-rural economy</p>
+            </div>
+            <div class="lga-item">
+              <h4>13. Ukwa East</h4>
+              <p>Riverine & agricultural area</p>
+            </div>
+            <div class="lga-item">
+              <h4>14. Ukwa West</h4>
+              <p>Riverine & oil-producing area</p>
+            </div>
+            <div class="lga-item">
+              <h4>15. Umuahia North</h4>
+              <p>State capital & administrative center</p>
+            </div>
+            <div class="lga-item">
+              <h4>16. Umuahia South</h4>
+              <p>Administrative & residential area</p>
+            </div>
+            <div class="lga-item">
+              <h4>17. Umu Nneochi</h4>
+              <p>Agricultural & mining area</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Creation of Ugwunagbo LGA -->
+        <div class="history-section">
+          <h2>
+            <i class="fas fa-map-marked-alt"></i> Creation of Ugwunagbo Local
+            Government Area
+          </h2>
+          <p>
+            Ugwunagbo Local Government Area was created in
+            <strong>1996</strong> during the military administration of
+            General Sani Abacha, as part of the nationwide local government
+            creation exercise that increased the number of LGAs in Nigeria
+            from 589 to 774.
+          </p>
+
+          <p>
+            The creation of Ugwunagbo LGA was a significant milestone for the
+            people, as it provided:
+          </p>
+
+          <div class="important-note">
+            <p>
+              <strong>Ugwunagbo</strong> literally translates to "the hill is
+              high" or "the height is elevated" in the Igbo language,
+              reflecting the geographical features of the area.
+            </p>
+          </div>
+
+          <div class="highlight-box">
+            <h3>Why Ugwunagbo was Created</h3>
+            <p>
+              <strong>1. Administrative Convenience:</strong> To bring
+              government closer to the people
+            </p>
+            <p>
+              <strong>2. Developmental Needs:</strong> To address specific
+              infrastructural and social needs
+            </p>
+            <p>
+              <strong>3. Cultural Identity:</strong> To preserve and promote
+              the unique cultural heritage
+            </p>
+            <p>
+              <strong>4. Political Representation:</strong> To ensure adequate
+              representation in state affairs
+            </p>
+          </div>
+
+          <p>
+            Before its creation as an independent LGA, Ugwunagbo was part of
+            the larger Obingwa Local Government Area. The creation followed
+            extensive consultations, petitions, and demonstrations by the
+            people seeking self-determination and development.
           </p>
         </div>
 
-        <div class="history-content">
-          <!-- Section 1: Abia State History -->
-          <div class="history-section">
-            <h2><i class="fas fa-landmark"></i> History of Abia State</h2>
-            <p>
-              Abia State is one of the 36 states in Nigeria, located in the
-              southeastern part of the country. The state was created on
-              <strong>August 27, 1991</strong> during the military regime of
-              General Ibrahim Babangida. It was carved out of the former Imo
-              State and derives its name from the acronym of the four main
-              groups of people in the state at creation: <strong>A</strong>ba,
-              <strong>B</strong>ende, <strong>I</strong>suikwuato, and
-              <strong>A</strong>fikpo.
-            </p>
+        <!-- Section 3: Geographical and Demographic Profile -->
+        <div class="history-section">
+          <h2>
+            <i class="fas fa-globe-africa"></i> Geographical and Demographic
+            Profile
+          </h2>
+          <p>
+            <strong>Location:</strong> Ugwunagbo is situated in the southern
+            part of Abia State, sharing boundaries with several LGAs including
+            Obingwa and Ukwa West.
+          </p>
 
-            <div class="highlight-box">
-              <h3>Key Facts About Abia State</h3>
-              <p><strong>Capital:</strong> Umuahia</p>
-              <p>
-                <strong>Commercial Hub:</strong> Aba (often called "Japan of
-                Africa")
-              </p>
-              <p><strong>Geopolitical Zone:</strong> South East</p>
-              <p><strong>Major Ethnic Groups:</strong> Igbo (predominant)</p>
-              <p><strong>Number of LGAs:</strong> 17 Local Government Areas</p>
-            </div>
-
-            <h3 style="color: #2c3e50; margin-top: 25px">
-              The 17 Local Government Areas of Abia State
-            </h3>
-            <div class="lgas-grid">
-              <div class="lga-item">
-                <h4>1. Aba North</h4>
-                <p>Commercial & industrial center</p>
-              </div>
-              <div class="lga-item">
-                <h4>2. Aba South</h4>
-                <p>Commercial & industrial hub</p>
-              </div>
-              <div class="lga-item">
-                <h4>3. Arochukwu</h4>
-                <p>Historical & cultural center</p>
-              </div>
-              <div class="lga-item">
-                <h4>4. Bende</h4>
-                <p>Agricultural hub</p>
-              </div>
-              <div class="lga-item">
-                <h4>5. Ikwuano</h4>
-                <p>Educational center</p>
-              </div>
-              <div class="lga-item">
-                <h4>6. Isiala Ngwa North</h4>
-                <p>Agricultural zone</p>
-              </div>
-              <div class="lga-item">
-                <h4>7. Isiala Ngwa South</h4>
-                <p>Agricultural zone</p>
-              </div>
-              <div class="lga-item">
-                <h4>8. Isuikwuato</h4>
-                <p>Agricultural zone</p>
-              </div>
-              <div class="lga-item">
-                <h4>9. Obingwa</h4>
-                <p>Mixed economy</p>
-              </div>
-              <div class="lga-item">
-                <h4>10. Ohafia</h4>
-                <p>Cultural heritage zone</p>
-              </div>
-              <div class="lga-item">
-                <h4>11. Osisioma Ngwa</h4>
-                <p>Industrial area</p>
-              </div>
-              <div class="lga-item">
-                <h4>12. Ugwunagbo</h4>
-                <p>Mixed urban-rural economy</p>
-              </div>
-              <div class="lga-item">
-                <h4>13. Ukwa East</h4>
-                <p>Riverine & agricultural area</p>
-              </div>
-              <div class="lga-item">
-                <h4>14. Ukwa West</h4>
-                <p>Riverine & oil-producing area</p>
-              </div>
-              <div class="lga-item">
-                <h4>15. Umuahia North</h4>
-                <p>State capital & administrative center</p>
-              </div>
-              <div class="lga-item">
-                <h4>16. Umuahia South</h4>
-                <p>Administrative & residential area</p>
-              </div>
-              <div class="lga-item">
-                <h4>17. Umu Nneochi</h4>
-                <p>Agricultural & mining area</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Creation of Ugwunagbo LGA -->
-          <div class="history-section">
-            <h2>
-              <i class="fas fa-map-marked-alt"></i> Creation of Ugwunagbo Local
-              Government Area
-            </h2>
-            <p>
-              Ugwunagbo Local Government Area was created in
-              <strong>1996</strong> during the military administration of
-              General Sani Abacha, as part of the nationwide local government
-              creation exercise that increased the number of LGAs in Nigeria
-              from 589 to 774.
-            </p>
-
-            <p>
-              The creation of Ugwunagbo LGA was a significant milestone for the
-              people, as it provided:
-            </p>
-
-            <div class="important-note">
-              <p>
-                <strong>Ugwunagbo</strong> literally translates to "the hill is
-                high" or "the height is elevated" in the Igbo language,
-                reflecting the geographical features of the area.
-              </p>
-            </div>
-
-            <div class="highlight-box">
-              <h3>Why Ugwunagbo was Created</h3>
-              <p>
-                <strong>1. Administrative Convenience:</strong> To bring
-                government closer to the people
-              </p>
-              <p>
-                <strong>2. Developmental Needs:</strong> To address specific
-                infrastructural and social needs
-              </p>
-              <p>
-                <strong>3. Cultural Identity:</strong> To preserve and promote
-                the unique cultural heritage
-              </p>
-              <p>
-                <strong>4. Political Representation:</strong> To ensure adequate
-                representation in state affairs
-              </p>
-            </div>
-
-            <p>
-              Before its creation as an independent LGA, Ugwunagbo was part of
-              the larger Obingwa Local Government Area. The creation followed
-              extensive consultations, petitions, and demonstrations by the
-              people seeking self-determination and development.
-            </p>
-          </div>
-
-          <!-- Section 3: Geographical and Demographic Profile -->
-          <div class="history-section">
-            <h2>
-              <i class="fas fa-globe-africa"></i> Geographical and Demographic
-              Profile
-            </h2>
-            <p>
-              <strong>Location:</strong> Ugwunagbo is situated in the southern
-              part of Abia State, sharing boundaries with several LGAs including
-              Obingwa and Ukwa West.
-            </p>
-
-            <p>
-              <strong>Major Towns and Villages:</strong> The LGA comprises
-              several communities including:
-            </p>
-            <ul style="list-style-type: none; padding-left: 20px">
-              <li>
-                <i
-                  class="fas fa-map-pin"
-                  style="color: #3498db; margin-right: 8px"
-                ></i>
-                <strong>Akanu</strong>
-              </li>
-              <li>
-                <i
-                  class="fas fa-map-pin"
-                  style="color: #3498db; margin-right: 8px"
-                ></i>
-                <strong>Asa Unumka</strong>
-              </li>
-              <li>
-                <i
-                  class="fas fa-map-pin"
-                  style="color: #3498db; margin-right: 8px"
-                ></i>
-                <strong>Umuakwu</strong>
-              </li>
-              <li>
-                <i
-                  class="fas fa-map-pin"
-                  style="color: #3498db; margin-right: 8px"
-                ></i>
-                <strong>Umugo</strong>
-              </li>
-              <li>
-                <i
-                  class="fas fa-map-pin"
-                  style="color: #3498db; margin-right: 8px"
-                ></i>
-                <strong>Obegu</strong>
-              </li>
-              <li>
-                <i
-                  class="fas fa-map-pin"
-                  style="color: #3498db; margin-right: 8px"
-                ></i>
-                <strong>Amapu</strong>
-              </li>
-            </ul>
-            <div class="read-history-btn">
-              <a href="newvillages.html" class="btn btn-primary">
-                View Villages Directory
-                <i class="fas fa-arrow-right" aria-hidden="true"></i>
-              </a>
-            </div>
-
-            <p>
-              <strong>Population:</strong> According to the 2006 census,
-              Ugwunagbo had an estimated population of 70,000 people. Current
-              estimates suggest a population of over 100,000 inhabitants.
-            </p>
-
-            <p>
-              <strong>Economic Activities:</strong> The people are predominantly
-              farmers, with major crops including cassava, yam, maize, and
-              vegetables. There's also significant engagement in trading, civil
-              service, and small-scale industries.
-            </p>
-          </div>
-
-          <!-- Section 4: Developmental Milestones -->
-          <div class="history-section">
-            <h2><i class="fas fa-chart-line"></i> Developmental Milestones</h2>
-            <p>
-              Since its creation, Ugwunagbo LGA has witnessed significant
-              development in various sectors:
-            </p>
-
-            <div class="highlight-box">
-              <h3>Key Achievements</h3>
-              <!-- <p><strong>Infrastructure:</strong> Construction of roads, bridges, and public buildings</p> -->
-              <p>
-                <strong>Education:</strong> Establishment of primary and
-                secondary schools
-              </p>
-              <p>
-                <strong>Healthcare:</strong> Development of health centers and
-                primary healthcare facilities
-              </p>
-              <p>
-                <strong>Agriculture:</strong> Support for farmers through
-                various agricultural programs
-              </p>
-              <p>
-                <strong>Security:</strong> Establishment of security networks
-                for community safety
-              </p>
-            </div>
-          </div>
-
-          <!-- Section 5: Cultural Heritage -->
-          <div class="history-section">
-            <h2><i class="fas fa-drum"></i> Cultural Heritage</h2>
-            <p>
-              Ugwunagbo people are part of the larger Igbo ethnic group with
-              rich cultural practices:
-            </p>
-
-            <div class="highlight-box">
-              <h3>Cultural Elements</h3>
-              <p>
-                <strong>Festivals:</strong> New Yam Festival (Iri Ji), cultural
-                dances
-              </p>
-              <p>
-                <strong>Traditional Rulers:</strong> Council of Traditional
-                Rulers (Ndị Eze)
-              </p>
-              <p>
-                <strong>Language:</strong> Igbo language with local dialect
-                variations
-              </p>
-              <p>
-                <strong>Cuisine:</strong> Traditional dishes including Ofe Akwu,
-                Ugba, and Abacha
-              </p>
-            </div>
-          </div>
-
-          <!-- Navigation Buttons -->
-          <div class="history-navigation">
-            <a href="full-leadership.html" class="history-btn leadership">
-              <i class="fas fa-users"></i> View Leadership History
+          <p>
+            <strong>Major Towns and Villages:</strong> The LGA comprises
+            several communities including:
+          </p>
+          <ul style="list-style-type: none; padding-left: 20px">
+            <li>
+              <i class="fas fa-map-pin" style="color: #3498db; margin-right: 8px"></i>
+              <strong>Akanu</strong>
+            </li>
+            <li>
+              <i class="fas fa-map-pin" style="color: #3498db; margin-right: 8px"></i>
+              <strong>Asa Unumka</strong>
+            </li>
+            <li>
+              <i class="fas fa-map-pin" style="color: #3498db; margin-right: 8px"></i>
+              <strong>Umuakwu</strong>
+            </li>
+            <li>
+              <i class="fas fa-map-pin" style="color: #3498db; margin-right: 8px"></i>
+              <strong>Umugo</strong>
+            </li>
+            <li>
+              <i class="fas fa-map-pin" style="color: #3498db; margin-right: 8px"></i>
+              <strong>Obegu</strong>
+            </li>
+            <li>
+              <i class="fas fa-map-pin" style="color: #3498db; margin-right: 8px"></i>
+              <strong>Amapu</strong>
+            </li>
+          </ul>
+          <div class="read-history-btn">
+            <a href="newvillages.html" class="btn btn-primary">
+              View Villages Directory
+              <i class="fas fa-arrow-right" aria-hidden="true"></i>
             </a>
           </div>
-        </div>
 
-        <div class="back-btn">
-          <a href="index.html#about"
-            ><i class="fas fa-arrow-left"></i> Back to About Section</a
-          >
-        </div>
-      </div>
-    </main>
-
-    <!-- Copy your footer from index.html -->
-    <footer>
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>Ugwunagbo LGA</h3>
-            <p>
-              Committed to serving our community with integrity, transparency,
-              and excellence.
-            </p>
-            <div class="social-links">
-              <a href="#" aria-label="Facebook"
-                ><i class="fab fa-facebook-f" aria-hidden="true"></i
-              ></a>
-              <a href="#" aria-label="Twitter"
-                ><i class="fab fa-twitter" aria-hidden="true"></i
-              ></a>
-              <a href="#" aria-label="Instagram"
-                ><i class="fab fa-instagram" aria-hidden="true"></i
-              ></a>
-              <a href="#" aria-label="YouTube"
-                ><i class="fab fa-youtube" aria-hidden="true"></i
-              ></a>
-            </div>
-          </div>
-         <div class="footer-column">
-    <h3>Departments</h3>
-    <ul class="footer-links">
-        <li><a href="department-admin.html">Administration</a></li>
-        <li><a href="department-finance.html">Finance</a></li>
-        <li><a href="department-planning.html">Planning</a></li>
-        <li><a href="department-health.html">Health</a></li>
-        <li><a href="department-judiciary.html">Judiciary</a></li>
-        <li><a href="department-inec.html">INEC</a></li>
-        <li><a href="department-security.html">Security</a></li>
-    </ul>
-</div>
-          <div class="footer-column">
-            <h3>Services</h3>
-            <ul class="footer-links">
-              <li><a href="#">Birth Registration</a></li>
-              <li><a href="#">Revenue Collection</a></li>
-              <li><a href="#">Business Permits</a></li>
-              <li><a href="#">Health Services</a></li>
-              <li><a href="#">Social Welfare</a></li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>Contact Info</h3>
-            <ul class="footer-links">
-              <li>
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-                Ugwunagbo LGA Secretariat
-              </li>
-              <li>
-                <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
-                7890
-              </li>
-              <li>
-                <i class="fas fa-envelope" aria-hidden="true"></i>
-                info@ugwunagbolga.gov.ng
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="copyright">
-          <p>Courtesy Of SmartDevTechs</p>
           <p>
-            &copy; <span id="currentYear"></span> Ugwunagbo Local Government
-            Area. All Rights Reserved.
+            <strong>Population:</strong> According to the 2006 census,
+            Ugwunagbo had an estimated population of 70,000 people. Current
+            estimates suggest a population of over 100,000 inhabitants.
+          </p>
+
+          <p>
+            <strong>Economic Activities:</strong> The people are predominantly
+            farmers, with major crops including cassava, yam, maize, and
+            vegetables. There's also significant engagement in trading, civil
+            service, and small-scale industries.
           </p>
         </div>
+
+        <!-- Section 4: Developmental Milestones -->
+        <div class="history-section">
+          <h2><i class="fas fa-chart-line"></i> Developmental Milestones</h2>
+          <p>
+            Since its creation, Ugwunagbo LGA has witnessed significant
+            development in various sectors:
+          </p>
+
+          <div class="highlight-box">
+            <h3>Key Achievements</h3>
+            <!-- <p><strong>Infrastructure:</strong> Construction of roads, bridges, and public buildings</p> -->
+            <p>
+              <strong>Education:</strong> Establishment of primary and
+              secondary schools
+            </p>
+            <p>
+              <strong>Healthcare:</strong> Development of health centers and
+              primary healthcare facilities
+            </p>
+            <p>
+              <strong>Agriculture:</strong> Support for farmers through
+              various agricultural programs
+            </p>
+            <p>
+              <strong>Security:</strong> Establishment of security networks
+              for community safety
+            </p>
+          </div>
+        </div>
+
+        <!-- Section 5: Cultural Heritage -->
+        <div class="history-section">
+          <h2><i class="fas fa-drum"></i> Cultural Heritage</h2>
+          <p>
+            Ugwunagbo people are part of the larger Igbo ethnic group with
+            rich cultural practices:
+          </p>
+
+          <div class="highlight-box">
+            <h3>Cultural Elements</h3>
+            <p>
+              <strong>Festivals:</strong> New Yam Festival (Iri Ji), cultural
+              dances
+            </p>
+            <p>
+              <strong>Traditional Rulers:</strong> Council of Traditional
+              Rulers (Ndị Eze)
+            </p>
+            <p>
+              <strong>Language:</strong> Igbo language with local dialect
+              variations
+            </p>
+            <p>
+              <strong>Cuisine:</strong> Traditional dishes including Ofe Akwu,
+              Ugba, and Abacha
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="history-navigation">
+          <a href="full-leadership.html" class="history-btn leadership">
+            <i class="fas fa-users"></i> View Leadership History
+          </a>
+        </div>
       </div>
-    </footer>
-    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
-      <i class="fas fa-chevron-up" aria-hidden="true"></i>
-    </button>
 
-    <script src="js/events.js"></script>
+      <div class="back-btn">
+        <a href="index.html#about"><i class="fas fa-arrow-left"></i> Back to About Section</a>
+      </div>
+    </div>
+  </main>
 
-    <script src="js/app.js"></script>
-    <script>
-      // Set current year
-      document.getElementById("currentYear").textContent =
-        new Date().getFullYear();
+  <!-- Copy your footer from index.html -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Ugwunagbo LGA</h3>
+          <p>
+            Committed to serving our community with integrity, transparency,
+            and excellence.
+          </p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Departments</h3>
+          <ul class="footer-links">
+            <li><a href="department-admin.html">Administration</a></li>
+            <li><a href="department-finance.html">Finance</a></li>
+            <li><a href="department-planning.html">Planning</a></li>
+            <li><a href="department-health.html">Health</a></li>
+            <li><a href="department-judiciary.html">Judiciary</a></li>
+            <li><a href="department-inec.html">INEC</a></li>
+            <li><a href="department-security.html">Security</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Services</h3>
+          <ul class="footer-links">
+            <li><a href="#">Birth Registration</a></li>
+            <li><a href="#">Revenue Collection</a></li>
+            <li><a href="#">Business Permits</a></li>
+            <li><a href="#">Health Services</a></li>
+            <li><a href="#">Social Welfare</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contact Info</h3>
+          <ul class="footer-links">
+            <li>
+              <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+              Ugwunagbo LGA Secretariat
+            </li>
+            <li>
+              <i class="fas fa-phone" aria-hidden="true"></i> +234 123 456
+              7890
+            </li>
+            <li>
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              info@ugwunagbolga.gov.ng
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>Courtesy Of SmartDevTechs</p>
+        <p>
+          &copy; <span id="currentYear"></span> Ugwunagbo Local Government
+          Area. All Rights Reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+  <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up" aria-hidden="true"></i>
+  </button>
 
-      // Mobile menu functionality
-      const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
-      const navLinks = document.querySelector(".nav-links");
+  <script src="js/events.js"></script>
 
-      if (mobileMenuBtn && navLinks) {
-        mobileMenuBtn.addEventListener("click", function () {
-          navLinks.classList.toggle("active");
+  <script src="js/app.js"></script>
+  <script>
+    // Set current year
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    // Mobile menu functionality
+    const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
+    const navLinks = document.querySelector(".nav-links");
+
+    if (mobileMenuBtn && navLinks) {
+      mobileMenuBtn.addEventListener("click", function () {
+        navLinks.classList.toggle("active");
+      });
+    }
+
+    // Scroll to top functionality
+    const scrollToTopBtn = document.getElementById("scrollToTop");
+    if (scrollToTopBtn) {
+      window.addEventListener("scroll", function () {
+        if (window.pageYOffset > 300) {
+          scrollToTopBtn.style.display = "block";
+        } else {
+          scrollToTopBtn.style.display = "none";
+        }
+      });
+
+      scrollToTopBtn.addEventListener("click", function () {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
         });
-      }
+      });
+    }
+  </script>
+</body>
 
-      // Scroll to top functionality
-      const scrollToTopBtn = document.getElementById("scrollToTop");
-      if (scrollToTopBtn) {
-        window.addEventListener("scroll", function () {
-          if (window.pageYOffset > 300) {
-            scrollToTopBtn.style.display = "block";
-          } else {
-            scrollToTopBtn.style.display = "none";
-          }
-        });
-
-        scrollToTopBtn.addEventListener("click", function () {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });
-        });
-      }
-    </script>
-  </body>
 </html>

@@ -152,32 +152,141 @@ const apiService = {
     return await response.json();
   },
 
-  // Video API
-  async getVideo() {
-    const response = await fetch("/api/video");
-    if (!response.ok) throw new Error("Failed to fetch video");
-    return await response.json();
-  },
+  // Traditional Rulers API
+async getTraditionalRulers() {
+  console.log("🔍 Fetching traditional rulers...");
+  const response = await fetch("/api/traditional-rulers");
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("❌ Failed to fetch traditional rulers:", errorText);
+    throw new Error(`Failed to fetch traditional rulers: ${response.status} ${response.statusText}`);
+  }
+  return await response.json();
+},
 
-  async updateVideo(videoData) {
-    const formData = new FormData();
-    Object.keys(videoData).forEach((key) => {
-      if (key === "video" && videoData[key] instanceof File) {
-        formData.append("video", videoData[key]);
-      } else {
-        formData.append(key, videoData[key]);
-      }
-    });
+async addTraditionalRuler(rulerData) {
+  console.log("📝 Adding traditional ruler:", rulerData);
+  
+  const formData = new FormData();
+  
+  // Add all fields to formData
+  Object.keys(rulerData).forEach((key) => {
+    if (key === "image" && rulerData[key] instanceof File) {
+      console.log('📸 Adding image file:', rulerData[key].name);
+      formData.append("image", rulerData[key]);
+    } else if (key !== "image") {
+      console.log(`📝 Adding ${key}:`, rulerData[key]);
+      formData.append(key, rulerData[key]);
+    }
+  });
 
-    const response = await fetch("/api/video", {
-      method: "PUT",
-      body: formData,
-    });
+  console.log("📤 Sending POST request to /api/traditional-rulers");
+  const response = await fetch("/api/traditional-rulers", {
+    method: "POST",
+    body: formData,
+  });
 
-    if (!response.ok) throw new Error("Failed to update video");
-    return await response.json();
-  },
+  console.log("📥 Response status:", response.status);
+  console.log("📥 Response headers:", response.headers);
+  
+  let result;
+  try {
+    result = await response.json();
+    console.log("📥 Response data:", result);
+  } catch (jsonError) {
+    console.error('❌ Failed to parse JSON response:', jsonError);
+    const text = await response.text();
+    console.error('❌ Raw response:', text);
+    throw new Error('Invalid JSON response from server');
+  }
 
+  if (!response.ok) {
+    throw new Error(result.error || result.message || `Server returned ${response.status}`);
+  }
+  
+  return result;
+},
+
+async deleteTraditionalRuler(id) {
+  console.log("🗑️ Deleting traditional ruler with ID:", id);
+  const response = await fetch(`/api/traditional-rulers/${id}`, {
+    method: "DELETE",
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to delete traditional ruler");
+  }
+  return result;
+},
+
+// NGOs & Foundations API
+async getNGOs() {
+  console.log("🔍 Fetching NGOs...");
+  const response = await fetch("/api/ngos-foundations");
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("❌ Failed to fetch NGOs:", errorText);
+    throw new Error(`Failed to fetch NGOs: ${response.status} ${response.statusText}`);
+  }
+  return await response.json();
+},
+
+async addNGO(ngoData) {
+  console.log("📝 Adding NGO:", ngoData);
+  
+  const formData = new FormData();
+  
+  // Add all fields to formData
+  Object.keys(ngoData).forEach((key) => {
+    if (key === "logo" && ngoData[key] instanceof File) {
+      console.log('📸 Adding logo file:', ngoData[key].name);
+      formData.append("logo", ngoData[key]);
+    } else if (key !== "logo") {
+      console.log(`📝 Adding ${key}:`, ngoData[key]);
+      formData.append(key, ngoData[key]);
+    }
+  });
+
+  console.log("📤 Sending POST request to /api/ngos-foundations");
+  const response = await fetch("/api/ngos-foundations", {
+    method: "POST",
+    body: formData,
+  });
+
+  console.log("📥 Response status:", response.status);
+  console.log("📥 Response headers:", response.headers);
+  
+  let result;
+  try {
+    result = await response.json();
+    console.log("📥 Response data:", result);
+  } catch (jsonError) {
+    console.error('❌ Failed to parse JSON response:', jsonError);
+    const text = await response.text();
+    console.error('❌ Raw response:', text);
+    throw new Error('Invalid JSON response from server');
+  }
+
+  if (!response.ok) {
+    throw new Error(result.error || result.message || `Server returned ${response.status}`);
+  }
+  
+  return result;
+},
+
+async deleteNGO(id) {
+  console.log("🗑️ Deleting NGO with ID:", id);
+  const response = await fetch(`/api/ngos-foundations/${id}`, {
+    method: "DELETE",
+  });
+
+  const result = await response.json();
+  if (!response.ok) {
+    throw new Error(result.error || "Failed to delete NGO");
+  }
+  return result;
+},
   // Villages API
   async getVillages() {
     const response = await fetch("/api/villages");
@@ -260,23 +369,6 @@ const apiService = {
     if (!response.ok) throw new Error("Failed to delete leader");
     return await response.json();
   },
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
 
 
   // News API
@@ -923,6 +1015,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Admin Data Loading Functions
+// Admin Data Loading Functions
 async function loadAdminData() {
   console.log("Loading admin data...");
   await loadGovernorData();
@@ -934,13 +1027,318 @@ async function loadAdminData() {
   await loadContactRequests();
   await loadSupportRequests();
   await loadServiceApplications();
+  
+  // ADD THESE TWO LINES:
+  await loadTraditionalRulersList();
+  await loadNGOsList();
+  
   initializeAdminTabs();
   initializeAdminForms();
   initializePasswordForm();
   initializeSupportManagement();
-  initializeServiceApplicationsManagement(); // ADD THIS LINE
+  initializeServiceApplicationsManagement();
+  
+  // ADD THESE TWO LINES TOO:
+  initializeTraditionalRulersManagement();
+  initializeNGOsManagement();
+}
+// Load traditional rulers list for admin panel
+async function loadTraditionalRulersList() {
+  console.log('📋 Loading traditional rulers list for admin...');
+  
+  const container = document.getElementById('traditionalRulersListContainer');
+  if (!container) {
+    console.log('❌ Traditional rulers list container not found');
+    return;
+  }
+  
+  try {
+    const rulers = await apiService.getTraditionalRulers();
+    
+    if (!rulers || rulers.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="fas fa-crown"></i><p>No traditional rulers added yet.</p></div>';
+      return;
+    }
+    
+    let html = '<div class="admin-list">';
+    rulers.forEach(ruler => {
+      html += `
+        <div class="admin-list-item">
+          <div class="item-info">
+            <h4>${ruler.name}</h4>
+            <p>${ruler.title} - ${ruler.village}</p>
+          </div>
+          <div class="item-actions">
+            <button class="btn-danger delete-traditional-ruler" data-id="${ruler._id || ruler.id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+    
+    container.innerHTML = html;
+    
+    // Add delete event listeners
+    container.addEventListener('click', async (e) => {
+      if (e.target.closest('.delete-traditional-ruler')) {
+        const id = e.target.closest('.delete-traditional-ruler').dataset.id;
+        await deleteTraditionalRuler(id);
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error loading traditional rulers list:', error);
+    container.innerHTML = '<div class="empty-state error"><i class="fas fa-exclamation-triangle"></i><p>Error loading list.</p></div>';
+  }
 }
 
+// Load NGOs list for admin panel
+async function loadNGOsList() {
+  console.log('📋 Loading NGOs list for admin...');
+  
+  const container = document.getElementById('ngosListContainer');
+  if (!container) {
+    console.log('❌ NGOs list container not found');
+    return;
+  }
+  
+  try {
+    const ngos = await apiService.getNGOs();
+    
+    if (!ngos || ngos.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="fas fa-hands-helping"></i><p>No NGOs added yet.</p></div>';
+      return;
+    }
+    
+    let html = '<div class="admin-list">';
+    ngos.forEach(ngo => {
+      html += `
+        <div class="admin-list-item">
+          <div class="item-info">
+            <h4>${ngo.name}</h4>
+            <p>${ngo.type} - ${ngo.focusArea}</p>
+          </div>
+          <div class="item-actions">
+            <button class="btn-danger delete-ngo" data-id="${ngo._id || ngo.id}">
+              <i class="fas fa-trash"></i> Delete
+            </button>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+    
+    container.innerHTML = html;
+    
+    // Add delete event listeners
+    container.addEventListener('click', async (e) => {
+      if (e.target.closest('.delete-ngo')) {
+        const id = e.target.closest('.delete-ngo').dataset.id;
+        await deleteNGO(id);
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error loading NGOs list:', error);
+    container.innerHTML = '<div class="empty-state error"><i class="fas fa-exclamation-triangle"></i><p>Error loading list.</p></div>';
+  }
+}
+
+// Delete traditional ruler
+async function deleteTraditionalRuler(id) {
+  SweetPopup.confirm(
+    'Are you sure you want to delete this traditional ruler?',
+    'Confirm Deletion',
+    async () => {
+      try {
+        await apiService.deleteTraditionalRuler(id);
+        await loadTraditionalRulersList();
+        SweetPopup.success('Traditional ruler deleted successfully!');
+      } catch (error) {
+        SweetPopup.error('Error deleting traditional ruler: ' + error.message);
+      }
+    }
+  );
+}
+
+// Delete NGO
+async function deleteNGO(id) {
+  SweetPopup.confirm(
+    'Are you sure you want to delete this NGO/Foundation?',
+    'Confirm Deletion',
+    async () => {
+      try {
+        await apiService.deleteNGO(id);
+        await loadNGOsList();
+        SweetPopup.success('NGO/Foundation deleted successfully!');
+      } catch (error) {
+        SweetPopup.error('Error deleting NGO: ' + error.message);
+      }
+    }
+  );
+}
+// Traditional Rulers Management
+function initializeTraditionalRulersManagement() {
+  console.log('👑 Initializing traditional rulers management...');
+  
+  const rulerForm = document.getElementById('traditionalRulerForm');
+  const rulerImage = document.getElementById('rulerImage');
+  const rulerImagePreview = document.getElementById('rulerImagePreview');
+  
+  if (rulerForm && !rulerForm.hasAttribute('data-initialized')) {
+    rulerForm.setAttribute('data-initialized', 'true');
+    console.log('✅ Traditional ruler form initialized');
+    
+    rulerForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      console.log('📝 Traditional ruler form submitted');
+      
+      // Create FormData from the form directly
+      const formData = new FormData(rulerForm);
+      
+      // Also collect data separately for logging
+      const rulerData = {
+        name: document.getElementById('rulerName').value,
+        title: document.getElementById('rulerTitle').value,
+        role: document.getElementById('rulerRole').value,
+        village: document.getElementById('rulerVillage').value,
+        bio: document.getElementById('rulerBio').value,
+        year: document.getElementById('rulerYear').value,
+        phone: document.getElementById('rulerPhone').value,
+        email: document.getElementById('rulerEmail').value,
+        achievements: document.getElementById('rulerAchievements').value,
+        image: rulerImage.files[0]
+      };
+      
+      console.log('📋 Form data:', rulerData);
+      console.log('📋 FormData entries:', Array.from(formData.entries()));
+      
+      // Validate required fields
+      if (!rulerData.name || !rulerData.title || !rulerData.role || !rulerData.village || !rulerData.bio || !rulerData.year) {
+        SweetPopup.error('Please fill in all required fields: Name, Title, Role, Village, Biography, and Year');
+        return;
+      }
+      
+      try {
+        console.log('🔄 Submitting traditional ruler data...');
+        const result = await apiService.addTraditionalRuler(rulerData);
+        SweetPopup.success(result.message || 'Traditional ruler added successfully!');
+        console.log('✅ Traditional ruler added:', result);
+        
+        // Reset form
+        rulerForm.reset();
+        rulerImagePreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+        
+        // Refresh the list
+        await loadTraditionalRulersList();
+        
+      } catch (error) {
+        console.error('❌ Error adding traditional ruler:', error);
+        console.error('❌ Error stack:', error.stack);
+        SweetPopup.error('Error adding traditional ruler: ' + error.message);
+      }
+    });
+  }
+  
+  // Image preview
+  if (rulerImage && rulerImagePreview) {
+    rulerImage.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          rulerImagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        rulerImagePreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+      }
+    });
+  }
+}
+
+// NGOs & Foundations Management
+function initializeNGOsManagement() {
+  console.log('🤝 Initializing NGOs management...');
+  
+  const ngoForm = document.getElementById('ngoForm');
+  const ngoLogo = document.getElementById('ngoLogo');
+  const ngoLogoPreview = document.getElementById('ngoLogoPreview');
+  
+  if (ngoForm && !ngoForm.hasAttribute('data-initialized')) {
+    ngoForm.setAttribute('data-initialized', 'true');
+    console.log('✅ NGO form initialized');
+    
+    ngoForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      console.log('📝 NGO form submitted');
+      
+      // Create FormData from the form directly
+      const formData = new FormData(ngoForm);
+      
+      // Also collect data separately for logging
+      const ngoData = {
+        name: document.getElementById('ngoName').value,
+        type: document.getElementById('ngoType').value,
+        description: document.getElementById('ngoDescription').value,
+        location: document.getElementById('ngoLocation').value,
+        yearFounded: document.getElementById('ngoYearFounded').value,
+        focusArea: document.getElementById('ngoFocusArea').value,
+        website: document.getElementById('ngoWebsite').value,
+        email: document.getElementById('ngoEmail').value,
+        phone: document.getElementById('ngoPhone').value,
+        projects: document.getElementById('ngoProjects').value,
+        logo: ngoLogo.files[0]
+      };
+      
+      console.log('📋 Form data:', ngoData);
+      console.log('📋 FormData entries:', Array.from(formData.entries()));
+      
+      // Validate required fields
+      if (!ngoData.name || !ngoData.type || !ngoData.description || !ngoData.location || !ngoData.yearFounded || !ngoData.focusArea) {
+        SweetPopup.error('Please fill in all required fields: Name, Type, Description, Location, Year Founded, and Focus Area');
+        return;
+      }
+      
+      try {
+        console.log('🔄 Submitting NGO data...');
+        const result = await apiService.addNGO(ngoData);
+        SweetPopup.success(result.message || 'NGO/Foundation added successfully!');
+        console.log('✅ NGO added:', result);
+        
+        // Reset form
+        ngoForm.reset();
+        ngoLogoPreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+        
+        // Refresh the list
+        await loadNGOsList();
+        
+      } catch (error) {
+        console.error('❌ Error adding NGO:', error);
+        console.error('❌ Error stack:', error.stack);
+        SweetPopup.error('Error adding NGO: ' + error.message);
+      }
+    });
+  }
+  
+  // Logo preview
+  if (ngoLogo && ngoLogoPreview) {
+    ngoLogo.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          ngoLogoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        ngoLogoPreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+      }
+    });
+  }
+}
 // Initialize service applications management
 function initializeServiceApplicationsManagement() {
   const refreshBtn = document.getElementById("refreshApplications");
@@ -1035,37 +1433,7 @@ function initializeAdminForms() {
     });
   }
 
-  // Video Form
-  const videoForm = document.getElementById("videoForm");
-  const videoFile = document.getElementById("videoFile");
-
-  if (videoForm && !videoForm.hasAttribute("data-initialized")) {
-    videoForm.setAttribute("data-initialized", "true");
-    videoForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const title = document.getElementById("videoTitle").value;
-      const description = document.getElementById("videoDescription").value;
-      const video = videoFile.files[0];
-
-      const videoData = {
-        title,
-        description,
-        video: video,
-      };
-
-      try {
-        await apiService.updateVideo(videoData);
-        SweetPopup.success("Video uploaded successfully!");
-
-        // Update UI
-        await loadVideo();
-      } catch (error) {
-        SweetPopup.error("Error uploading video: " + error.message);
-      }
-    });
-  }
-
+  
   // Village Form
   const villageForm = document.getElementById("villageForm");
 
@@ -1420,6 +1788,161 @@ function initializePasswordForm() {
   }
 }
 
+
+
+// Add this function to load traditional rulers on the public page
+async function loadTraditionalRulersPublic() {
+    const container = document.getElementById('rulersContainer');
+    if (!container) return;
+    
+    try {
+        const response = await fetch('/api/traditional-rulers');
+        const rulers = await response.json();
+        
+        if (rulers.length === 0) {
+            container.innerHTML = `
+                <div class="no-rulers">
+                    <i class="fas fa-crown"></i>
+                    <h3>No Traditional Rulers Added Yet</h3>
+                    <p>Traditional rulers will appear here once uploaded through the admin dashboard.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Display rulers
+        container.innerHTML = rulers.map(ruler => `
+            <div class="ruler-card">
+                <div class="ruler-image">
+                    <img src="${ruler.image || 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}" alt="${ruler.name}">
+                    <div class="ruler-badge">${ruler.title}</div>
+                </div>
+                <div class="ruler-content">
+                    <h3 class="ruler-name">${ruler.name}</h3>
+                    <div class="ruler-title">${ruler.role}</div>
+                    <p class="ruler-details">${ruler.bio}</p>
+                    <div class="ruler-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${ruler.village}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Since ${ruler.year}</span>
+                        </div>
+                    </div>
+                    <div class="ruler-contact">
+                        ${ruler.phone ? `
+                            <a href="tel:${ruler.phone}" class="contact-link">
+                                <i class="fas fa-phone"></i>
+                                <span>Call</span>
+                            </a>
+                        ` : ''}
+                        ${ruler.email ? `
+                            <a href="mailto:${ruler.email}" class="contact-link">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email</span>
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading traditional rulers:', error);
+        container.innerHTML = `
+            <div class="no-rulers">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Error Loading Data</h3>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+
+// Add this function to load NGOs on the public page
+async function loadNGOsPublic() {
+    const container = document.getElementById('ngosContainer');
+    if (!container) return;
+    
+    try {
+        const response = await fetch('/api/ngos-foundations');
+        const ngos = await response.json();
+        
+        if (ngos.length === 0) {
+            container.innerHTML = `
+                <div class="no-ngos">
+                    <i class="fas fa-hands-helping"></i>
+                    <h3>No NGOs & Foundations Added Yet</h3>
+                    <p>NGOs and Foundations will appear here once uploaded through the admin dashboard.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Display NGOs
+        container.innerHTML = ngos.map(ngo => `
+            <div class="ngo-card">
+                <div class="ngo-logo-container">
+                    <div class="ngo-logo">
+                        <img src="${ngo.logo || 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'}" alt="${ngo.name}">
+                    </div>
+                </div>
+                <div class="ngo-content">
+                    <h3 class="ngo-name">${ngo.name}</h3>
+                    <div class="ngo-type">${ngo.type}</div>
+                    <p class="ngo-description">${ngo.description}</p>
+                    <div class="ngo-details">
+                        <div class="detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${ngo.location}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Founded: ${ngo.yearFounded}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-bullseye"></i>
+                            <span>Focus: ${ngo.focusArea}</span>
+                        </div>
+                    </div>
+                    <div class="ngo-contact">
+                        ${ngo.website ? `
+                            <a href="${ngo.website}" target="_blank" class="contact-link">
+                                <i class="fas fa-globe"></i>
+                                <span>Website</span>
+                            </a>
+                        ` : ''}
+                        ${ngo.email ? `
+                            <a href="mailto:${ngo.email}" class="contact-link">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email</span>
+                            </a>
+                        ` : ''}
+                        ${ngo.phone ? `
+                            <a href="tel:${ngo.phone}" class="contact-link">
+                                <i class="fas fa-phone"></i>
+                                <span>Call</span>
+                            </a>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+    } catch (error) {
+        console.error('Error loading NGOs:', error);
+        container.innerHTML = `
+            <div class="no-ngos">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Error Loading Data</h3>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
+}
 // Load governor to the website
 async function loadGovernor() {
   const governorContainer = document.getElementById("governorContainer");
@@ -4226,37 +4749,41 @@ function resetLeadershipHistoryFormToAddMode() {
 }
 
 // Add to loadAdminData function
+// Update loadAdminData function
 async function loadAdminData() {
-  console.log("Loading admin data...");
-  await loadGovernorData();
-  await loadLeaderList();
-  await loadVideoData();
-  await loadVillagesList();
-  await loadNewsList();
-  await loadEventsList();
-  await loadContactRequests();
-  await loadSupportRequests();
-  await loadServiceApplications();
-  await loadHistoricalLeadersList(); // ADD THIS LINE
-  initializeAdminTabs();
-  initializeAdminForms();
-  initializePasswordForm();
-  initializeSupportManagement();
-  initializeServiceApplicationsManagement();
-  initializeLeadershipHistoryForm(); // ADD THIS LINE
+  console.log("🔄 Loading admin data...");
+  try {
+    await loadGovernorData();
+    await loadLeaderList();
+    await loadVideoData();
+    await loadVillagesList();
+    await loadNewsList();
+    await loadEventsList();
+    await loadContactRequests();
+    await loadSupportRequests();
+    await loadServiceApplications();
+    await loadHistoricalLeadersList();
+    await loadAcademiaList();
+    await loadGalleryList();
+    await loadTraditionalRulersList(); // Make sure this is called
+    await loadNGOsList(); // Make sure this is called
+    
+    initializeAdminTabs();
+    initializeAdminForms();
+    initializePasswordForm();
+    initializeSupportManagement();
+    initializeServiceApplicationsManagement();
+    initializeLeadershipHistoryForm();
+    initializeAcademiaManagement();
+    initializeGalleryManagement();
+    initializeTraditionalRulersManagement(); // Make sure this is called
+    initializeNGOsManagement(); // Make sure this is called
+    
+    console.log("✅ All admin data loaded successfully");
+  } catch (error) {
+    console.error("❌ Error loading admin data:", error);
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 // Academia Management
 function initializeAcademiaManagement() {
   const academiaForm = document.getElementById('academiaForm');
@@ -5153,13 +5680,200 @@ async function loadAdminData() {
 }
 
 
+// Traditional Rulers Form Handler
+async function handleTraditionalRulerSubmit() {
+    console.log('📝 Traditional ruler form handler called');
+    
+    const rulerForm = document.getElementById('traditionalRulerForm');
+    const rulerImage = document.getElementById('rulerImage');
+    
+    if (!rulerForm) {
+        console.error('❌ Traditional ruler form not found');
+        return;
+    }
+    
+    // Collect form data
+    const formData = new FormData(rulerForm);
+    const rulerData = {
+        name: document.getElementById('rulerName')?.value || '',
+        title: document.getElementById('rulerTitle')?.value || '',
+        role: document.getElementById('rulerRole')?.value || '',
+        village: document.getElementById('rulerVillage')?.value || '',
+        bio: document.getElementById('rulerBio')?.value || '',
+        year: document.getElementById('rulerYear')?.value || '',
+        phone: document.getElementById('rulerPhone')?.value || '',
+        email: document.getElementById('rulerEmail')?.value || '',
+        achievements: document.getElementById('rulerAchievements')?.value || '',
+        image: rulerImage?.files[0] || null
+    };
+    
+    console.log('📋 Form data collected:', rulerData);
+    console.log('📋 FormData entries:', Array.from(formData.entries()));
+    
+    // Validate required fields
+    if (!rulerData.name || !rulerData.title || !rulerData.role || !rulerData.village || !rulerData.bio || !rulerData.year) {
+        SweetPopup.error('Please fill in all required fields: Name, Title, Role, Village, Biography, and Year');
+        return;
+    }
+    
+    try {
+        console.log('🔄 Submitting traditional ruler data...');
+        const result = await apiService.addTraditionalRuler(rulerData);
+        
+        if (result.success) {
+            SweetPopup.success(result.message || 'Traditional ruler added successfully!');
+            console.log('✅ Traditional ruler added:', result);
+            
+            // Reset form
+            rulerForm.reset();
+            const rulerImagePreview = document.getElementById('rulerImagePreview');
+            if (rulerImagePreview) {
+                rulerImagePreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+            }
+            
+            // Refresh the list
+            await loadTraditionalRulersList();
+        } else {
+            SweetPopup.error(result.error || 'Failed to add traditional ruler');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error adding traditional ruler:', error);
+        SweetPopup.error('Error adding traditional ruler: ' + error.message);
+    }
+}
 
+// NGOs Form Handler
+async function handleNGOFormSubmit() {
+    console.log('📝 NGO form handler called');
+    
+    const ngoForm = document.getElementById('ngoForm');
+    const ngoLogo = document.getElementById('ngoLogo');
+    
+    if (!ngoForm) {
+        console.error('❌ NGO form not found');
+        return;
+    }
+    
+    // Collect form data
+    const formData = new FormData(ngoForm);
+    const ngoData = {
+        name: document.getElementById('ngoName')?.value || '',
+        type: document.getElementById('ngoType')?.value || '',
+        description: document.getElementById('ngoDescription')?.value || '',
+        location: document.getElementById('ngoLocation')?.value || '',
+        yearFounded: document.getElementById('ngoYearFounded')?.value || '',
+        focusArea: document.getElementById('ngoFocusArea')?.value || '',
+        website: document.getElementById('ngoWebsite')?.value || '',
+        email: document.getElementById('ngoEmail')?.value || '',
+        phone: document.getElementById('ngoPhone')?.value || '',
+        projects: document.getElementById('ngoProjects')?.value || '',
+        logo: ngoLogo?.files[0] || null
+    };
+    
+    console.log('📋 Form data collected:', ngoData);
+    console.log('📋 FormData entries:', Array.from(formData.entries()));
+    
+    // Validate required fields
+    if (!ngoData.name || !ngoData.type || !ngoData.description || !ngoData.location || !ngoData.yearFounded || !ngoData.focusArea) {
+        SweetPopup.error('Please fill in all required fields: Name, Type, Description, Location, Year Founded, and Focus Area');
+        return;
+    }
+    
+    try {
+        console.log('🔄 Submitting NGO data...');
+        const result = await apiService.addNGO(ngoData);
+        
+        if (result.success) {
+            SweetPopup.success(result.message || 'NGO/Foundation added successfully!');
+            console.log('✅ NGO added:', result);
+            
+            // Reset form
+            ngoForm.reset();
+            const ngoLogoPreview = document.getElementById('ngoLogoPreview');
+            if (ngoLogoPreview) {
+                ngoLogoPreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+            }
+            
+            // Refresh the list
+            await loadNGOsList();
+        } else {
+            SweetPopup.error(result.error || 'Failed to add NGO');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error adding NGO:', error);
+        SweetPopup.error('Error adding NGO: ' + error.message);
+    }
+}
 
+// Update the initialization functions to use the new handlers
+function initializeTraditionalRulersManagement() {
+  console.log('👑 Initializing traditional rulers management...');
+  
+  const rulerForm = document.getElementById('traditionalRulerForm');
+  const rulerImage = document.getElementById('rulerImage');
+  const rulerImagePreview = document.getElementById('rulerImagePreview');
+  
+  if (rulerForm && !rulerForm.hasAttribute('data-initialized')) {
+    rulerForm.setAttribute('data-initialized', 'true');
+    console.log('✅ Traditional ruler form initialized');
+    
+    // Remove any existing event listeners and set new one
+    rulerForm.onsubmit = function(e) {
+      e.preventDefault();
+      handleTraditionalRulerSubmit();
+    };
+  }
+  
+  // Image preview
+  if (rulerImage && rulerImagePreview) {
+    rulerImage.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          rulerImagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        rulerImagePreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+      }
+    });
+  }
+}
 
-
-
-
-
-
-
-
+function initializeNGOsManagement() {
+  console.log('🤝 Initializing NGOs management...');
+  
+  const ngoForm = document.getElementById('ngoForm');
+  const ngoLogo = document.getElementById('ngoLogo');
+  const ngoLogoPreview = document.getElementById('ngoLogoPreview');
+  
+  if (ngoForm && !ngoForm.hasAttribute('data-initialized')) {
+    ngoForm.setAttribute('data-initialized', 'true');
+    console.log('✅ NGO form initialized');
+    
+    // Remove any existing event listeners and set new one
+    ngoForm.onsubmit = function(e) {
+      e.preventDefault();
+      handleNGOFormSubmit();
+    };
+  }
+  
+  // Logo preview
+  if (ngoLogo && ngoLogoPreview) {
+    ngoLogo.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          ngoLogoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        ngoLogoPreview.innerHTML = '<span style="color: #999;">No image selected</span>';
+      }
+    });
+  }
+}
