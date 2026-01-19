@@ -1801,7 +1801,7 @@ app.get("/", (req, res) => {
 // Serve other pages
 app.get("/:page", (req, res) => {
   const page = req.params.page;
-  const filePath = path.join(__dirname, "public", `${page}.html`);
+  const filePath = path.join (__dirname, "public", `${page}.html`);
   
   if (fs.existsSync(filePath)) {
     res.sendFile(filePath);
@@ -1811,38 +1811,38 @@ app.get("/:page", (req, res) => {
 });
 
 // Initialize database and start server
-// async function startServer() {
-//   try {
-//     console.log('🚀 Starting Ugwunagbo LGA website server...');
-//     const databaseClient = await connectToDatabase();
+async function startServer() {
+  try {
+    console.log('🚀 Starting Ugwunagbo LGA website server...');
+    const databaseClient = await connectToDatabase();
     
-//     if (databaseClient) {
-//       app.locals.db = db; // Make database available to routes
-//     }
+    if (databaseClient) {
+      app.locals.db = db; // Make database available to routes
+    }
     
-//     app.listen(PORT, () => {
-//       console.log(`✅ Server running on port ${PORT}`);
-//       console.log(`🌐 Website URL: http://localhost:${PORT}`);
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+      console.log(`🌐 Website URL: http://localhost:${PORT}`);
       
-//       if (!databaseClient) {
-//         console.log('❌ DATABASE STATUS: DISCONNECTED - Please start MongoDB service');
-//         console.log('💡 On Windows: Start MongoDB Service from Services');
-//         console.log('💡 On Linux: sudo systemctl start mongod');
-//         console.log('💡 On macOS: brew services start mongodb-community');
-//       } else {
-//         console.log('✅ DATABASE STATUS: CONNECTED - All features available');
-//         console.log('📁 Uploads directory:', uploadsDir);
-//         console.log('👥 Leadership History API: http://localhost:' + PORT + '/api/leadership-history');
-//       }
-//     });
-//   } catch (error) {
-//     console.error('❌ Failed to start server:', error);
-//     process.exit(1);
-//   }
-// }
+      if (!databaseClient) {
+        console.log('❌ DATABASE STATUS: DISCONNECTED - Please start MongoDB service');
+        console.log('💡 On Windows: Start MongoDB Service from Services');
+        console.log('💡 On Linux: sudo systemctl start mongod');
+        console.log('💡 On macOS: brew services start mongodb-community');
+      } else {
+        console.log('✅ DATABASE STATUS: CONNECTED - All features available');
+        console.log('📁 Uploads directory:', uploadsDir);
+        console.log('👥 Leadership History API: http://localhost:' + PORT + '/api/leadership-history');
+      }
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
 // Start the server
-// startServer();
+startServer();
 
 
 // Example Node.js/Express backend code
@@ -1889,19 +1889,3 @@ app.post('/api/service-applications/payments', async (req, res) => {
 
 
 
-// ========== DEPLOYMENT CONFIGURATION ==========
-
-// Handle Render's dynamic port
-const renderPort = process.env.PORT || 3000;
-
-// Only start server if not in test mode
-if (require.main === module) {
-  app.listen(renderPort, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${renderPort}`);
-    console.log(`🌐 Access at: http://localhost:${renderPort}`);
-    console.log(`📡 MongoDB URI configured: ${process.env.MONGODB_URI ? 'Yes' : 'No'}`);
-  });
-}
-
-// Export app for testing (if needed)
-module.exports = app;
