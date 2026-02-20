@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Apply for Service - Ugwunagbo LGA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -26,11 +26,17 @@
             --radius: 16px;
         }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         /* Page Background */
         .service-application-page {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             min-height: 100vh;
-            padding: 2rem 0;
+            padding: 1rem;
         }
 
         /* Main Container */
@@ -42,13 +48,14 @@
             box-shadow: var(--shadow);
             overflow: hidden;
             border: 1px solid var(--border);
+            width: 100%;
         }
 
         /* Header */
         .application-header {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             color: white;
-            padding: 3.5rem 2rem;
+            padding: 2.5rem 1.5rem;
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -66,35 +73,39 @@
         }
 
         .application-header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            margin-bottom: 0.75rem;
             font-weight: 700;
             position: relative;
             z-index: 1;
+            word-wrap: break-word;
         }
 
         .application-header p {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             opacity: 0.9;
             max-width: 600px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            padding: 0 0.5rem;
         }
 
         /* Form Content */
         .application-form {
-            padding: 3rem;
+            padding: 1.5rem;
         }
 
         /* Form Sections */
         .form-section {
             background: #F9FAFB;
             border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         .form-section:hover {
@@ -104,7 +115,7 @@
 
         .section-title {
             color: var(--primary);
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
             margin-bottom: 1.5rem;
             font-weight: 600;
             display: flex;
@@ -112,6 +123,7 @@
             gap: 12px;
             padding-bottom: 0.75rem;
             border-bottom: 2px solid var(--primary-light);
+            flex-wrap: wrap;
         }
 
         .section-title i {
@@ -123,18 +135,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         /* Form Layout */
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+            width: 100%;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
+            width: 100%;
         }
 
         .form-group label {
@@ -143,6 +158,7 @@
             font-weight: 600;
             color: var(--text);
             font-size: 0.95rem;
+            word-wrap: break-word;
         }
 
         .form-group label.required::after {
@@ -152,13 +168,14 @@
 
         .form-control {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             border: 2px solid var(--border);
             border-radius: 10px;
             font-size: 1rem;
             transition: all 0.3s ease;
             background: white;
             font-family: inherit;
+            max-width: 100%;
         }
 
         .form-control:focus {
@@ -171,19 +188,25 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 16px center;
-            padding-right: 50px;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
         }
 
         /* File Upload */
         .file-upload {
             border: 3px dashed var(--border);
             border-radius: 12px;
-            padding: 2.5rem;
+            padding: 1.5rem;
             text-align: center;
             transition: all 0.3s ease;
             background: white;
             cursor: pointer;
+            width: 100%;
         }
 
         .file-upload:hover {
@@ -192,21 +215,25 @@
         }
 
         .file-upload i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: var(--primary-light);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .file-label {
             display: inline-block;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
-            padding: 12px 28px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
             font-size: 0.95rem;
+            margin: 0.5rem 0;
+            max-width: 100%;
+            white-space: normal;
+            word-wrap: break-word;
         }
 
         .file-label:hover {
@@ -215,11 +242,51 @@
             box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
         }
 
+        /* Selected Files */
+        .selected-files {
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            word-break: break-all;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .file-item span {
+            flex: 1;
+            min-width: 150px;
+            word-break: break-word;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .remove-file:hover {
+            color: #c82333;
+        }
+
         /* Submit Button */
         .submit-section {
             text-align: center;
-            padding-top: 2rem;
-            margin-top: 1rem;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
         }
 
         .submit-btn {
@@ -228,17 +295,20 @@
             justify-content: center;
             background: linear-gradient(135deg, var(--accent), var(--accent-light));
             color: white;
-            padding: 18px 48px;
+            padding: 14px 28px;
             border-radius: 12px;
             text-decoration: none;
             font-weight: 700;
             transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 1.1rem;
-            gap: 12px;
+            font-size: 1rem;
+            gap: 10px;
             letter-spacing: 0.5px;
             box-shadow: 0 6px 20px rgba(255, 152, 0, 0.25);
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
         }
 
         .submit-btn:hover {
@@ -250,18 +320,18 @@
         /* Success Message */
         .form-success {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 2rem 1rem;
             background: white;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            margin: 2rem auto;
+            margin: 1rem auto;
             max-width: 800px;
         }
 
         .success-icon {
-            font-size: 4rem;
+            font-size: 3rem;
             color: var(--primary);
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             animation: bounce 1s ease;
         }
 
@@ -287,37 +357,80 @@
         /* Payment Section */
         .payment-section {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 2.5rem;
+            padding: 1.5rem;
             border-radius: 15px;
-            margin: 3rem 0;
+            margin: 1.5rem 0;
             border: 2px solid var(--border);
+            width: 100%;
+            overflow-x: auto;
         }
 
         .bank-details {
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 12px;
             border-left: 5px solid var(--accent);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+        }
+
+        .bank-info {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-row {
+            display: flex;
+            flex-direction: column;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 500px) {
+            .info-row {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         /* Progress Indicator */
         .progress-indicator {
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            margin: 2rem 0;
-            padding: 1.5rem;
+            align-items: flex-start;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
             background: white;
             border-radius: 12px;
             border: 1px solid var(--border);
+        }
+
+        @media (min-width: 640px) {
+            .progress-indicator {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
         }
 
         .progress-step {
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .progress-step {
+                width: auto;
+            }
         }
 
         .step-number {
@@ -331,6 +444,7 @@
             justify-content: center;
             font-weight: bold;
             font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
         .step-number.active {
@@ -338,52 +452,265 @@
             color: white;
         }
 
-        /* Responsive Design */
+        .step-text {
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+
+        /* Date of Birth Field */
+        .dob-field-container {
+            margin-top: 10px;
+            animation: slideDown 0.3s ease;
+            width: 100%;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Application ID Display */
+        .application-id {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem auto;
+            font-weight: bold;
+            text-align: center;
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            letter-spacing: 1px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            max-width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word;
+        }
+
+        /* Payment Status */
+        .payment-status {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            margin: 1rem 0;
+        }
+
+        .status-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-icon.success {
+            color: var(--primary);
+        }
+
+        .status-icon.pending {
+            color: var(--accent);
+        }
+
+        .status-icon.failed {
+            color: #dc3545;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .submit-btn {
+            min-width: auto;
+            width: 100%;
+            max-width: 200px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Loading Overlay */
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        #loadingOverlay > div {
+            text-align: center;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            color: #333;
+            max-width: 90%;
+            width: 300px;
+        }
+
+        /* Responsive Breakpoints */
         @media (max-width: 768px) {
+            .service-application-page {
+                padding: 0.5rem;
+            }
+
             .application-container {
-                margin: 1rem;
+                margin: 0;
                 border-radius: 12px;
             }
 
             .application-header {
-                padding: 2.5rem 1.5rem;
-            }
-
-            .application-header h1 {
-                font-size: 2.2rem;
+                padding: 1.5rem 1rem;
             }
 
             .application-form {
-                padding: 2rem 1.5rem;
+                padding: 1rem;
+            }
+
+            .form-section {
+                padding: 1rem;
+            }
+
+            .section-title {
+                gap: 8px;
+            }
+
+            .section-title i {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .progress-indicator {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+                gap: 0.75rem;
             }
         }
 
         @media (max-width: 480px) {
-            .application-header {
-                padding: 2rem 1rem;
+            .application-header h1 {
+                font-size: 1.5rem;
             }
 
-            .application-form {
-                padding: 1.5rem 1rem;
+            .application-header p {
+                font-size: 0.9rem;
             }
 
-            .form-section {
-                padding: 1.5rem;
+            .form-group label {
+                font-size: 0.9rem;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+                font-size: 0.95rem;
             }
 
             .file-upload {
-                padding: 1.5rem;
+                padding: 1rem;
+            }
+
+            .file-upload i {
+                font-size: 2rem;
+            }
+
+            .file-label {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .submit-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+                max-width: 100%;
+            }
+
+            .payment-section {
+                padding: 1rem;
+            }
+
+            .bank-details {
+                padding: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-buttons .submit-btn {
+                max-width: 100%;
+            }
+        }
+
+        /* Fix for very small screens */
+        @media (max-width: 320px) {
+            .application-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+            }
+
+            .section-title i {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+            }
+
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .remove-file {
+                align-self: flex-end;
+            }
+        }
+
+        /* Ensure images and media are responsive */
+        img, svg, iframe, video {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Fix for iOS input zoom */
+        @media screen and (-webkit-min-device-pixel-ratio:0) { 
+            select,
+            textarea,
+            input {
+                font-size: 16px !important;
             }
         }
 
@@ -412,108 +739,44 @@
             animation-delay: 0.2s;
         }
 
-        /* Loading Spinner */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Date of Birth Field */
-        .dob-field-container {
-            margin-top: 10px;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Application ID Display */
-        .application-id {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        /* Optional badge */
+        .optional-badge {
+            background: #6c757d;
             color: white;
-            padding: 1.2rem 2rem;
-            border-radius: 10px;
-            margin: 2rem auto;
-            font-weight: bold;
-            text-align: center;
-            font-size: 1.3rem;
-            letter-spacing: 1px;
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            max-width: 500px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Payment Status */
-        .payment-status {
-            text-align: center;
-            padding: 2.5rem;
-            background: white;
+            padding: 2px 8px;
             border-radius: 12px;
-            border: 2px solid var(--border);
-            margin: 1.5rem 0;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            display: inline-block;
+            white-space: nowrap;
         }
 
-        .status-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1.2rem;
+        @media (max-width: 480px) {
+            .optional-badge {
+                display: inline-block;
+                margin-left: 4px;
+                font-size: 0.7rem;
+                padding: 2px 6px;
+            }
         }
 
-        .status-icon.success {
-            color: var(--primary);
+        /* Required note */
+        .required-note {
+            margin-top: 1rem;
+            color: #666;
+            font-size: 0.9rem;
         }
 
-        .status-icon.pending {
-            color: var(--accent);
-        }
-
-        .status-icon.failed {
-            color: #dc3545;
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2.5rem;
-            flex-wrap: wrap;
-        }
-
-        .action-buttons .submit-btn {
-            min-width: 180px;
-            padding: 14px 25px;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            border-radius: 10px;
+        @media (max-width: 480px) {
+            .required-note {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Header -->
+    <!-- Header (unchanged) -->
     <header>
         <div class="container">
             <div class="header-top">
@@ -549,7 +812,7 @@
             <li><a href="index.html#services" class="active">Services</a></li>
             <li><a href="forum.html">Diaspora</a></li>
             <li><a href="traditional-rulers.html">Traditional Rulers</a></li>
-            <li><a href="ngos-foundations.html">NGOs & Foundations</a></li>
+            <li><a href="ngos-foundations.html">net start NGOs & Foundations</a></li>
             <li><a href="academia.html">Academia</a></li>
             <li><a href="index.html#departments">Departments</a></li>
             <li><a href="index.html#news">News</a></li>
@@ -565,9 +828,22 @@
 
     <!-- Service Application Content -->
     <section class="service-application-page">
-        <div class="container">
+        <div class="container" style="padding: 0;">
             <!-- Progress Indicator -->
-
+            <div class="progress-indicator">
+                <div class="progress-step">
+                    <span class="step-number active">1</span>
+                    <span class="step-text">Fill Application</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Make Payment</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Confirmation</span>
+                </div>
+            </div>
 
             <div class="application-container">
                 <div class="application-header">
@@ -680,8 +956,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="additionalInfo">Additional Information <span class="optional-badge"
-                                    style="background: #6c757d; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; margin-left: 8px;">Optional</span></label>
+                            <label for="additionalInfo">Additional Information <span class="optional-badge">Optional</span></label>
                             <textarea id="additionalInfo" class="form-control"
                                 placeholder="Any additional information you'd like to provide..." rows="3"></textarea>
                         </div>
@@ -689,8 +964,7 @@
                         <div class="form-group">
                             <label for="requiredDocuments">
                                 Supporting Documents
-                                <span class="optional-badge"
-                                    style="background: #6c757d; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; margin-left: 8px;">Optional</span>
+                                <span class="optional-badge">Optional</span>
                             </label>
                             <div class="file-upload" id="fileUploadArea">
                                 <i class="fas fa-cloud-upload-alt"></i>
@@ -712,7 +986,7 @@
                         <button type="submit" class="submit-btn" id="submitApplication">
                             <i class="fas fa-paper-plane"></i> Submit Application
                         </button>
-                        <div class="required-note" style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+                        <div class="required-note">
                             Fields marked with <span style="color: #dc3545;">*</span> are required
                         </div>
                     </div>
@@ -733,55 +1007,48 @@
                     <!-- Payment Instructions -->
                     <div class="payment-section">
                         <h3
-                            style="color: var(--primary); text-align: center; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; gap: 12px;">
+                            style="color: var(--primary); text-align: center; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
                             <i class="fas fa-credit-card"></i> Payment Instructions
                         </h3>
 
                         <div class="bank-details">
                             <h4
-                                style="color: #2c3e50; margin-bottom: 1.5rem; text-align: center; padding-bottom: 1rem; border-bottom: 2px solid #f1f3f4;">
+                                style="color: #2c3e50; margin-bottom: 1rem; text-align: center; padding-bottom: 0.75rem; border-bottom: 2px solid #f1f3f4; font-size: clamp(1rem, 4vw, 1.2rem);">
                                 Make Payment to Official Account</h4>
 
-                            <div class="bank-info" style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
-                                <div class="info-row"
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <strong style="color: #495057;">Bank Name:</strong>
+                            <div class="bank-info">
+                                <div class="info-row">
+                                    <strong>Bank Name:</strong>
                                     <span>First Bank of Nigeria</span>
                                 </div>
-                                <div class="info-row"
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <strong style="color: #495057;">Account Name:</strong>
+                                <div class="info-row">
+                                    <strong>Account Name:</strong>
                                     <span>Ugwunagbo Local Government</span>
                                 </div>
-                                <div class="info-row"
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <strong style="color: #495057;">Account Number:</strong>
-                                    <span
-                                        style="font-family: 'Courier New', monospace; font-weight: bold; color: var(--primary); font-size: 1.1rem;">3112345678</span>
+                                <div class="info-row">
+                                    <strong>Account Number:</strong>
+                                    <span style="font-family: 'Courier New', monospace; font-weight: bold; color: var(--primary);">3112345678</span>
                                 </div>
-                                <div class="info-row"
-                                    style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
-                                    <strong style="color: #495057;">Amount:</strong>
-                                    <span
-                                        style="color: var(--accent); font-weight: bold; font-size: 1.2rem; background: #fff8e1; padding: 0.3rem 0.8rem; border-radius: 6px; border: 1px dashed var(--accent);">₦5,000.00</span>
+                                <div class="info-row">
+                                    <strong>Amount:</strong>
+                                    <span style="color: var(--accent); font-weight: bold; background: #fff8e1; padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px dashed var(--accent);">₦5,000.00</span>
                                 </div>
                             </div>
 
                             <div class="payment-notes"
-                                style="margin-top: 1.8rem; padding-top: 1.5rem; border-top: 2px dashed #dee2e6;">
+                                style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px dashed #dee2e6;">
                                 <p
-                                    style="color: #555; margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 10px;">
-                                    <i class="fas fa-info-circle" style="color: var(--primary); margin-top: 3px;"></i>
-                                    <span><strong>Important:</strong> Use your Application ID as payment
-                                        reference</span>
+                                    style="color: #555; margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 8px;">
+                                    <i class="fas fa-info-circle" style="color: var(--primary); margin-top: 3px; flex-shrink: 0;"></i>
+                                    <span><strong>Important:</strong> Use your Application ID as payment reference</span>
                                 </p>
                                 <p
-                                    style="color: #555; margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 10px;">
-                                    <i class="fas fa-clock" style="color: var(--primary); margin-top: 3px;"></i>
+                                    style="color: #555; margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 8px;">
+                                    <i class="fas fa-clock" style="color: var(--primary); margin-top: 3px; flex-shrink: 0;"></i>
                                     <span>Payment verification takes 24-48 hours</span>
                                 </p>
-                                <p style="color: #555; display: flex; align-items: flex-start; gap: 10px;">
-                                    <i class="fas fa-phone" style="color: var(--primary); margin-top: 3px;"></i>
+                                <p style="color: #555; display: flex; align-items: flex-start; gap: 8px;">
+                                    <i class="fas fa-phone" style="color: var(--primary); margin-top: 3px; flex-shrink: 0;"></i>
                                     <span><strong>Call:</strong> 07012345678 for payment assistance</span>
                                 </p>
                             </div>
@@ -795,10 +1062,10 @@
                             <h3 id="paymentStatusTitle" style="color: #2c3e50; margin-bottom: 1rem;"></h3>
                             <p id="paymentStatusMessage" style="color: #666; max-width: 600px; margin: 0 auto;"></p>
                             <div class="next-steps" id="nextSteps"
-                                style="margin-top: 2rem; display: none; text-align: left; display: inline-block; background: #f8f9fa; padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--primary);">
-                                <p style="font-weight: bold; color: #2c3e50; margin-bottom: 1rem;">Next Steps:</p>
+                                style="margin-top: 1.5rem; display: none; text-align: left; background: #f8f9fa; padding: 1rem; border-radius: 10px; border-left: 4px solid var(--primary);">
+                                <p style="font-weight: bold; color: #2c3e50; margin-bottom: 0.75rem;">Next Steps:</p>
                                 <ul style="padding-left: 1.2rem;">
-                                    <li style="color: #555; margin-bottom: 0.8rem;">Your application will be processed
+                                    <li style="color: #555; margin-bottom: 0.5rem;">Your application will be processed
                                         within 3-5 working days</li>
                                     <li style="color: #555;">You will receive SMS notifications for updates</li>
                                 </ul>
@@ -821,7 +1088,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Footer (unchanged) -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -895,12 +1162,9 @@
     </button>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; color: white; font-size: 1.2rem;">
-        <div style="text-align: center; background: white; padding: 2rem; border-radius: 10px; color: #333;">
-            <div class="loading-spinner"
-                style="border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); width: 40px; height: 40px; margin: 0 auto 1rem;">
-            </div>
+    <div id="loadingOverlay">
+        <div>
+            <div class="loading-spinner"></div>
             <p>Submitting your application...</p>
         </div>
     </div>
@@ -908,7 +1172,7 @@
     <script>
         // Service Application JavaScript - ALL FUNCTIONALITY PRESERVED
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('Service application page loaded - Restyled Version');
+            console.log('Service application page loaded - Mobile Responsive Version');
 
             // Initialize the application
             initApplication();
@@ -953,7 +1217,7 @@
 
             // Click on file upload area to trigger file input
             fileUploadArea.addEventListener('click', function (e) {
-                if (e.target !== fileInput && !e.target.classList.contains('remove-file')) {
+                if (e.target !== fileInput && !e.target.classList.contains('remove-file') && !e.target.closest('.remove-file')) {
                     fileInput.click();
                 }
             });
@@ -1216,6 +1480,7 @@
                     border-radius: 8px;
                     margin-bottom: 20px;
                     border: 1px solid #f5c6cb;
+                    font-size: 0.95rem;
                 `;
                 const form = document.getElementById('serviceApplicationForm');
                 form.insertBefore(errorDiv, form.firstChild);
@@ -1311,13 +1576,13 @@
                     <div class="form-group dob-field-container">
                         <label for="dateOfBirth" class="required">
                             Date of Birth
-                            <span style="font-size: 0.9rem; color: #666; font-weight: normal; margin-left: 5px;">
+                            <span style="font-size: 0.9rem; color: #666; font-weight: normal; margin-left: 5px; display: inline-block;">
                                 (Required for ${serviceTypeSelect.options[serviceTypeSelect.selectedIndex].text})
                             </span>
                         </label>
                         <input type="date" id="dateOfBirth" class="form-control" required>
-                        <small style="display: block; margin-top: 5px; color: #666;">
-                            <i class="fas fa-info-circle"></i> This helps us process your ${serviceTypeSelect.options[serviceTypeSelect.selectedIndex].text} accurately
+                        <small style="display: block; margin-top: 5px; color: #666; font-size: 0.85rem;">
+                            <i class="fas fa-info-circle"></i> This helps us process your application accurately
                         </small>
                     </div>
                 `;
@@ -1362,20 +1627,25 @@
         }
 
         function printPaymentInstructions() {
-            const applicationId = window.currentApplicationId;
+            const applicationId = window.currentApplicationId || generateApplicationId();
             const printContent = `
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Payment Instructions - Ugwunagbo LGA</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <style>
                         body { font-family: Arial, sans-serif; margin: 20px; }
                         .header { text-align: center; margin-bottom: 30px; }
                         .logo { font-size: 24px; font-weight: bold; color: #2E7D32; }
-                        .application-id { background: #2E7D32; color: white; padding: 10px; text-align: center; margin: 20px 0; }
+                        .application-id { background: #2E7D32; color: white; padding: 10px; text-align: center; margin: 20px 0; word-wrap: break-word; }
                         .bank-details { border: 2px solid #333; padding: 20px; margin: 20px 0; }
-                        .info-row { display: flex; justify-content: space-between; margin: 10px 0; }
+                        .info-row { display: flex; flex-direction: column; margin: 10px 0; padding: 10px; background: #f5f5f5; }
+                        @media (min-width: 500px) {
+                            .info-row { flex-direction: row; justify-content: space-between; }
+                        }
                         .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+                        ul { padding-left: 20px; }
                     </style>
                 </head>
                 <body>
@@ -1391,19 +1661,19 @@
                     <div class="bank-details">
                         <h3>Payment Instructions</h3>
                         <div class="info-row">
-                            <strong>Bank Name:</strong> First Bank of Nigeria
+                            <strong>Bank Name:</strong> <span>First Bank of Nigeria</span>
                         </div>
                         <div class="info-row">
-                            <strong>Account Name:</strong> Ugwunagbo Local Government
+                            <strong>Account Name:</strong> <span>Ugwunagbo Local Government</span>
                         </div>
                         <div class="info-row">
-                            <strong>Account Number:</strong> 3112345678
+                            <strong>Account Number:</strong> <span>3112345678</span>
                         </div>
                         <div class="info-row">
-                            <strong>Amount:</strong> ₦5,000.00
+                            <strong>Amount:</strong> <span>₦5,000.00</span>
                         </div>
                         <div class="info-row">
-                            <strong>Reference:</strong> ${applicationId}
+                            <strong>Reference:</strong> <span>${applicationId}</span>
                         </div>
                     </div>
                     

@@ -2220,9 +2220,7 @@ async function loadLeaders() {
             return;
         }
 
-        // Sort leaders by position (1-Executive Chairman, 2-Deputy Chairman, 3-Secretary, 4-Other)
         const sortedLeaders = leadersData.sort((a, b) => {
-            // Extract position index from position string (e.g., "1-Executive Chairman" -> 1)
             const getPositionIndex = (position) => {
                 if (!position) return 999; // Put undefined positions last
                 const match = position.match(/^(\d+)-/);
